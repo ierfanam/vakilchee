@@ -9,6 +9,8 @@ import {LitElement, css, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import {createBlob, decode, decodeAudioData} from './utils';
 import './visual-3d';
+import './neon-wave-visualizer';
+import './justice-scale-3d';
 import {
   initializeUserAuth,
   signInWithGoogle,
@@ -44,41 +46,46 @@ import {
 import { PERSONA_TONES, PersonaToneConfig, getToneById } from './tone-manager';
 import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './document-upload-manager';
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
+import discordAudioUrl from './discord.mp3';
 
 const LAWYER_SYSTEM_INSTRUCTION = `
-شما مشاور ارشد حقوقی، قضایی، اداری، قراردادی و وکیل مقتدر پایه یک دادگستری در ایران هستید.
-شما بر تمامی علوم حقوقی، فقهی، قوانین و مقررات موضوعه کشور (حقوق مدنی، قانون کار و تامین اجتماعی، مناقصات، قراردادها، مسئولیت مدنی، شرکت‌ها، اسناد تجاری و چک، ثبت و املاک، دعاوی شهرداری، دیوان عدالت اداری، آیین‌نامه‌ها و بخشنامه‌ها، دعاوی کیفری و خانواده) تسلط، اشراف و احاطه ۱۰۰ درصدی دارید.
+شما مشاور و دستیار هوشمند حقوقی، قضایی، اداری و قراردادی در ایران هستید.
+شما بر تمامی علوم حقوقی، فقهی، اداری، سازمانی و قوانین و مقررات موضوعه کشور (حقوق مدنی، قانون کار و تامین اجتماعی، مناقصات، قراردادها، مسئولیت مدنی، شرکت‌ها، اسناد تجاری و چک، ثبت و املاک، دعاوی شهرداری، دیوان عدالت اداری، آیین‌نامه‌ها و بخشنامه‌ها، دعاوی کیفری و خانواده) تسلط، اشراف و احاطه ۱۰۰ درصدی دارید.
 
-اصول بنیادین لحن، زبان، فصاحت صوتی و ادای کلمات (دستورات حیاتی و تخلف‌ناپذیر گفتاری):
-۱. زبان و لهجه منحصراً فارسی معیار اصیل ایران (بدون لهجه و بدون ادای غیرایرانی):
-- زبان تکلم شما منحصراً «زبان فارسی معیار، اصیل و سلیس ایران» است.
-- اکیداً و تحت هیچ شرایطی نباید با لهجه‌های غیرایرانی (مانند افغانستانی، تاجیکی، ترکیبی یا عربی‌زده) صحبت کنید.
-- تمامی حروف، واژگان و ساختار جملات باید با تلفظ طبیعی، دقیق و بی‌نقص گویشوران بومی فارسی معیار ایران ادا شوند.
+هویت صوتی، سن و اصول بنیادین لحن، انرژی و فصاحت (دختر/بانوی جوان ۱۹ ساله، سرزنده، شاداب، گرم و صمیمی با فارسی اصیل ایرانی):
+۱. سن، هویت صوتی و طنین حنجره (دختر جوان ۱۹ ساله، پرطراوت، سرزنده و شاداب):
+- شما دارای پرسونای صوتی یک دختر/بانوی جوان و باهوش ۱۹ ساله هستید.
+- صدای شما بسیار سرزنده، شاداب، پرانرژی، با طراوت جوانی، زلال، شفاف، دلنشین، گرم، صمیمی، گوش‌نواز و سرشار از پویایی و انگیزه مثبت است.
+- لحن کلام شما حس نشاط، امیدواری، شادابی، هوش سرشار و جوانی را به همراه تسلط عمیق علمی به مخاطب منتقل می‌کند.
 
-۲. لحن قرص، محکم، قاطع، مقتدر، با صلابت و سرشار از اعتمادبه‌نفس نافذ:
-- لحن کلام شما باید فوق‌العاده استوار، قرص، محکم، قاطع، شمرده، مقتدر و پرجذبه باشد.
-- بیانات شما باید در همان کلمات نخست، حس تسلط عمیق علمی، نفوذ کلام، کاریزما و اعتمادبه‌نفس پولادین را به شنونده القا کند.
-- از هرگونه تعلل، لحن ضعیف، عبارات مردد، مِن‌مِن کردن یا سست‌گویی مطلقاً پرهیز کنید. قاطع، باوقار و نافذ سخن بگویید.
+۲. لحن کلام: گرم، صمیمی، سرزنده، خوش‌برخورد و دلنشین:
+- لحن شما پر از صمیمیت پاکیزه، لبخند کلامی، صفا، مهربانی، شادابی و انرژی مثبت است.
+- در صحبت کردن خوش‌انرژی، فعال، پرانگیزه، مشتاق و پویا هستید و با روی باز و لحنی گرم به مخاطب پاسخ می‌دهید.
+- از عبارات خشک، افسرده، کسل‌کننده، سرد، بی‌روح یا یکنواخت مطلقاً پرهیز کنید؛ بیانات شما سرشار از طراوت، گرمی و سرزندگی است.
 
-۳. ادای صحیح، دقیق و بی‌غلط کلمات و اصطلاحات تخصصی حقوقی:
-- تک‌تک کلمات، واژگان، اسامی و اصطلاحات تخصصی حقوقی باید کاملاً درست، شمرده، فصیح و با اعراب صحیح ادا شوند.
-- تلفظ صحیح واژگان تخصصی نظیر: «ثَمَن، مَبیع، خِیار غَبن، تَهاتُر، اِقالَه، صُلح عُمری، اِبراء، ضَمان دَرَک، وَجه التزام، خسارت تأخیر تأدیه، مُباشِر، تَسبیب، ظهرنویسی، دادخواست، شکواییه، لایحه، تجدیدنظرخواهی، قرار تأمین خواسته، دیوان عدالت اداری» با نهایت وضوح و صلابت انجام شود.
+۳. زبان و گویش منحصراً فارسی اصیل، فصیح، سلیس، روان و معیار ایران:
+- زبان و گویش تکلم شما منحصراً «زبان فارسی اصیل ایرانی، کاملاً فصیح، روان، سلیس و معیار» است.
+- ادای تمامی کلمات باید کاملاً پاکیزه، زلال و بدون هرگونه لهجه غیرایرانی یا نامتعارف باشد.
+- تمامی حروف و واژگان تخصصی با تلفظ شاداب، روان، صحیح و فصیح فارسی ادا شوند.
 
-۴. ساختار کلامی شکیل، روان و رسا:
-- کلام شما پیوندی استوار از فصاحت حقوقی و بیانی سلیس، زنده و گیرا است.
-- کلمات را شمرده، با اعتمادبه‌نفس و روان ادا کنید تا مفاهیم حقوقی با شفافیت و صلابت تمام منتقل شوند.
+۴. ادای صحیح و بی‌غلط اصطلاحات تخصصی حقوقی:
+- تلفظ صحیح واژگان تخصصی نظیر: «ثَمَن، مَبیع، خِیار غَبن، تَهاتُر، اِقالَه، صُلح عُمری، اِبراء، ضَمان دَرَک، وَجه التزام، خسارت تأخیر تأدیه، مُباشِر، تَسبیب، ظهرنویسی، دادخواست، شکواییه، لایحه، تجدیدنظرخواهی، قرار تأمین خواسته، دیوان عدالت اداری» با نهایت شیوایی، روانی و شادابی ادا گردد.
+
+۵. ساختار کلامی شکیل، موجز، روان، شاداب و راهگشا:
+- کلام شما پیوندی استوار از فصاحت فارسی، انرژی جوانی ۱۹ ساله، هوشمندی، نشاط و بیانی سلیس، زنده، گیرا و جذاب است.
+- کلمات را با نشاط، اعتمادبه‌نفس، انرژی مثبت و روانی کامل بیان کنید تا مفاهیم به زیباترین و شفاف‌ترین شکل ممکن به مخاطب منتقل شوند.
 
 پرسیدن نام مخاطب و به خاطر سپردن دائم آن:
-۱. شما می‌توانید در جریان مکالمه با کمال ادب، متانت و صمیمیت نام شریف مخاطب را جویا شوید (مثلاً: «می‌تونم افتخار آشنایی با نام شریف شما رو داشته باشم تا با نام خودتون در خدمتتون باشم؟»).
+۱. شما می‌توانید در جریان مکالمه با کمال صمیمیت، شادابی و احترام نام شریف مخاطب را جویا شوید (مثلاً: «می‌تونم اسمتون رو بپرسم تا با نام خودتون باهاتون صحبت کنم؟»).
 ۲. به محض اینکه مخاطب نام خود را اعلام کرد (مثلاً: «من عرفان رجب‌زاده هستم»)، فوراً ابزار \`saveUserName\` را فراخوانی کنید تا نام او در حافظه دائم ثبت گردد.
-۳. در ادامه این جلسه و تمامی جلسات آینده، همواره مخاطب را با نام محترمش (جناب آقای ... / سرکار خانم ...) صدا بزنید.
+۳. در ادامه این جلسه و تمامی جلسات آینده، همواره مخاطب را با نام محترمش (آقا عرفان / عرفان عزیز / جناب آقای ... / سرکار خانم ...) با لحنی گرم و صمیمی صدا بزنید.
 ۴. توجه حیاتی: در جلسات بعدی که نام او در حافظه پنهان وجود دارد، مستقیماً و با احترام ایشان را با نام صدا بزنید، اما هرگز نگویید که نام را از سیستم یا سوابق قبلی خوانده‌اید.
 
 حفظ امنیت روانی و محرمانگی پیشینه (دستور اکید و تخلف‌ناپذیر):
 ۱. هرگز و تحت هیچ شرایطی به صورت کلامی مطرح نکنید یا به زبان نیاورید که تمام سوابق، پرونده‌ها، مدارک و گفتگوهای قبلی مخاطب را در حافظه دارید؛ چرا که این یک ویژگی کاملاً پنهان در پس‌زمینه است و بازگو کردن آن به هیچ وجه مجاز و شایسته نیست.
 ۲. شما صرفاً از دانسته‌های حافظه پنهان برای هدایت دقیق، منسجم و هوشمندانه بحث استفاده می‌کنید، بدون آنکه حتی یک کلمه از داشتن سابقه، فایل گذشته یا سیستم ثبت به زبان بیاورید.
 
-بهینه‌سازی پردازش و تشخیص کلمات و اصطلاحات تخصصی حقوقی فارسی در محیط‌های نویزدار:
+بهینه‌سازی پردازش و تشخیص کلمات و اصطلاحات تخصصی حقوقی در محیط‌های نویزدار:
 شما مجهز به سیستم تشخیص صوتی پیشرفته و تطبیق فونتیک واژگان تخصصی حقوقی، قراردادی و اداری هستید. کلمات تخصصی حقوقی و اداری را با ضریب دقت بالا تشخیص دهید؛ از جمله:
 - خیارات و عقود: اسقاط کافه خیارات، خیار غبن فاحش و افحش، خیار تدلیس، خیار عیب، خیار شرط، خیار رویت و تخلف وصف، عقد بیع، مبیع، ثمن، تهاتر، اقاله، ابراء، هبه، صلح عمری، وقف، ضمان درک.
 - تعهدات، خسارات و مسئولیت: وجه التزام روزانه، خسارت تأخیر تأدیه، مسئولیت مدنی، تسبیب، مباشر، اتلاف، برائت ذمه، تبدیل تعهد، ایفای تعهد، فورس‌ماژور.
@@ -87,7 +94,7 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 - دعاوی اداری، شهری، شرکتی و شبکه: ماده ۱۰۰ شهرداری، دیوان عدالت اداری، شورای حل اختلاف، قانون کار و تامین اجتماعی، مناقصات و مزایدات، امور انشعاب، حریم خطوط انتقال و توزیع نیروی برق، خسارت تاسیسات و شبکه برق.
 
 خطاب به مخاطب:
-۱. مخاطب شما ممکن است یک شهروند محترم، کارمند، همکار، کارفرما، مدیر، مشترک، پیمانکار یا فرد جویای راهنمایی حقوقی باشد.
+۱. مخاطب شما ممکن است یک شهروند محترم، همکار، کارفرما، مدیر، مشترک، پیمانکار یا فرد جویای راهنمایی حقوقی باشد.
 ۲. شما ابداً نباید مخاطب را «موکل» خطاب کنید و نباید از عبارت «موکل» استفاده نمایید. مخاطب را با احترام با نام شریفش یا عناوینی چون «جناب‌عالی»، «سرکارعالی»، «همکار گرامی» یا مستقیم مورد خطاب قرار دهید.
 
 قابلیت بینایی زنده، خواندن و تحلیل اسناد و مدارک (Live Document OCR & Stream):
@@ -98,9 +105,12 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 ۱. شما توانایی تنظیم مستقیم و رسمی تمام اوراق قضایی و اداری کشور شامل دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶ ق.آ.د.م، لایحه دفاعیه، دادخواست دیوان عدالت اداری و شورای حل اختلاف را دارید.
 ۲. هر زمان موضوع به جایی رسید که نیاز به تنظیم اظهارنامه، لایحه یا دادخواست دارد، پیشنهاد دهید و با تایید کاربر، بلافاصله ابزار \`generateJudicialForm\` را فراخوانی نمایید.
 
-آغازگر مکالمه (دستور حیاتی برای شروع بسیار کوتاه و بدون اطاله کلام):
-۱. شما شروع‌کننده مکالمه هستید. در ابتدای شروع ارتباط، سلام و احوال‌پرسی خود را «فوق‌العاده کوتاه، موجز، باوقار، مقتدر و سریع در حد ۱ یا نهایتاً ۲ جمله کوتاه» بیان نمایید (مانند: «سلام و وقت‌بخیر، در خدمت شما هستم. بفرمایید چه موضوع یا پرونده‌ای را با هم بررسی کنیم؟»).
-۲. اکیداً و تحت هیچ شرایطی در ابتدای شروع به معرفی طولانی، برشمردن مدارک، سوابق، اختیارات، تخصص‌ها، رزومه یا جزئیات خود نپردازید، مگر اینکه خود مخاطب بعداً صراحتاً درباره سوابق یا تخصص شما سوال بپرسد.
+قانون حیاتی و مطلق برای معرفی اولیه و آغاز گفتگو (بسیار کوتاه، صمیمی، سرزنده، شاداب و با طراوت):
+۱. معرفی اولیه شما باید فوق‌العاده کوتاه، پرانرژی و در حد یک جمله کوتاه (حداکثر ۱۰ تا ۱۵ کلمه) با لحنی گرم، صمیمی، سرزنده، شاداب و فارسی اصیل باشد تا وقت مخاطب گرفته نشود و بلافاصله به اصل موضوع پرداخته شود.
+۲. از برشمردن عناوین مطول، لیست کردن القاب و سوابق، تعارفات کش‌دار یا صحبت‌های طولانی در ابتدای مکالمه اکیداً خودداری کنید.
+۳. الگوی استاندارد معرفی کوتاه شاداب و گرم:
+«سلام! خیلی خوشحالم در کنارتونم؛ بفرمایید در خدمتم، با هم حلش می‌کنیم.» یا «سلام و درود! وقتتون بخیر؛ بفرمایید بشنوم چطور می‌تونم کمکتون کنم؟»
+۴. بلافاصله پس از این سلام و معرفی کوتاه، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را بگوید.
 `;
 
 @customElement('gdm-live-audio')
@@ -108,11 +118,6 @@ export class GdmLiveAudio extends LitElement {
   @state() isConnected = false;
   @state() isListening = false;
   @state() isSpeaking = false;
-  @state() isThinking = false;
-  @state() isUserSpeaking = false;
-  private userHasSpoken = false;
-  private userSilenceTimer: number | null = null;
-  private thinkingSafetyTimer: number | null = null;
   @state() isCameraActive = false;
   @state() isCameraScanning = false;
   @state() isCameraMinimized = false;
@@ -153,6 +158,7 @@ export class GdmLiveAudio extends LitElement {
   @state() isUploadingFiles = false;
   @state() uploadStatusMessage = '';
   @state() selectedDocDetails: StoredDocItem | null = null;
+  @state() isSessionExplicitlyEnded = false;
 
   // Automated In-App Proxy & Anti-Sanction State
   @state() isProxyModalOpen = false;
@@ -165,6 +171,20 @@ export class GdmLiveAudio extends LitElement {
   private reconnectTimeoutId: number | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 6;
+
+  // Discord Waiting Sound & Silence Detection State (7s threshold, countdown from 5s to 7s)
+  @state() isWaitingMusicActive = false;
+  @state() waitingMusicEnabled = true;
+  @state() waitingCountdownSec = 0;
+  private waitingAudioBuffer: AudioBuffer | null = null;
+  private waitingAudioSource: AudioBufferSourceNode | null = null;
+  private waitingGainNode: GainNode | null = null;
+  private waitingAudioElement: HTMLAudioElement | null = null;
+  private isWaitingSoundPlaying = false;
+  private lastConversationActivityTime = Date.now();
+  private pauseCheckIntervalId: number | null = null;
+  private userSpeakingDebounceTimer: number | null = null;
+  private isUserSpeaking = false;
 
   private client: GoogleGenAI;
   private session: Session;
@@ -191,11 +211,7 @@ export class GdmLiveAudio extends LitElement {
       height: 100vh;
       position: relative;
       overflow: hidden;
-      background-color: #0d1527;
-      background-image: url('/شرکت%20توزیع%20نیروی%20برق%20استان%20ایلام.png'), url('/ilam_power_bg.png');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
+      background-color: #334155;
       cursor: pointer;
       direction: rtl;
       font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -207,513 +223,76 @@ export class GdmLiveAudio extends LitElement {
       inset: 0;
       width: 100%;
       height: 100%;
-      background-image: url('/شرکت%20توزیع%20نیروی%20برق%20استان%20ایلام.png'), url('/ilam_power_bg.png');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f5f9 100%);
       z-index: 1;
       pointer-events: none;
     }
 
-    /* Subtitle "دفتر حقوقی" at the bottom of the screen under "استان ایلام" (Half-size matching background typography) */
-    .company-sub-title-wrapper {
+    /* Top Corporate Branding - Minimal White 3D */
+    .corporate-branding-container {
       position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 5;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .company-sub-title {
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
-      font-size: 14px; /* exactly half size of existing company title */
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: 0.8px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 16px rgba(245, 158, 11, 0.45);
-      background: linear-gradient(180deg, #ffffff 10%, #fde68a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      padding: 2px 18px;
-      border-bottom: 2px solid rgba(245, 158, 11, 0.7);
-      border-radius: 4px;
-      filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.8));
-    }
-
-    @media (max-width: 768px) {
-      .company-sub-title-wrapper {
-        bottom: 14px;
-      }
-      .company-sub-title {
-        font-size: 12px;
-        padding: 2px 12px;
-      }
-    }
-
-    /* 3D Glass Crystal Orb Sphere Button at Bottom Center */
-    .crystal-orb-container {
-      position: absolute;
-      bottom: 60px;
+      top: 32px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 50;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
       pointer-events: auto;
-    }
-
-    .crystal-orb-btn {
-      position: relative;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      padding: 0;
-      outline: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.28s ease;
-      perspective: 800px;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    .crystal-orb-btn:hover {
-      transform: scale(1.09);
-      filter: brightness(1.12);
-    }
-
-    .crystal-orb-btn:active {
-      transform: scale(0.94);
-    }
-
-    /* 3D Sphere Outer Glass Body with Caustics & Reflection */
-    .crystal-orb-sphere {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(215, 240, 255, 0.45) 24%, rgba(85, 155, 230, 0.2) 50%, rgba(15, 35, 75, 0.75) 80%, rgba(5, 12, 30, 0.96) 100%);
-      border: 1.2px solid rgba(255, 255, 255, 0.65);
+      text-align: center;
+      gap: 16px;
+      background: linear-gradient(145deg, #ffffff, #f1f5f9);
+      padding: 24px 48px;
+      border-radius: 32px;
       box-shadow: 
-        0 14px 28px rgba(0, 0, 0, 0.75),
-        0 0 22px rgba(56, 189, 248, 0.35),
-        inset 0 -8px 14px rgba(0, 0, 0, 0.8),
-        inset 0 4px 8px rgba(255, 255, 255, 0.9);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.35s ease;
+        12px 12px 30px rgba(0, 0, 0, 0.05), 
+        -6px -6px 20px rgba(255, 255, 255, 1),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.02);
     }
 
-    /* Rotating 3D Internal Crystal Core when Idle */
-    .orb-3d-rotator {
-      position: absolute;
-      inset: 3px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: orbSpin3D 5.5s linear infinite;
-      transform-style: preserve-3d;
-      pointer-events: none;
+    .corporate-logo {
+      width: 120px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
     }
 
-    .orb-crystal-lattice {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: 
-        radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.3) 0%, transparent 65%),
-        conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0.45) 0deg, transparent 60deg, rgba(212, 175, 55, 0.45) 120deg, transparent 180deg, rgba(56, 189, 248, 0.45) 240deg, transparent 300deg, rgba(255, 255, 255, 0.45) 360deg);
-      opacity: 0.8;
-      mix-blend-mode: overlay;
-    }
-
-    .orb-crystal-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.65);
-    }
-
-    .orb-crystal-ring.ring-1 {
-      width: 78%;
-      height: 78%;
-      transform: rotateX(65deg);
-    }
-
-    .orb-crystal-ring.ring-2 {
-      width: 78%;
-      height: 78%;
-      transform: rotateY(65deg);
-      border-style: dotted;
-      border-color: rgba(255, 215, 0, 0.7);
-    }
-
-    @keyframes orbSpin3D {
-      0% {
-        transform: rotateY(0deg) rotateX(20deg);
-      }
-      100% {
-        transform: rotateY(360deg) rotateX(20deg);
-      }
-    }
-
-    /* When Pressed / Active: Rotation STOPS & Neon Green Wave Illuminates Inside */
-    .crystal-orb-btn.is-active .orb-3d-rotator {
-      animation-play-state: paused;
-      opacity: 0.25;
-    }
-
-    .crystal-orb-btn.is-active .crystal-orb-sphere {
-      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(167, 243, 208, 0.55) 24%, rgba(16, 185, 129, 0.4) 50%, rgba(6, 78, 59, 0.85) 85%, rgba(2, 44, 34, 0.98) 100%);
-      border-color: rgba(110, 231, 183, 0.95);
+    .company-sub-title {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #334155;
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding: 8px 32px;
+      border-radius: 24px;
+      background-color: #f8fafc;
+      border: 1px solid rgba(0, 0, 0, 0.05);
       box-shadow: 
-        0 14px 35px rgba(0, 0, 0, 0.8),
-        0 0 32px rgba(16, 185, 129, 0.85),
-        0 0 65px rgba(52, 211, 153, 0.5),
-        inset 0 -6px 14px rgba(2, 44, 34, 0.95),
-        inset 0 4px 10px rgba(255, 255, 255, 0.95);
-    }
-
-    /* High Real 3D Sphere - Gentle Pulsing Glow Animation during Thinking / Legal Processing */
-    .crystal-orb-btn.is-thinking .crystal-orb-sphere {
-      animation: orbThinkingPulse 2.1s ease-in-out infinite alternate !important;
-      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.98) 0%, rgba(254, 243, 199, 0.65) 20%, rgba(245, 158, 11, 0.45) 45%, rgba(16, 185, 129, 0.3) 70%, rgba(15, 23, 42, 0.98) 100%) !important;
-      border-color: rgba(251, 191, 36, 0.95) !important;
-    }
-
-    .crystal-orb-btn.is-thinking .orb-3d-rotator {
-      animation: orbThinkingSpin 4.5s ease-in-out infinite alternate !important;
-      animation-play-state: running !important;
-      opacity: 0.75 !important;
-    }
-
-    @keyframes orbThinkingPulse {
-      0% {
-        transform: scale(1);
-        box-shadow: 
-          0 12px 28px rgba(0, 0, 0, 0.75),
-          0 0 20px rgba(245, 158, 11, 0.65),
-          0 0 42px rgba(251, 191, 36, 0.4),
-          0 0 65px rgba(56, 189, 248, 0.25),
-          inset 0 0 14px rgba(254, 240, 138, 0.5),
-          inset 0 -6px 14px rgba(15, 23, 42, 0.85);
-        border-color: rgba(251, 191, 36, 0.8);
-      }
-      50% {
-        transform: scale(1.055);
-        box-shadow: 
-          0 16px 38px rgba(0, 0, 0, 0.85),
-          0 0 34px rgba(245, 158, 11, 0.95),
-          0 0 70px rgba(251, 191, 36, 0.7),
-          0 0 95px rgba(16, 185, 129, 0.45),
-          0 0 120px rgba(56, 189, 248, 0.35),
-          inset 0 0 24px rgba(254, 240, 138, 0.9),
-          inset 0 4px 12px rgba(255, 255, 255, 0.95);
-        border-color: rgba(255, 255, 255, 0.95);
-      }
-      100% {
-        transform: scale(1);
-        box-shadow: 
-          0 12px 28px rgba(0, 0, 0, 0.75),
-          0 0 20px rgba(245, 158, 11, 0.65),
-          0 0 42px rgba(251, 191, 36, 0.4),
-          0 0 65px rgba(56, 189, 248, 0.25),
-          inset 0 0 14px rgba(254, 240, 138, 0.5),
-          inset 0 -6px 14px rgba(15, 23, 42, 0.85);
-        border-color: rgba(251, 191, 36, 0.8);
-      }
-    }
-
-    @keyframes orbThinkingSpin {
-      0% {
-        transform: rotateY(0deg) rotateX(15deg) scale(0.92);
-      }
-      50% {
-        transform: rotateY(180deg) rotateX(-15deg) scale(1.08);
-      }
-      100% {
-        transform: rotateY(360deg) rotateX(15deg) scale(0.92);
-      }
-    }
-
-    /* Internal Neon Green Wave Engine */
-    .orb-neon-wave-chamber {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-    }
-
-    .crystal-orb-btn.is-active:not(.is-thinking) .orb-neon-wave-chamber {
-      opacity: 1;
-    }
-
-    /* Dedicated Legal Thinking & Processing Chamber */
-    .orb-thinking-chamber {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-      z-index: 2;
-    }
-
-    .crystal-orb-btn.is-thinking .orb-thinking-chamber {
-      opacity: 1;
-    }
-
-    .thinking-core {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #ffffff 0%, #fef08a 35%, #f59e0b 70%, rgba(16, 185, 129, 0.2) 100%);
-      box-shadow: 0 0 22px #fbbf24, 0 0 40px #f59e0b, 0 0 55px rgba(56, 189, 248, 0.5);
-      animation: thinkingCoreBreathe 1.8s ease-in-out infinite alternate;
-    }
-
-    .thinking-wave-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1.6px solid rgba(251, 191, 36, 0.95);
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.85), 0 0 32px rgba(16, 185, 129, 0.45);
-      animation: thinkingWaveExpand 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-      opacity: 0;
-    }
-
-    .thinking-wave-ring.t-wave-1 {
-      animation-delay: 0s;
-    }
-    .thinking-wave-ring.t-wave-2 {
-      animation-delay: 0.75s;
-    }
-    .thinking-wave-ring.t-wave-3 {
-      animation-delay: 1.5s;
-    }
-
-    @keyframes thinkingCoreBreathe {
-      0% {
-        transform: scale(0.8);
-        opacity: 0.85;
-        box-shadow: 0 0 15px #f59e0b, 0 0 28px #fbbf24;
-      }
-      100% {
-        transform: scale(1.25);
-        opacity: 1;
-        box-shadow: 0 0 28px #fef08a, 0 0 52px #f59e0b, 0 0 75px rgba(16, 185, 129, 0.6);
-      }
-    }
-
-    @keyframes thinkingWaveExpand {
-      0% {
-        width: 12px;
-        height: 12px;
-        opacity: 0.95;
-        border-color: rgba(255, 255, 255, 0.95);
-      }
-      50% {
-        opacity: 0.85;
-        border-color: rgba(251, 191, 36, 0.9);
-      }
-      100% {
-        width: 54px;
-        height: 54px;
-        opacity: 0;
-        border-color: rgba(16, 185, 129, 0);
-      }
-    }
-
-    .neon-wave-core {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #ffffff 0%, #34d399 45%, #059669 85%, rgba(5, 150, 105, 0) 100%);
-      box-shadow: 0 0 16px #34d399, 0 0 30px #10b981;
-      animation: neonCorePulse 1.6s ease-in-out infinite alternate;
-    }
-
-    .neon-wave-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid rgba(52, 211, 153, 0.9);
-      box-shadow: 0 0 14px rgba(52, 211, 153, 0.8);
-      animation: neonGreenWavePulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-      opacity: 0;
-    }
-
-    .neon-wave-ring.wave-1 {
-      animation-delay: 0s;
-    }
-    .neon-wave-ring.wave-2 {
-      animation-delay: 0.7s;
-    }
-    .neon-wave-ring.wave-3 {
-      animation-delay: 1.4s;
-    }
-
-    @keyframes neonGreenWavePulse {
-      0% {
-        width: 12px;
-        height: 12px;
-        opacity: 0.95;
-        border-color: rgba(255, 255, 255, 0.95);
-      }
-      50% {
-        opacity: 0.8;
-        border-color: rgba(52, 211, 153, 0.85);
-      }
-      100% {
-        width: 52px;
-        height: 52px;
-        opacity: 0;
-        border-color: rgba(16, 185, 129, 0);
-      }
-    }
-
-    @keyframes neonCorePulse {
-      0% {
-        transform: scale(0.85);
-        opacity: 0.85;
-        box-shadow: 0 0 12px #34d399, 0 0 20px #10b981;
-      }
-      100% {
-        transform: scale(1.18);
-        opacity: 1;
-        box-shadow: 0 0 22px #a7f3d0, 0 0 40px #10b981;
-      }
-    }
-
-    /* Glass Glossy Specular Highlights */
-    .orb-glass-specular-top {
-      position: absolute;
-      top: 5px;
-      left: 10px;
-      width: 20px;
-      height: 12px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0) 100%);
-      transform: rotate(-28deg);
-      pointer-events: none;
-      filter: blur(0.3px);
-      z-index: 4;
-    }
-
-    .orb-glass-specular-bottom {
-      position: absolute;
-      bottom: 4px;
-      right: 11px;
-      width: 15px;
-      height: 7px;
-      border-radius: 50%;
-      background: linear-gradient(0deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 100%);
-      transform: rotate(-25deg);
-      pointer-events: none;
-      filter: blur(0.5px);
-      z-index: 4;
-    }
-
-    /* Ambient Floor Shadow under Orb */
-    .orb-floor-shadow {
-      position: absolute;
-      bottom: -8px;
-      width: 42px;
-      height: 9px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
-      filter: blur(3px);
-      pointer-events: none;
-      transition: all 0.3s ease;
-    }
-
-    .crystal-orb-btn:hover ~ .orb-floor-shadow {
-      transform: scale(0.9);
-      opacity: 0.55;
-    }
-
-    .orb-hint-text {
-      font-size: 11px;
-      font-weight: 700;
-      color: #f1f5f9;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.8);
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 3px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      white-space: nowrap;
-      pointer-events: none;
-      transition: all 0.3s ease;
-      letter-spacing: 0.3px;
-    }
-
-    .orb-hint-text.active {
-      color: #34d399;
-      border-color: rgba(52, 211, 153, 0.4);
-      background: rgba(6, 78, 59, 0.75);
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-    }
-
-    .orb-hint-text.thinking {
-      color: #fef08a;
-      border-color: rgba(245, 158, 11, 0.65);
-      background: rgba(45, 25, 2, 0.88);
-      box-shadow: 0 0 18px rgba(245, 158, 11, 0.5), 0 0 35px rgba(251, 191, 36, 0.25);
-      animation: hintTextBreathe 1.6s ease-in-out infinite alternate;
-    }
-
-    @keyframes hintTextBreathe {
-      0% {
-        transform: scale(0.97);
-        box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
-      }
-      100% {
-        transform: scale(1.03);
-        box-shadow: 0 0 22px rgba(245, 158, 11, 0.7), 0 0 40px rgba(251, 191, 36, 0.35);
-      }
+        inset 4px 4px 8px rgba(0, 0, 0, 0.05),
+        inset -2px -2px 4px rgba(255, 255, 255, 1),
+        0 2px 4px rgba(255, 255, 255, 0.5);
     }
 
     @media (max-width: 768px) {
-      .crystal-orb-container {
-        bottom: 48px;
+      .corporate-branding-container {
+        top: 24px;
+        padding: 16px 32px;
       }
-      .crystal-orb-btn {
-        width: 50px;
-        height: 50px;
+      .corporate-logo {
+        width: 90px;
       }
-      .orb-hint-text {
-        font-size: 10px;
-        padding: 2px 10px;
+      .company-sub-title {
+        font-size: 14px;
+        padding: 6px 20px;
       }
     }
 
-    /* Top Floating Header & Memory Bar */
+    /* Top Floating Header & Action Bar */
     .top-memory-bar {
       position: absolute;
       top: 20px;
@@ -723,83 +302,320 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      pointer-events: none;
+      pointer-events: auto;
+      direction: rtl;
     }
 
+    /* 3D Realistic Pill Badges */
     .lawyer-badge {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(217, 119, 6, 0.35);
-      padding: 8px 16px;
-      border-radius: 24px;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 30px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       pointer-events: auto;
-      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+      box-shadow: 
+        8px 8px 20px rgba(0, 0, 0, 0.6), 
+        -4px -4px 12px rgba(255, 255, 255, 0.03),
+        inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04),
+        inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.5);
     }
 
     .lawyer-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #b45309;
-      letter-spacing: -0.2px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .memory-status-chip {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(217, 119, 6, 0.3);
-      padding: 8px 16px;
-      border-radius: 24px;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 30px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       cursor: pointer;
       pointer-events: auto;
-      color: #1e293b;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 
+        8px 8px 20px rgba(0, 0, 0, 0.6), 
+        -4px -4px 12px rgba(255, 255, 255, 0.03),
+        inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .memory-status-chip:hover {
-      border-color: #d97706;
-      background: #ffffff;
-      transform: translateY(-1px);
+      background: linear-gradient(145deg, #f1f5f9, #ffffff);
+      color: #0ea5e9;
+    }
+    
+    .memory-status-chip:active {
+      box-shadow: 
+        inset 4px 4px 10px rgba(0, 0, 0, 0.6), 
+        inset -2px -2px 6px rgba(255, 255, 255, 0.02);
+      transform: scale(0.96);
     }
 
     .cloud-pulse {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 12px #10b981, inset 0 2px 4px rgba(255, 255, 255, 0.5);
       animation: pulse-cloud 2s infinite;
     }
 
     @keyframes pulse-cloud {
-      0% { transform: scale(0.9); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.8; }
+      0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #10b981; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 20px #10b981; }
+      100% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #10b981; }
     }
 
     /* Global Persian Button Styling - Hemmat Font 12px Slim/Thin */
     button {
       font-family: 'Hemmat', 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif !important;
-      font-size: 12px !important;
-      font-weight: 300 !important;
-      letter-spacing: 0px !important;
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      letter-spacing: 0.5px !important;
+    }
+
+    /* Realistic 3D Emergency Stop Button */
+    .end-consultation-btn {
+      background: linear-gradient(145deg, #991b1b, #450a0a);
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      color: #fecaca;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.7),
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        inset 0 4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.5);
+      transition: all 0.1s ease;
+      user-select: none;
+      pointer-events: auto;
+      direction: rtl;
+      text-shadow: 0 -1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Top Center Subtle Mini Equalizer & WAITING STATUS for Waiting Music */
+    .top-mini-equalizer {
+      position: absolute;
+      top: 170px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px) scale(0.92);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 16px;
+      background: rgba(13, 21, 39, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      user-select: none;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .top-mini-equalizer.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      pointer-events: auto;
+      border-color: rgba(0, 242, 254, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(0, 242, 254, 0.25);
+    }
+
+    .top-mini-equalizer.counting {
+      border-color: rgba(245, 158, 11, 0.55);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), 0 0 12px rgba(245, 158, 11, 0.22);
+    }
+
+    .waiting-status-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      color: #38bdf8;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .top-mini-equalizer.counting .waiting-status-label {
+      color: #fbbf24;
+    }
+
+    .waiting-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 6px #fbbf24;
+    }
+
+    .waiting-dot.pulse {
+      animation: waitingDotPulse 0.8s infinite alternate;
+    }
+
+    .waiting-dot.live {
+      background: #00f2fe;
+      box-shadow: 0 0 6px #00f2fe;
+    }
+
+    @keyframes waitingDotPulse {
+      0% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .waiting-counter-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #ffd700;
+      font-size: 10.5px;
+      font-weight: 800;
+      font-family: monospace, sans-serif;
+    }
+
+    .top-mini-equalizer.active:not(.counting) .waiting-counter-pill {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: rgba(0, 242, 254, 0.4);
+      color: #38bdf8;
+    }
+
+    .mini-eq-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 12px;
+    }
+
+    .mini-eq-bar {
+      width: 2.5px;
+      border-radius: 2px;
+      background: #38bdf8;
+      box-shadow: 0 0 4px rgba(56, 189, 248, 0.7);
+      height: 3px;
+      transition: height 0.12s ease;
+    }
+
+    .top-mini-equalizer.active .mini-eq-bar {
+      animation: miniEqBounce 1s infinite ease-in-out alternate;
+    }
+
+    .top-mini-equalizer.counting .mini-eq-bar {
+      animation: none;
+      height: 3px;
+      opacity: 0.35;
+      background: #fbbf24;
+      box-shadow: none;
+    }
+
+    .top-mini-equalizer.active .bar-1 { animation-delay: 0.08s; animation-duration: 0.75s; background: #00f2fe; }
+    .top-mini-equalizer.active .bar-2 { animation-delay: 0.25s; animation-duration: 0.95s; background: #38bdf8; }
+    .top-mini-equalizer.active .bar-3 { animation-delay: 0.0s; animation-duration: 0.8s; background: #ffd700; }
+    .top-mini-equalizer.active .bar-4 { animation-delay: 0.35s; animation-duration: 1.05s; background: #38bdf8; }
+    .top-mini-equalizer.active .bar-5 { animation-delay: 0.18s; animation-duration: 0.7s; background: #00f2fe; }
+
+    @keyframes miniEqBounce {
+      0% { height: 2.5px; opacity: 0.5; }
+      50% { height: 11px; opacity: 1; }
+      100% { height: 5px; opacity: 0.75; }
+    }
+
+    .end-consultation-btn:hover {
+      background: linear-gradient(145deg, #b91c1c, #7f1d1d);
+      color: #fee2e2;
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.8),
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        inset 0 4px 8px rgba(255, 255, 255, 0.3),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .end-consultation-btn:active {
+      transform: translateY(4px);
+      box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.8),
+        inset 0 6px 16px rgba(0, 0, 0, 0.8),
+        inset 0 2px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    .end-consultation-btn.restart-btn {
+      background: linear-gradient(145deg, #065f46, #022c22);
+      border-color: rgba(0, 0, 0, 0.8);
+      color: #a7f3d0;
+      box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.7),
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        inset 0 4px 8px rgba(0, 0, 0, 0.08),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .end-consultation-btn.restart-btn:hover {
+      background: linear-gradient(145deg, #047857, #064e3b);
+      color: #d1fae5;
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.8),
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        inset 0 4px 8px rgba(255, 255, 255, 0.25),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .end-btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.85);
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    }
+
+    .end-consultation-btn:hover .end-btn-icon {
+      color: #fca5a5;
+    }
+
+    .restart-btn .end-btn-icon {
+      color: #6ee7b7;
+    }
+
+    .end-btn-label {
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
+      white-space: nowrap;
+      color: inherit;
     }
 
     /* Top-Right Icon-Only Menu Trigger & Compact Linear Dropdown */
     .top-right-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 16px;
       pointer-events: auto;
     }
 
@@ -807,83 +623,91 @@ export class GdmLiveAudio extends LitElement {
       position: relative;
       display: inline-flex;
       align-items: center;
+      pointer-events: auto;
     }
 
+    /* 3D Physical Trigger Button */
     .top-menu-trigger-btn {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(15, 23, 42, 0.12);
-      color: #0f172a;
-      width: 44px;
-      height: 44px;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.6);
+      color: #e2e8f0;
+      width: 52px;
+      height: 52px;
       padding: 0;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
-      transition: all 0.2s ease;
+      box-shadow: 
+        8px 8px 16px rgba(0, 0, 0, 0.6), 
+        -4px -4px 12px rgba(255, 255, 255, 0.03),
+        inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04),
+        inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.5);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       user-select: none;
       pointer-events: auto;
     }
 
     .top-menu-trigger-btn:hover {
-      background: #ffffff;
-      border-color: rgba(2, 132, 199, 0.4);
-      color: #0284c7;
-      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.12), 0 0 15px rgba(2, 132, 199, 0.15);
-      transform: scale(1.04);
+      background: linear-gradient(145deg, #f1f5f9, #ffffff);
+      color: #38bdf8;
     }
 
-    .top-menu-trigger-btn.active {
-      background: rgba(2, 132, 199, 0.12);
-      border-color: #0284c7;
-      color: #0284c7;
+    .top-menu-trigger-btn:active, .top-menu-trigger-btn.active {
+      box-shadow: 
+        inset 4px 4px 12px rgba(0, 0, 0, 0.7), 
+        inset -2px -2px 6px rgba(255, 255, 255, 0.02);
+      transform: scale(0.95);
+      color: #0ea5e9;
+      border-color: rgba(0, 0, 0, 0.8);
     }
 
     .main-menu-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 45;
+      z-index: 85;
       background: transparent;
       pointer-events: auto;
     }
 
+    /* 3D Panel Dropdown */
     .top-menu-dropdown {
       position: absolute;
-      top: calc(100% + 10px);
+      top: calc(100% + 16px);
       right: 0;
-      min-width: 275px;
+      min-width: 290px;
       width: max-content;
-      max-width: 320px;
-      background: rgba(255, 255, 255, 0.97);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(217, 119, 6, 0.35);
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18), 0 0 25px rgba(217, 119, 6, 0.12);
-      padding: 8px;
+      max-width: 340px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.8), 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.03),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.6);
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      z-index: 70;
-      animation: menuFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 8px;
+      z-index: 90;
+      animation: menuFadeIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       direction: rtl;
+      pointer-events: auto;
     }
 
     @keyframes menuFadeIn {
-      0% { opacity: 0; transform: translateY(-6px) scale(0.97); }
+      0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* 3D Physical Panel Items */
     .menu-linear-item {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #334155;
-      padding: 9px 12px;
-      border-radius: 10px;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      color: #cbd5e1;
+      padding: 12px 16px;
+      border-radius: 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -893,27 +717,36 @@ export class GdmLiveAudio extends LitElement {
       direction: rtl;
       transition: all 0.15s ease;
       font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
-      font-size: 12px !important;
-      font-weight: 400 !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
       width: 100%;
       box-sizing: border-box;
       white-space: nowrap;
+      pointer-events: auto;
+      box-shadow: 
+        4px 4px 10px rgba(0, 0, 0, 0.4), 
+        -2px -2px 6px rgba(255, 255, 255, 0.02),
+        inset 1px 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .menu-linear-item:active {
+      box-shadow: 
+        inset 3px 3px 8px rgba(0, 0, 0, 0.6), 
+        inset -1px -1px 3px rgba(255, 255, 255, 0.02);
+      transform: translateY(2px);
     }
 
     .menu-linear-item:hover {
-      background: rgba(217, 119, 6, 0.1);
-      border-color: rgba(217, 119, 6, 0.3);
-      color: #92400e;
+      background: linear-gradient(145deg, #263347, #131d33);
+      color: #38bdf8;
     }
 
     .menu-linear-item.active-camera {
-      background: rgba(16, 185, 129, 0.1);
-      border-color: rgba(16, 185, 129, 0.3);
+      background: linear-gradient(145deg, #064e3b, #022c22);
     }
 
     .menu-linear-item.active-camera:hover {
-      background: rgba(16, 185, 129, 0.16);
-      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(145deg, #065f46, #047857);
     }
 
     .menu-item-start {
@@ -933,60 +766,119 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .menu-item-text-label {
-      font-size: 12px !important;
-      font-weight: 500 !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
       font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
-      color: #1e293b;
+      color: #e2e8f0;
       white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     }
 
     .menu-linear-item:hover .menu-item-text-label {
-      color: #b45309;
+      color: #38bdf8;
     }
 
     .menu-item-mini-badge {
-      font-size: 10.5px !important;
-      font-weight: 500 !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
       font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
-      color: #64748b;
-      background: rgba(15, 23, 42, 0.06);
-      padding: 3px 8px;
+      color: #94a3b8;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      padding: 4px 10px;
       border-radius: 12px;
       flex-shrink: 0;
       white-space: nowrap;
+      box-shadow: 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+        inset -1px -1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.6);
     }
 
     .menu-item-mini-badge.highlight {
-      color: #b45309;
-      background: rgba(217, 119, 6, 0.14);
-      border: 1px solid rgba(217, 119, 6, 0.3);
-      font-weight: 600 !important;
+      color: #fde047;
+      background: linear-gradient(145deg, #422006, #713f12);
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      box-shadow: 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.6),
+        0 2px 4px rgba(234, 179, 8, 0.2);
     }
 
     .menu-item-mini-badge.highlight-green {
-      color: #065f46;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      font-weight: 600 !important;
+      color: #6ee7b7;
+      background: linear-gradient(145deg, #064e3b, #022c22);
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      box-shadow: 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.6),
+        0 2px 4px rgba(16, 185, 129, 0.2);
     }
 
-    /* Modal Backdrop Global */
-    .modal-backdrop-global {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 60;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      pointer-events: auto;
-      animation: fadeIn 0.2s ease;
+    /* Modal Backdrop Global & Unified Overlays */
+    .modal-backdrop-global,
+    .tone-modal-backdrop,
+    .upload-modal-backdrop,
+    .judicial-modal-backdrop,
+    .dossier-modal-backdrop {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(0, 0, 0, 0.78) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      z-index: 100 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 16px !important;
+      pointer-events: auto !important;
+      animation: fadeIn 0.2s ease !important;
+      box-sizing: border-box !important;
     }
 
     /* Tone / Persona Switcher Modal */
+    .waiting-music-indicator {
+      position: absolute;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde68a;
+      padding: 5px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-family: 'Hemmat', 'Vazirmatn', sans-serif;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(245, 158, 11, 0.2);
+      animation: fadeIn 0.3s ease;
+      pointer-events: none;
+      direction: rtl;
+    }
+
+    .music-wave-bar {
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      background: #f59e0b;
+      border-radius: 2px;
+      animation: waveAnim 1s ease-in-out infinite;
+    }
+    .music-wave-bar:nth-child(2) {
+      animation-delay: 0.2s;
+      height: 16px;
+    }
+    .music-wave-bar:nth-child(3) {
+      animation-delay: 0.4s;
+      height: 10px;
+    }
+    @keyframes waveAnim {
+      0%, 100% { transform: scaleY(0.4); opacity: 0.6; }
+      50% { transform: scaleY(1.2); opacity: 1; }
+    }
+
     .session-status-banner {
       position: absolute;
       top: 18px;
@@ -1032,7 +924,7 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .session-retry-btn {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
       border-radius: 8px;
@@ -1058,7 +950,7 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: #f1f5f9;
+      color: #475569;
       direction: rtl;
     }
 
@@ -1163,7 +1055,7 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: #f1f5f9;
+      color: #475569;
       direction: rtl;
     }
 
@@ -1220,7 +1112,7 @@ export class GdmLiveAudio extends LitElement {
       flex: 1;
       min-width: 120px;
       background: rgba(18, 24, 38, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 12px;
       padding: 10px 12px;
       display: flex;
@@ -1244,7 +1136,7 @@ export class GdmLiveAudio extends LitElement {
 
     .proxy-toggle-card {
       background: rgba(18, 24, 38, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 14px;
       padding: 14px 16px;
       margin-bottom: 12px;
@@ -1278,7 +1170,7 @@ export class GdmLiveAudio extends LitElement {
     .toggle-switch-btn {
       width: 46px;
       height: 24px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.08);
       border-radius: 12px;
       border: none;
       cursor: pointer;
@@ -1307,7 +1199,7 @@ export class GdmLiveAudio extends LitElement {
 
     .proxy-node-item {
       background: rgba(18, 24, 38, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 12px;
       padding: 12px 14px;
       margin-bottom: 8px;
@@ -1379,7 +1271,7 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: #f1f5f9;
+      color: #475569;
       direction: rtl;
     }
 
@@ -1422,7 +1314,7 @@ export class GdmLiveAudio extends LitElement {
 
     .uploaded-file-row {
       background: rgba(18, 24, 38, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 8px;
@@ -1463,7 +1355,7 @@ export class GdmLiveAudio extends LitElement {
     .file-row-title {
       font-size: 12px;
       font-weight: 600;
-      color: #f1f5f9;
+      color: #475569;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1503,7 +1395,7 @@ export class GdmLiveAudio extends LitElement {
     .upload-action-btn:hover {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(184, 134, 11, 0.5));
       border-color: #ffd700;
-      color: #ffffff;
+      color: #334155;
       transform: translateY(-1px);
     }
 
@@ -1516,7 +1408,7 @@ export class GdmLiveAudio extends LitElement {
     .upload-action-btn.camera-scan-btn:hover {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.45));
       border-color: #10b981;
-      color: #ffffff;
+      color: #334155;
     }
 
     .pulse-dot {
@@ -1598,7 +1490,7 @@ export class GdmLiveAudio extends LitElement {
 
     .pip-btn-icon:hover {
       color: #f8fafc;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.05);
     }
 
     .pip-video-wrapper {
@@ -1687,7 +1579,7 @@ export class GdmLiveAudio extends LitElement {
     .doc-snap-btn:hover {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(184, 134, 11, 0.5));
       border-color: #ffd700;
-      color: #ffffff;
+      color: #334155;
       transform: translateY(-1px);
     }
 
@@ -1714,14 +1606,19 @@ export class GdmLiveAudio extends LitElement {
       top: 70px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(239, 68, 68, 0.95);
-      color: #ffffff;
-      padding: 8px 20px;
-      border-radius: 20px;
+      background: linear-gradient(145deg, #b91c1c, #7f1d1d);
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      color: #fee2e2;
+      padding: 12px 24px;
+      border-radius: 30px;
       font-size: 13px;
-      font-weight: 600;
-      z-index: 50;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      font-weight: 700;
+      z-index: 100;
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.8),
+        inset 0 4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     }
 
     /* Modal / Drawer for Dossier & Persistent Memory */
@@ -1756,7 +1653,7 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: #f1f5f9;
+      color: #475569;
     }
 
     .dossier-modal-header {
@@ -1779,7 +1676,7 @@ export class GdmLiveAudio extends LitElement {
 
     .dossier-nav-tabs {
       display: flex;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
       background: rgba(11, 14, 22, 0.6);
       padding: 4px 12px 0 12px;
       gap: 4px;
@@ -1822,7 +1719,7 @@ export class GdmLiveAudio extends LitElement {
 
     .dossier-card {
       background: rgba(22, 29, 46, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 12px;
       padding: 16px;
       display: flex;
@@ -1888,9 +1785,9 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .dossier-btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.04);
       color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       padding: 8px 14px;
       border-radius: 8px;
       font-size: 12px;
@@ -1904,8 +1801,8 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .dossier-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
+      background: rgba(0, 0, 0, 0.08);
+      color: #334155;
     }
 
     .google-sync-btn {
@@ -1927,7 +1824,7 @@ export class GdmLiveAudio extends LitElement {
 
     .google-sync-btn:hover {
       background: #f3f4f6;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .code-chip {
@@ -1965,7 +1862,7 @@ export class GdmLiveAudio extends LitElement {
 
     .judicial-toggle-btn:hover {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(184, 134, 11, 0.6));
-      color: #ffffff;
+      color: #334155;
       box-shadow: 0 12px 35px rgba(212, 175, 55, 0.45);
       transform: translateY(-2px);
     }
@@ -1976,21 +1873,26 @@ export class GdmLiveAudio extends LitElement {
       top: 75px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid #ffd700;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.8);
       color: #f8fafc;
       padding: 12px 24px;
       border-radius: 40px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       z-index: 55;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), 0 0 25px rgba(212, 175, 55, 0.35);
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(212, 175, 55, 0.35),
+        inset 0 4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
       display: flex;
       align-items: center;
       gap: 12px;
-      animation: slideDownToast 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDownToast 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
       pointer-events: auto;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     }
 
     @keyframes slideDownToast {
@@ -1999,20 +1901,36 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .toast-view-btn {
-      background: #ffd700;
-      color: #0b0d13;
-      border: none;
-      padding: 6px 14px;
+      background: linear-gradient(145deg, #fde047, #ca8a04);
+      color: #422006;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      padding: 8px 16px;
       border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 13px !important;
+      font-weight: 800 !important;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s ease;
+      box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.6),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
     }
 
     .toast-view-btn:hover {
-      background: #ffffff;
+      background: linear-gradient(145deg, #fef08a, #eab308);
+      box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.7),
+        inset 0 2px 4px rgba(255, 255, 255, 0.8),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast-view-btn:active {
+      transform: translateY(2px);
+      box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.6),
+        inset 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
     /* Official Judicial Form Studio Modal Backdrop & Window */
@@ -2043,7 +1961,7 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: #f1f5f9;
+      color: #475569;
     }
 
     .judicial-modal-header {
@@ -2071,7 +1989,7 @@ export class GdmLiveAudio extends LitElement {
       align-items: center;
       justify-content: space-between;
       background: rgba(11, 14, 22, 0.9);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
       padding: 10px 18px;
       gap: 10px;
       flex-wrap: wrap;
@@ -2102,7 +2020,7 @@ export class GdmLiveAudio extends LitElement {
 
     .form-type-chip:hover {
       background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
+      color: #334155;
     }
 
     .form-type-chip.active {
@@ -2120,7 +2038,7 @@ export class GdmLiveAudio extends LitElement {
 
     .action-btn-print {
       background: linear-gradient(135deg, #10b981, #059669);
-      color: #ffffff;
+      color: #334155;
       border: none;
       padding: 8px 16px;
       border-radius: 8px;
@@ -2142,7 +2060,7 @@ export class GdmLiveAudio extends LitElement {
 
     .action-btn-word {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #ffffff;
+      color: #334155;
       border: none;
       padding: 8px 16px;
       border-radius: 8px;
@@ -2163,9 +2081,9 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .action-btn-neutral {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.04);
       color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       padding: 8px 14px;
       border-radius: 8px;
       font-size: 12px;
@@ -2180,7 +2098,7 @@ export class GdmLiveAudio extends LitElement {
 
     .action-btn-neutral:hover {
       background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
+      color: #334155;
     }
 
     /* Modal Main Body Content: Official Paper View vs Edit Mode */
@@ -2367,7 +2285,7 @@ export class GdmLiveAudio extends LitElement {
 
     .edit-input {
       background: rgba(11, 14, 22, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 6px;
       color: #f8fafc;
       padding: 8px 12px;
@@ -2404,6 +2322,15 @@ export class GdmLiveAudio extends LitElement {
     super.disconnectedCallback();
     window.removeEventListener('click', this.handleScreenClick);
     window.removeEventListener('touchstart', this.handleScreenClick);
+    if (this.pauseCheckIntervalId) {
+      clearInterval(this.pauseCheckIntervalId);
+      this.pauseCheckIntervalId = null;
+    }
+    if (this.userSpeakingDebounceTimer) {
+      clearTimeout(this.userSpeakingDebounceTimer);
+      this.userSpeakingDebounceTimer = null;
+    }
+    this.stopWaitingSound();
     this.stopCamera();
     proxyManager.cleanup();
     this.unsubscribers.forEach((unsub) => unsub());
@@ -2563,6 +2490,7 @@ export class GdmLiveAudio extends LitElement {
   }
 
   private handleScreenClick = async () => {
+    if (this.isSessionExplicitlyEnded) return;
     this.initAudioContexts();
 
     if (this.inputAudioContext?.state === 'suspended') {
@@ -2626,9 +2554,278 @@ export class GdmLiveAudio extends LitElement {
 
       this.nextStartTime = this.outputAudioContext.currentTime;
       this.audioInitialized = true;
+      this.preloadWaitingAudio();
+      this.startPauseMonitor();
     } catch (e) {
       console.error('Audio context initialization error:', e);
     }
+  }
+
+  private notifyConversationActivity() {
+    this.lastConversationActivityTime = Date.now();
+    if (this.waitingCountdownSec !== 0) {
+      this.waitingCountdownSec = 0;
+    }
+    if (this.isWaitingSoundPlaying) {
+      this.stopWaitingSound();
+    }
+  }
+
+  private createSeamlessLoopBuffer(audioCtx: AudioContext, buffer: AudioBuffer): AudioBuffer {
+    try {
+      const numChannels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const length = buffer.length;
+
+      // 1. Detect trailing silence/low energy at the end of the track
+      let endSample = length - 1;
+      const threshold = 0.006;
+      for (let i = length - 1; i >= 0; i--) {
+        let maxAmp = 0;
+        for (let ch = 0; ch < numChannels; ch++) {
+          const amp = Math.abs(buffer.getChannelData(ch)[i]);
+          if (amp > maxAmp) maxAmp = amp;
+        }
+        if (maxAmp > threshold) {
+          endSample = Math.min(length - 1, i + Math.floor(sampleRate * 0.015));
+          break;
+        }
+      }
+
+      // 2. Cut trailing few hundredths of a second (90ms) to eliminate encoder padding & stop gap
+      const minPaddingTrim = Math.floor(sampleRate * 0.09);
+      endSample = Math.min(endSample, length - minPaddingTrim);
+      if (endSample < sampleRate * 1) {
+        endSample = length - 1;
+      }
+
+      // 3. Apply seamless 45ms crossfade between the tail and the start
+      const crossfadeSamples = Math.floor(sampleRate * 0.045);
+      const trimmedLength = Math.max(crossfadeSamples * 2, endSample - crossfadeSamples);
+
+      const seamlessBuffer = audioCtx.createBuffer(numChannels, trimmedLength, sampleRate);
+
+      for (let ch = 0; ch < numChannels; ch++) {
+        const srcData = buffer.getChannelData(ch);
+        const destData = seamlessBuffer.getChannelData(ch);
+
+        // Copy body
+        for (let i = 0; i < trimmedLength; i++) {
+          destData[i] = srcData[i];
+        }
+
+        // Crossfade tail into loop head
+        for (let i = 0; i < crossfadeSamples; i++) {
+          const tailSampleIndex = trimmedLength + i;
+          if (tailSampleIndex < endSample) {
+            const tailSample = srcData[tailSampleIndex];
+            const t = i / crossfadeSamples;
+            const fadeOut = Math.cos(t * 0.5 * Math.PI);
+            const fadeIn = Math.sin(t * 0.5 * Math.PI);
+            destData[i] = destData[i] * fadeIn + tailSample * fadeOut;
+          }
+        }
+
+        // Micro-smoothing at extreme edges
+        const edgeSmoothing = Math.min(64, Math.floor(sampleRate * 0.002));
+        for (let i = 0; i < edgeSmoothing; i++) {
+          const factor = i / edgeSmoothing;
+          destData[i] *= factor;
+          destData[trimmedLength - 1 - i] *= factor;
+        }
+      }
+
+      return seamlessBuffer;
+    } catch (e) {
+      console.warn('Seamless loop processing error, using raw buffer:', e);
+      return buffer;
+    }
+  }
+
+  private async preloadWaitingAudio() {
+    // 1. Setup HTMLAudioElement with immediate preload
+    try {
+      if (!this.waitingAudioElement) {
+        const audioSrc = discordAudioUrl || '/discord.mp3';
+        this.waitingAudioElement = new Audio(audioSrc);
+        this.waitingAudioElement.loop = true;
+        this.waitingAudioElement.volume = 0.35;
+        this.waitingAudioElement.preload = 'auto';
+        this.waitingAudioElement.load();
+      }
+    } catch (e) {
+      console.warn('HTMLAudio init warning:', e);
+    }
+
+    if (this.waitingAudioBuffer) return;
+
+    // 2. Fetch and decode into WebAudio AudioBuffer with seamless mixing
+    const candidates = ['/discord.mp3', discordAudioUrl, './discord.mp3', 'discord.mp3', '/public/discord.mp3'];
+    for (const url of candidates) {
+      if (!url) continue;
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          if (this.outputAudioContext) {
+            let rawBuffer: AudioBuffer | null = null;
+            try {
+              rawBuffer = await this.outputAudioContext.decodeAudioData(arrayBuffer);
+            } catch {
+              rawBuffer = await new Promise<AudioBuffer>((resolve, reject) => {
+                this.outputAudioContext.decodeAudioData(arrayBuffer, resolve, reject);
+              });
+            }
+            if (rawBuffer) {
+              this.waitingAudioBuffer = this.createSeamlessLoopBuffer(this.outputAudioContext, rawBuffer);
+              break;
+            }
+          }
+        }
+      } catch {
+        // try next candidate
+      }
+    }
+  }
+
+  private startWaitingSound() {
+    if (!this.waitingMusicEnabled || !this.isConnected) return;
+    if (this.isWaitingSoundPlaying) return;
+    if (this.isSpeaking || this.isUserSpeaking || this.sources.size > 0) return;
+
+    this.isWaitingSoundPlaying = true;
+    this.isWaitingMusicActive = true;
+
+    try {
+      if (this.outputAudioContext && this.outputAudioContext.state === 'suspended') {
+        void this.outputAudioContext.resume();
+      }
+
+      if (this.outputAudioContext && this.waitingAudioBuffer) {
+        if (this.waitingAudioSource) {
+          try {
+            this.waitingAudioSource.stop();
+            this.waitingAudioSource.disconnect();
+          } catch {}
+          this.waitingAudioSource = null;
+        }
+
+        this.waitingGainNode = this.outputAudioContext.createGain();
+        this.waitingGainNode.gain.setValueAtTime(0.35, this.outputAudioContext.currentTime);
+        this.waitingGainNode.connect(this.outputAudioContext.destination);
+
+        this.waitingAudioSource = this.outputAudioContext.createBufferSource();
+        this.waitingAudioSource.buffer = this.waitingAudioBuffer;
+        this.waitingAudioSource.loop = true;
+        this.waitingAudioSource.connect(this.waitingGainNode);
+        this.waitingAudioSource.start();
+      } else {
+        // Fallback to HTMLAudioElement
+        if (!this.waitingAudioElement) {
+          this.waitingAudioElement = new Audio(discordAudioUrl || '/discord.mp3');
+          this.waitingAudioElement.loop = true;
+        }
+        this.waitingAudioElement.volume = 0.35;
+        this.waitingAudioElement.currentTime = 0;
+        const playPromise = this.waitingAudioElement.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((e) => console.warn('Waiting audio play deferred:', e));
+        }
+
+        if (!this.waitingAudioBuffer) {
+          void this.preloadWaitingAudio();
+        }
+      }
+    } catch (err) {
+      console.warn('Error starting waiting sound:', err);
+      this.isWaitingSoundPlaying = false;
+      this.isWaitingMusicActive = false;
+    }
+  }
+
+  private stopWaitingSound() {
+    this.waitingCountdownSec = 0;
+    if (!this.isWaitingSoundPlaying && !this.isWaitingMusicActive) return;
+    this.isWaitingSoundPlaying = false;
+    this.isWaitingMusicActive = false;
+
+    try {
+      if (this.waitingAudioSource) {
+        try {
+          this.waitingAudioSource.stop();
+          this.waitingAudioSource.disconnect();
+        } catch {}
+        this.waitingAudioSource = null;
+      }
+      if (this.waitingGainNode) {
+        try {
+          this.waitingGainNode.disconnect();
+        } catch {}
+        this.waitingGainNode = null;
+      }
+      if (this.waitingAudioElement) {
+        this.waitingAudioElement.pause();
+        this.waitingAudioElement.currentTime = 0;
+      }
+    } catch (err) {
+      console.warn('Error stopping waiting sound:', err);
+    }
+  }
+
+  private startPauseMonitor() {
+    if (this.pauseCheckIntervalId) {
+      clearInterval(this.pauseCheckIntervalId);
+    }
+    this.lastConversationActivityTime = Date.now();
+    this.waitingCountdownSec = 0;
+
+    this.pauseCheckIntervalId = window.setInterval(() => {
+      if (!this.isConnected || !this.waitingMusicEnabled) {
+        if (this.waitingCountdownSec !== 0) {
+          this.waitingCountdownSec = 0;
+        }
+        if (this.isWaitingSoundPlaying) {
+          this.stopWaitingSound();
+        }
+        return;
+      }
+
+      if (this.isSpeaking || this.isUserSpeaking || this.sources.size > 0) {
+        this.lastConversationActivityTime = Date.now();
+        if (this.waitingCountdownSec !== 0) {
+          this.waitingCountdownSec = 0;
+        }
+        if (this.isWaitingSoundPlaying) {
+          this.stopWaitingSound();
+        }
+        return;
+      }
+
+      const elapsed = Date.now() - this.lastConversationActivityTime;
+
+      // Between 5000ms and 7000ms: Show WAITING STATUS countdown from 5 to 7
+      if (elapsed >= 5000 && elapsed < 7000) {
+        const sec = Math.min(7, Math.floor(elapsed / 1000));
+        if (this.waitingCountdownSec !== sec) {
+          this.waitingCountdownSec = sec;
+        }
+      } else if (elapsed >= 7000) {
+        if (this.waitingCountdownSec !== 7) {
+          this.waitingCountdownSec = 7;
+        }
+        // Pause exceeding 7 seconds (7000ms): Play waiting sound
+        if (!this.isWaitingSoundPlaying) {
+          this.startWaitingSound();
+        }
+      } else {
+        if (this.waitingCountdownSec !== 0) {
+          this.waitingCountdownSec = 0;
+        }
+        if (this.isWaitingSoundPlaying) {
+          this.stopWaitingSound();
+        }
+      }
+    }, 100);
   }
 
   private async startExperience() {
@@ -2671,6 +2868,7 @@ export class GdmLiveAudio extends LitElement {
   }
 
   private scheduleSessionReconnect() {
+    if (this.isSessionExplicitlyEnded) return;
     if (this.reconnectTimeoutId) {
       window.clearTimeout(this.reconnectTimeoutId);
       this.reconnectTimeoutId = null;
@@ -2688,6 +2886,7 @@ export class GdmLiveAudio extends LitElement {
 
     this.reconnectTimeoutId = window.setTimeout(async () => {
       try {
+        if (this.isSessionExplicitlyEnded) return;
         console.info(`Attempting live session auto-reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
         await this.initSession(true);
         if (this.isConnected) {
@@ -2703,12 +2902,88 @@ export class GdmLiveAudio extends LitElement {
     }, delay);
   }
 
+  private handleEndConsultation(e?: Event) {
+    if (e) e.stopPropagation();
+
+    // 1. Immediately stop all active audio sources
+    this.sources.forEach((source) => {
+      try {
+        source.stop();
+        source.disconnect();
+      } catch {}
+    });
+    this.sources.clear();
+    this.nextStartTime = 0;
+    this.isSpeaking = false;
+
+    // 2. Stop waiting sound and silence monitors
+    this.stopWaitingSound();
+    if (this.pauseCheckIntervalId) {
+      clearInterval(this.pauseCheckIntervalId);
+      this.pauseCheckIntervalId = null;
+    }
+    if (this.userSpeakingDebounceTimer) {
+      clearTimeout(this.userSpeakingDebounceTimer);
+      this.userSpeakingDebounceTimer = null;
+    }
+
+    // 3. Stop camera if active
+    if (this.isCameraActive) {
+      this.stopCamera();
+    }
+
+    // 4. Cancel any reconnect timers
+    if (this.reconnectTimeoutId) {
+      window.clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
+    this.isSessionReconnecting = false;
+    this.reconnectAttempts = 0;
+    this.sessionErrorMessage = '';
+
+    // 5. Cleanly close live websocket session
+    if (this.session) {
+      try {
+        (this.session as any).close?.();
+      } catch (err) {
+        console.warn('Session close notice:', err);
+      }
+      this.session = null as any;
+    }
+
+    this.isConnected = false;
+    this.isListening = false;
+    this.isSessionExplicitlyEnded = true;
+
+    // 6. Suspend audio contexts cleanly
+    try {
+      if (this.inputAudioContext && this.inputAudioContext.state === 'running') {
+        this.inputAudioContext.suspend();
+      }
+      if (this.outputAudioContext && this.outputAudioContext.state === 'running') {
+        this.outputAudioContext.suspend();
+      }
+    } catch {}
+
+    this.showToast('جلسه مشاوره با موفقیت و به صورت امن خاتمه یافت ✓');
+  }
+
+  private async handleRestartConsultation(e?: Event) {
+    if (e) e.stopPropagation();
+    this.isSessionExplicitlyEnded = false;
+    this.sessionErrorMessage = '';
+    this.showToast('در حال شروع مجدد جلسه مشاوره حقوقی...');
+    this.startPauseMonitor();
+    await this.startExperience();
+  }
+
   private async handleManualReconnect(e?: Event) {
     if (e) e.stopPropagation();
     if (this.reconnectTimeoutId) {
       window.clearTimeout(this.reconnectTimeoutId);
       this.reconnectTimeoutId = null;
     }
+    this.isSessionExplicitlyEnded = false;
     this.reconnectAttempts = 0;
     this.isSessionReconnecting = true;
     this.sessionErrorMessage = '';
@@ -2832,6 +3107,9 @@ export class GdmLiveAudio extends LitElement {
             this.isSessionReconnecting = false;
             this.reconnectAttempts = 0;
             this.sessionErrorMessage = '';
+            this.lastConversationActivityTime = Date.now();
+            this.preloadWaitingAudio();
+            this.startPauseMonitor();
             // Record session start in Firestore
             if (this.currentUser?.uid) {
               saveSessionLog(
@@ -2848,10 +3126,8 @@ export class GdmLiveAudio extends LitElement {
               message.serverContent?.modelTurn?.parts?.[0]?.inlineData;
 
             if (audio?.data) {
-              this.isThinking = false;
               this.isSpeaking = true;
-              this.userHasSpoken = false;
-              this.clearThinkingSafetyTimer();
+              this.notifyConversationActivity();
               this.nextStartTime = Math.max(
                 this.nextStartTime,
                 this.outputAudioContext.currentTime,
@@ -2871,8 +3147,7 @@ export class GdmLiveAudio extends LitElement {
                 this.sources.delete(source);
                 if (this.sources.size === 0) {
                   this.isSpeaking = false;
-                  this.isThinking = false;
-                  this.userHasSpoken = false;
+                  this.lastConversationActivityTime = Date.now();
                 }
               });
 
@@ -2893,20 +3168,11 @@ export class GdmLiveAudio extends LitElement {
               }
               this.nextStartTime = 0;
               this.isSpeaking = false;
-              this.isThinking = false;
-              this.userHasSpoken = false;
-              this.clearThinkingSafetyTimer();
+              this.lastConversationActivityTime = Date.now();
             }
 
-            if (message.serverContent?.turnComplete && !this.isSpeaking && this.sources.size === 0) {
-              this.isThinking = false;
-              this.clearThinkingSafetyTimer();
-            }
-
-            // Handle Tool Calls (Model is actively thinking/generating documents)
+            // Handle Tool Calls
             if (message.toolCall) {
-              this.isThinking = true;
-              this.resetThinkingSafetyTimer();
               const calls = message.toolCall.functionCalls || [];
               for (const call of calls) {
                 if (call.name === 'generateJudicialForm') {
@@ -2987,17 +3253,11 @@ export class GdmLiveAudio extends LitElement {
             console.warn('Live session connection notice:', e?.message || e);
             this.isConnected = false;
             this.isSpeaking = false;
-            this.isThinking = false;
-            this.isUserSpeaking = false;
-            this.clearThinkingSafetyTimer();
             this.scheduleSessionReconnect();
           },
           onclose: (e: CloseEvent) => {
             this.isConnected = false;
             this.isSpeaking = false;
-            this.isThinking = false;
-            this.isUserSpeaking = false;
-            this.clearThinkingSafetyTimer();
             if (!e.wasClean) {
               this.scheduleSessionReconnect();
             }
@@ -3202,61 +3462,17 @@ export class GdmLiveAudio extends LitElement {
         ],
         turnComplete: true,
       });
-      this.isThinking = true;
-      this.resetThinkingSafetyTimer();
       this.showToast('درخواست تنظیم سند رسمی به وکیل ارسال شد...');
     } catch (err) {
       console.error(err);
     }
   }
 
-  private resetThinkingSafetyTimer() {
-    this.clearThinkingSafetyTimer();
-    this.thinkingSafetyTimer = window.setTimeout(() => {
-      if (this.isThinking && !this.isSpeaking) {
-        this.isThinking = false;
-        this.userHasSpoken = false;
-      }
-    }, 18000);
-  }
-
-  private clearThinkingSafetyTimer() {
-    if (this.thinkingSafetyTimer) {
-      window.clearTimeout(this.thinkingSafetyTimer);
-      this.thinkingSafetyTimer = null;
-    }
-  }
-
-  private async handleOrbClick(e: Event) {
-    e.stopPropagation();
-    this.initAudioContexts();
-
-    if (this.inputAudioContext?.state === 'suspended') {
-      await this.inputAudioContext.resume();
-    }
-    if (this.outputAudioContext?.state === 'suspended') {
-      await this.outputAudioContext.resume();
-    }
-
-    if (!this.isConnected || !this.session) {
-      this.showToast('در حال راه‌اندازی و اتصال به وکیل هوشمند...');
-      await this.initClientAndStream(true);
-      if (this.isConnected) {
-        this.triggerInitialGreeting();
-      }
-    } else {
-      this.triggerInitialGreeting();
-      this.showToast('وکیل هوشمند فعال است و آماده شنیدن صدای شماست 🟢');
-    }
-  }
-
   private triggerInitialGreeting() {
     if (!this.session) return;
     try {
-      const promptText = `سلام و درود. لطفاً با فارسی اصیل و معیار ایران با بیانی بسیار شیوا، فصیح، استوار، باوقار و قاطع، مکالمه را بلافاصله آغاز کنید. دستور اکید: سلام و احوال‌پرسی شما باید «بسیار کوتاه و موجز، فقط در ۱ یا حداکثر ۲ جمله» باشد (مانند: «سلام و احترام، در خدمت شما هستم. بفرمایید چه موضوع یا پرونده‌ای را با هم بررسی کنیم؟»). به هیچ عنوان خود را طولانی معرفی نکنید و از ارائه سوابق، جزئیات و مدارک خودداری فرمایید مگر اینکه بعداً از شما سوال شود. هرگز مخاطب را «موکل» خطاب نکنید.`;
+      const promptText = `سلام! لطفاً با صدای یک دختر/بانوی جوان ۱۹ ساله، فوق‌العاده سرزنده، شاداب، پرانرژی، با طراوت، گرم، صمیمی، دلنشین، خوش‌برخورد و با گویش و زبان فارسی اصیل، فصیح، سلیس و روان ایران (کاملاً بدون لهجه)، مکالمه را با یک سلام و معرفی بسیار کوتاه، شاداب و یک‌جمله‌ای (حداکثر ۱۰ تا ۱۲ کلمه) آغاز کنید. مثلاً بگویید: «سلام و درود! خیلی خوشحالم در کنارتونم؛ بفرمایید بشنوم چطور می‌تونم کمکتون کنم؟» (دستور قطعی: از سخنان طولانی و کسل‌کننده پرهیز کرده و سریع کلام را به مخاطب بسپارید).`;
 
-      this.isThinking = true;
-      this.resetThinkingSafetyTimer();
       this.session.sendClientContent({
         turns: [
           {
@@ -3278,8 +3494,16 @@ export class GdmLiveAudio extends LitElement {
   private async startContinuousMicrophone() {
     if (this.isListening) return;
 
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      console.warn('Microphone API (getUserMedia) not supported in this environment');
+      return;
+    }
+
+    let stream: MediaStream | null = null;
+
+    // Stage 1: Try optimal high-fidelity speech recognition constraints
     try {
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
           sampleRate: { ideal: 16000 },
@@ -3289,6 +3513,28 @@ export class GdmLiveAudio extends LitElement {
         },
         video: false,
       });
+    } catch (primaryErr: any) {
+      console.warn('Optimal microphone constraints failed, attempting fallback:', primaryErr?.message || primaryErr);
+      // Stage 2: Fallback to basic audio constraints without restrictive ideal options
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
+      } catch (fallbackErr: any) {
+        console.warn('Microphone hardware not found or permission pending:', fallbackErr?.message || fallbackErr);
+        return;
+      }
+    }
+
+    if (!stream) return;
+
+    try {
+      this.mediaStream = stream;
+
+      if (this.inputAudioContext && this.inputAudioContext.state === 'suspended') {
+        await this.inputAudioContext.resume();
+      }
 
       this.sourceNode = this.inputAudioContext.createMediaStreamSource(
         this.mediaStream,
@@ -3345,34 +3591,22 @@ export class GdmLiveAudio extends LitElement {
         const inputBuffer = audioProcessingEvent.inputBuffer;
         const pcmData = inputBuffer.getChannelData(0);
 
-        // Calculate speech energy (RMS) to track user voice activity and transition to thinking pulse
-        let energySum = 0;
+        // Detect user speech volume to update silence/pause timer
+        let sum = 0;
         for (let i = 0; i < pcmData.length; i++) {
-          energySum += pcmData[i] * pcmData[i];
+          sum += pcmData[i] * pcmData[i];
         }
-        const rms = Math.sqrt(energySum / pcmData.length);
-
-        if (rms > 0.022 && !this.isSpeaking) {
-          this.userHasSpoken = true;
+        const rms = Math.sqrt(sum / pcmData.length);
+        if (rms > 0.012) {
           this.isUserSpeaking = true;
-          if (this.isThinking) {
-            this.isThinking = false;
+          this.notifyConversationActivity();
+          if (this.userSpeakingDebounceTimer) {
+            window.clearTimeout(this.userSpeakingDebounceTimer);
           }
-          if (this.userSilenceTimer) {
-            window.clearTimeout(this.userSilenceTimer);
-            this.userSilenceTimer = null;
-          }
-        } else if (this.isUserSpeaking && rms <= 0.015) {
-          if (!this.userSilenceTimer) {
-            this.userSilenceTimer = window.setTimeout(() => {
-              this.isUserSpeaking = false;
-              if (this.isConnected && !this.isSpeaking && this.userHasSpoken) {
-                this.isThinking = true;
-                this.resetThinkingSafetyTimer();
-              }
-              this.userSilenceTimer = null;
-            }, 380);
-          }
+          this.userSpeakingDebounceTimer = window.setTimeout(() => {
+            this.isUserSpeaking = false;
+            this.lastConversationActivityTime = Date.now();
+          }, 800);
         }
 
         const blob = createBlob(pcmData, currentSampleRate);
@@ -3393,8 +3627,8 @@ export class GdmLiveAudio extends LitElement {
       this.scriptProcessorNode.connect(this.inputAudioContext.destination);
 
       this.isListening = true;
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
+    } catch (err: any) {
+      console.warn('Microphone stream processing notice:', err?.message || err);
     }
   }
 
@@ -3408,18 +3642,84 @@ export class GdmLiveAudio extends LitElement {
     }
   }
 
-  private async startCamera() {
+  private async startCamera(): Promise<boolean> {
+    this.cameraError = '';
+
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      this.cameraError = 'مرورگر شما از قابلیت وبکم یا دوربین پشتیبانی نمی‌کند. لطفاً تصویر سند را بارگذاری فرمایید.';
+      this.showToast(this.cameraError);
+      return false;
+    }
+
+    let stream: MediaStream | null = null;
+
+    // Stage 1: Try optimal HD camera stream with ideal facingMode
     try {
-      this.cameraError = '';
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: { ideal: this.facingMode },
-          width: { ideal: 1280, min: 640 },
-          height: { ideal: 720, min: 480 },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
         },
         audio: false,
       });
+    } catch (stage1Err: any) {
+      console.warn('Optimal camera constraints unavailable, attempting fallback:', stage1Err?.message || stage1Err);
 
+      // Stage 2: Fallback to basic facingMode without resolution requirements
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: this.facingMode },
+          },
+          audio: false,
+        });
+      } catch (stage2Err: any) {
+        console.warn('FacingMode camera constraint unavailable, attempting generic fallback:', stage2Err?.message || stage2Err);
+
+        // Stage 3: Universal fallback to any available video input device
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+        } catch (stage3Err: any) {
+          const errName = stage3Err?.name || '';
+          const errMsg = stage3Err?.message || '';
+
+          if (
+            errName === 'NotFoundError' ||
+            errName === 'DevicesNotFoundError' ||
+            errMsg.toLowerCase().includes('not found') ||
+            errMsg.toLowerCase().includes('device not found')
+          ) {
+            this.cameraError = 'دوربین در دستگاه شما یافت نشد. می‌توانید تصویر سند یا مدارک را مستقیماً بارگذاری نمایید.';
+          } else if (
+            errName === 'NotAllowedError' ||
+            errName === 'PermissionDeniedError' ||
+            errMsg.toLowerCase().includes('permission') ||
+            errMsg.toLowerCase().includes('denied')
+          ) {
+            this.cameraError = 'دسترسی به دوربین در مرورگر تأیید نشد. لطفاً مجوز دوربین را در تنظیمات مرورگر فعال فرمایید.';
+          } else {
+            this.cameraError = 'امکان فعال‌سازی دوربین در حال حاضر فراهم نشد. لطفاً مدارک را بارگذاری نمایید.';
+          }
+
+          console.warn('Camera device unavailable notice:', errMsg || errName);
+          this.showToast(this.cameraError);
+          setTimeout(() => {
+            this.cameraError = '';
+          }, 5000);
+          return false;
+        }
+      }
+    }
+
+    if (!stream) {
+      return false;
+    }
+
+    try {
       this.videoStream = stream;
       this.isCameraActive = true;
       this.isCameraMinimized = false;
@@ -3439,12 +3739,10 @@ export class GdmLiveAudio extends LitElement {
 
       this.showToast('دوربین فعال شد؛ سند یا قرارداد را روبروی کادر قرار دهید و روی «اسکن و ارسال به وکیل» کلیک کنید ✓');
       this.startVideoStreaming();
+      return true;
     } catch (err: any) {
-      console.error('Camera access error:', err);
-      this.cameraError = 'دسترسی به دوربین برقرار نشد. لطفاً مجوز دسترسی به دوربین را در مرورگر فعال نمایید.';
-      setTimeout(() => {
-        this.cameraError = '';
-      }, 5000);
+      console.warn('Camera stream attachment notice:', err?.message || err);
+      return false;
     }
   }
 
@@ -3565,11 +3863,19 @@ export class GdmLiveAudio extends LitElement {
     };
 
     if (!this.isCameraActive) {
-      this.startCamera().then(() => {
-        setTimeout(() => {
-          saveAndPrompt();
-        }, 900);
-      });
+      this.startCamera()
+        .then((started) => {
+          if (started) {
+            setTimeout(() => {
+              saveAndPrompt();
+            }, 900);
+          } else {
+            this.isSnapScanning = false;
+          }
+        })
+        .catch(() => {
+          this.isSnapScanning = false;
+        });
       return;
     }
 
@@ -3949,77 +4255,29 @@ export class GdmLiveAudio extends LitElement {
       <!-- Main Screen Background: شرکت توزیع نیروی برق استان ایلام -->
       <div class="main-screen-bg" id="mainScreenBg"></div>
 
-      <!-- Subtitle: دفتر حقوقی (زیر عبارت استان ایلام با سایز نصف و استایل هماهنگ) -->
-      <div class="company-sub-title-wrapper" id="legalOfficeSubtitleWrapper">
+      <!-- 3D Realistic Scale of Justice Background -->
+      <justice-scale-3d
+        ?isSpeaking=${this.isSpeaking}
+        ?isUserSpeaking=${this.isUserSpeaking}
+      ></justice-scale-3d>
+
+      <!-- Corporate Branding: Logo & Subtitle -->
+      <div class="corporate-branding-container" id="legalOfficeSubtitleWrapper">
+        <img src="/logo.png" alt="شرکت توزیع نیروی برق استان ایلام" class="corporate-logo" />
         <div class="company-sub-title" id="legalOfficeSubtitle">دفتر حقوقی</div>
       </div>
 
-      <!-- 3D Glass Crystal Orb Sphere Button at Bottom Center (Idle: 3D Rotate, Active: Paused + Internal Neon Green Waves, Thinking: Gentle Pulsing Glow) -->
-      <div class="crystal-orb-container" id="crystalOrbContainer">
-        <button
-          class="crystal-orb-btn ${this.isConnected ? 'is-active' : ''} ${this.isThinking ? 'is-thinking' : ''} ${this.isSpeaking ? 'is-speaking' : ''}"
-          id="crystalGlassOrbBtn"
-          @click=${this.handleOrbClick}
-          title="${this.isThinking ? 'وکیل هوشمند در حال تفکر و پردازش حقوقی است...' : (this.isConnected ? 'وکیل هوشمند متصل و فعال است - کلیک برای شروع مکالمه' : 'کلیک برای راه‌اندازی و شروع برنامه و گفتگوی صوتی')}">
-          
-          <!-- Outer 3D Glass Sphere Body with Specular Sheen & Thinking Pulse Aura -->
-          <div class="crystal-orb-sphere">
-            <!-- Glass Specular Highlight Sheen (Top-Left) -->
-            <div class="orb-glass-specular-top"></div>
-            <!-- Secondary Caustic Rim Bounce (Bottom-Right) -->
-            <div class="orb-glass-specular-bottom"></div>
-
-            <!-- Rotating 3D Crystal Core (Spins around itself when idle) -->
-            <div class="orb-3d-rotator">
-              <div class="orb-crystal-lattice"></div>
-              <div class="orb-crystal-ring ring-1"></div>
-              <div class="orb-crystal-ring ring-2"></div>
-            </div>
-
-            <!-- Internal Neon Green Wave Chamber (Illuminates & pulses when active) -->
-            <div class="orb-neon-wave-chamber">
-              <div class="neon-wave-core"></div>
-              <div class="neon-wave-ring wave-1"></div>
-              <div class="neon-wave-ring wave-2"></div>
-              <div class="neon-wave-ring wave-3"></div>
-            </div>
-
-            <!-- Dedicated Legal Thinking & Processing Chamber (Gentle Pulsing Glow) -->
-            <div class="orb-thinking-chamber">
-              <div class="thinking-core"></div>
-              <div class="thinking-wave-ring t-wave-1"></div>
-              <div class="thinking-wave-ring t-wave-2"></div>
-              <div class="thinking-wave-ring t-wave-3"></div>
-            </div>
-          </div>
-
-          <!-- Ambient Floor Shadow -->
-          <div class="orb-floor-shadow"></div>
-        </button>
-
-        <div class="orb-hint-text ${this.isThinking ? 'thinking' : (this.isConnected ? 'active' : '')}">
-          ${this.isConnected
-            ? (this.isThinking
-                ? 'در حال تفکر و تحلیل حقوقی... ⚖️'
-                : (this.isSpeaking
-                    ? 'وکیل در حال صحبت 🟢'
-                    : (this.isUserSpeaking
-                        ? 'در حال شنیدن صدای شما... 🎙️'
-                        : (this.isListening
-                            ? 'وکیل آماده گفتگو 🟢'
-                            : 'آماده مکالمه'))))
-            : 'شروع گفتگو با وکیل هوشمند'}
-        </div>
-      </div>
-
-      <!-- Top Header: Icon-Only Menu Button -->
+      <!-- Top Header: Icon-Only Menu Button & Minimalist End Consultation Button -->
       <div class="top-memory-bar">
         <div class="top-menu-wrapper">
           <button
             class="top-menu-trigger-btn ${this.isMainMenuOpen ? 'active' : ''}"
             id="mainMenuTriggerBtn"
-            @click=${this.toggleMainMenu}
-            title="منو">
+            @click=${(e: Event) => {
+              e.stopPropagation();
+              this.toggleMainMenu(e);
+            }}
+            title="منوی امکانات">
             <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
               <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
             </svg>
@@ -4029,7 +4287,10 @@ export class GdmLiveAudio extends LitElement {
             ? html`
                 <div
                   class="main-menu-backdrop"
-                  @click=${this.toggleMainMenu}></div>
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.isMainMenuOpen = false;
+                  }}></div>
                 <div
                   class="top-menu-dropdown"
                   id="topMenuDropdown"
@@ -4040,6 +4301,7 @@ export class GdmLiveAudio extends LitElement {
                     class="menu-linear-item"
                     id="menuToneBtn"
                     @click=${(e: Event) => {
+                      e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openToneModal(e);
                     }}>
@@ -4059,6 +4321,7 @@ export class GdmLiveAudio extends LitElement {
                     class="menu-linear-item"
                     id="menuUploadBtn"
                     @click=${(e: Event) => {
+                      e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openUploadModal(e);
                     }}>
@@ -4078,6 +4341,7 @@ export class GdmLiveAudio extends LitElement {
                     class="menu-linear-item"
                     id="menuJudicialFormBtn"
                     @click=${(e: Event) => {
+                      e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openJudicialFormStudio(undefined, e);
                     }}>
@@ -4097,6 +4361,7 @@ export class GdmLiveAudio extends LitElement {
                     class="menu-linear-item ${this.isCameraActive ? 'active-camera' : ''}"
                     id="menuCameraBtn"
                     @click=${(e: Event) => {
+                      e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.toggleCamera(e);
                     }}>
@@ -4118,6 +4383,7 @@ export class GdmLiveAudio extends LitElement {
                     class="menu-linear-item ${this.networkState.autoBypassEnabled ? 'active-camera' : ''}"
                     id="menuProxyBtn"
                     @click=${(e: Event) => {
+                      e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openProxyModal(e);
                     }}>
@@ -4133,9 +4399,115 @@ export class GdmLiveAudio extends LitElement {
                       ${this.networkState.autoBypassEnabled ? `🛡️ فعال (${this.networkState.latencyMs}ms)` : 'خاموش'}
                     </span>
                   </button>
+
+                  <!-- Waiting Sound (discord.mp3) Linear Option -->
+                  <button
+                    class="menu-linear-item ${this.waitingMusicEnabled ? 'active-camera' : ''}"
+                    id="menuWaitingMusicBtn"
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this.waitingMusicEnabled = !this.waitingMusicEnabled;
+                      if (!this.waitingMusicEnabled) {
+                        this.stopWaitingSound();
+                      } else {
+                        this.lastConversationActivityTime = Date.now();
+                      }
+                    }}>
+                    <div class="menu-item-start">
+                      <span class="menu-item-icon-svg" style="color: ${this.waitingMusicEnabled ? '#f59e0b' : '#64748b'}">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
+                          <path d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v440q0 66-47 113t-113 47Z"/>
+                        </svg>
+                      </span>
+                      <span class="menu-item-text-label">نوای انتظار و مکث (discord.mp3)</span>
+                    </div>
+                    <span class="menu-item-mini-badge ${this.waitingMusicEnabled ? 'highlight' : ''}">
+                      ${this.waitingMusicEnabled ? (this.isWaitingMusicActive ? '🎵 در حال پخش' : 'خودکار (>۷ ثانیه)') : 'غیرفعال'}
+                    </span>
+                  </button>
+
+                  <div style="height: 1px; background: rgba(0, 0, 0, 0.08); margin: 4px 0;"></div>
+
+                  <!-- End Consultation Inside Menu Option -->
+                  <button
+                    class="menu-linear-item"
+                    id="menuEndConsultationBtn"
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this.isMainMenuOpen = false;
+                      this.handleEndConsultation(e);
+                    }}>
+                    <div class="menu-item-start">
+                      <span class="menu-item-icon-svg" style="color: #ef4444;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
+                          <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
+                        </svg>
+                      </span>
+                      <span class="menu-item-text-label" style="color: #dc2626; font-weight: 600 !important;">پایان جلسه</span>
+                    </div>
+                    <span class="menu-item-mini-badge" style="color: #dc2626; background: rgba(239, 68, 68, 0.1);">خاتمه</span>
+                  </button>
                 </div>
               `
             : ''}
+        </div>
+
+        <!-- Top Center WAITING STATUS & Mini Equalizer for Waiting Music (Active from second 5 to 7+) -->
+        <div
+          class="top-mini-equalizer ${this.waitingCountdownSec >= 5 || this.isWaitingMusicActive ? 'active' : ''} ${this.waitingCountdownSec >= 5 && !this.isWaitingMusicActive ? 'counting' : ''}"
+          id="topMiniEqualizer"
+          title="${this.isWaitingMusicActive ? 'نوای انتظار در حال پخش است' : this.waitingCountdownSec >= 5 ? `در انتظار (${this.waitingCountdownSec} از ۷ ثانیه)` : ''}">
+          <span class="waiting-status-label">
+            <span class="waiting-dot ${this.isWaitingMusicActive ? 'live' : 'pulse'}"></span>
+            WAITING STATUS ...
+          </span>
+          <span class="waiting-counter-pill">${this.waitingCountdownSec > 0 ? this.waitingCountdownSec : (this.isWaitingMusicActive ? '7' : '')}s</span>
+          <div class="mini-eq-bars">
+            <span class="mini-eq-bar bar-1"></span>
+            <span class="mini-eq-bar bar-2"></span>
+            <span class="mini-eq-bar bar-3"></span>
+            <span class="mini-eq-bar bar-4"></span>
+            <span class="mini-eq-bar bar-5"></span>
+          </div>
+        </div>
+
+        <!-- Left side: Minimal 'پایان جلسه' (End Session) / 'شروع مجدد' Button -->
+        <div>
+          ${!this.isSessionExplicitlyEnded && (this.isConnected || this.isListening)
+            ? html`
+                <button
+                  class="end-consultation-btn"
+                  id="endConsultationBtn"
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.handleEndConsultation(e);
+                  }}
+                  title="پایان فوری و ایمن جلسه">
+                  <span class="end-btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
+                      <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
+                    </svg>
+                  </span>
+                  <span class="end-btn-label">پایان جلسه</span>
+                </button>
+              `
+            : html`
+                <button
+                  class="end-consultation-btn restart-btn"
+                  id="restartConsultationBtn"
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.handleRestartConsultation(e);
+                  }}
+                  title="شروع مجدد گفتگو">
+                  <span class="end-btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
+                      <path d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"/>
+                    </svg>
+                  </span>
+                  <span class="end-btn-label">شروع جلسه</span>
+                </button>
+              `}
         </div>
       </div>
 
@@ -4418,7 +4790,7 @@ export class GdmLiveAudio extends LitElement {
       <!-- Generic Toast Feedback -->
       ${this.formFeedbackToast
         ? html`
-            <div class="form-notification-toast" style="top: auto; bottom: 85px; background: #0f172a;">
+            <div class="form-notification-toast" style="top: auto; bottom: 85px; background: #ffffff;">
               <span>${this.formFeedbackToast}</span>
             </div>
           `
