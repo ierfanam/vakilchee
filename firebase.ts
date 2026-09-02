@@ -83,7 +83,7 @@ export interface StoredDocItem {
 export interface JudicialFormData {
   id?: string;
   userId?: string;
-  formType: 'dadkhast' | 'shekayat' | 'ezharnameh' | 'layehe' | 'shora' | 'divan' | 'tamin';
+  formType: 'dadkhast' | 'shekayat' | 'ezharnameh' | 'layehe' | 'shora' | 'divan' | 'tamin' | 'nameh_edari' | 'darkhast_edari' | 'etelaieh_hoghooghi' | 'qarardad_solh';
   title: string;
   authorityName: string;
   claimant: {

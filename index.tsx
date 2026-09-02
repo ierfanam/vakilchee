@@ -11,6 +11,7 @@ import {createBlob, decode, decodeAudioData} from './utils';
 import './visual-3d';
 import './neon-wave-visualizer';
 import './justice-scale-3d';
+import './dynamic-audio-visualizer';
 import {
   initializeUserAuth,
   signInWithGoogle,
@@ -39,6 +40,7 @@ import {
   JUDICIAL_FORM_TYPES,
   generateSampleJudicialForm,
   renderJudicialFormHTML,
+  downloadJudicialPDF,
   downloadJudicialDoc,
   printJudicialForm,
   FormTypeOption,
@@ -141,13 +143,15 @@ export class GdmLiveAudio extends LitElement {
   @state() newMemoryKeyInput = 'نکته حقوقی';
   @state() activeDossierTab: 'summary' | 'facts' | 'sessions' | 'docs' | 'forms' | 'sync' = 'summary';
 
-  // Official Judicial Form Studio State
+  // Official Judicial Form & Official Letter Studio State
   @state() isJudicialFormModalOpen = false;
   @state() activeJudicialForm: JudicialFormData | null = null;
   @state() judicialFormsList: JudicialFormData[] = [];
   @state() isFormEditing = false;
   @state() formGeneratedNotification = '';
   @state() isSavingForm = false;
+  @state() isGeneratingDraft = false;
+  @state() isGeneratingPDF = false;
   @state() formFeedbackToast = '';
   @state() selectedTemplateType: JudicialFormData['formType'] = 'dadkhast';
 
@@ -240,6 +244,21 @@ export class GdmLiveAudio extends LitElement {
       overflow-y: auto;
       direction: rtl;
       font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+    }
+
+    .audio-visualizer-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 640px;
+      z-index: 40;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .typewriter-text {
@@ -390,10 +409,7 @@ export class GdmLiveAudio extends LitElement {
       direction: rtl;
       font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       user-select: none;
-      border-style: inset;
-      border-width: 32px;
-      border-radius: 0px;
-      animation: subtleFloat 8s ease-in-out infinite;
+      border: none;
     }
 
     .main-screen-bg {
@@ -401,8 +417,8 @@ export class GdmLiveAudio extends LitElement {
       inset: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f5f9 100%);
-      z-index: 1;
+      background: radial-gradient(circle at 50% 40%, #ffffff 0%, #f8fafc 60%, #e2e8f0 100%);
+      z-index: 0;
       pointer-events: none;
     }
 
@@ -2214,9 +2230,60 @@ export class GdmLiveAudio extends LitElement {
       gap: 8px;
     }
 
+    .action-btn-pdf {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn-pdf:hover {
+      background: linear-gradient(135deg, #be123c, #9f1239);
+      box-shadow: 0 6px 20px rgba(225, 29, 72, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .action-btn-ai-draft {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #ffffff;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4), 0 0 10px rgba(255, 215, 0, 0.2);
+      transition: all 0.2s ease;
+      animation: pulseGlow 3s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
+      100% { box-shadow: 0 4px 20px rgba(124, 58, 237, 0.6), 0 0 16px rgba(255, 215, 0, 0.35); }
+    }
+
+    .action-btn-ai-draft:hover {
+      background: linear-gradient(135deg, #6d28d9, #4338ca);
+      transform: translateY(-1px);
+    }
+
     .action-btn-print {
       background: linear-gradient(135deg, #10b981, #059669);
-      color: #334155;
+      color: #ffffff;
       border: none;
       padding: 8px 16px;
       border-radius: 8px;
@@ -2238,7 +2305,7 @@ export class GdmLiveAudio extends LitElement {
 
     .action-btn-word {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #334155;
+      color: #ffffff;
       border: none;
       padding: 8px 16px;
       border-radius: 8px;
@@ -2259,9 +2326,9 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .action-btn-neutral {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.08);
       color: #e2e8f0;
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 8px 14px;
       border-radius: 8px;
       font-size: 12px;
@@ -2276,7 +2343,7 @@ export class GdmLiveAudio extends LitElement {
 
     .action-btn-neutral:hover {
       background: rgba(255, 255, 255, 0.16);
-      color: #334155;
+      color: #ffffff;
     }
 
     /* Modal Main Body Content: Official Paper View vs Edit Mode */
@@ -3202,38 +3269,38 @@ export class GdmLiveAudio extends LitElement {
 
     const judicialFormToolDeclaration = {
       name: 'generateJudicialForm',
-      description: 'تنظیم و صدور رسمی برگ دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶، لایحه دفاعیه دادگاه، دادخواست شورای حل اختلاف یا دیوان عدالت اداری در قالب سربرگ و فرم چاپی قوه قضاییه. هرگاه کاربر درخواست تنظیم فرم رسمی کرد یا پس از اینکه پیشنهاد دادید و کاربر موافقت کرد، این تابع را صدا بزنید تا فرم رسمی صادر و در صفحه او نمایش و دانلود داده شود.',
+      description: 'تنظیم و صدور رسمی برگ پیش‌نویس دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶، لایحه دفاعیه، دادخواست دیوان عدالت یا شورای حل اختلاف، و همچنین نامه‌های رسمی اداری، درخواست‌های سازمانی (اداره کار، تامین اجتماعی، شهرداری، بانک‌ها) و اخطاریه‌های حقوقی با خروجی قابل دانلود PDF و سربرگ معتبر. هرگاه کاربر درخواست تنظیم فرم رسمی یا نامه اداری کرد یا پس از اینکه پیشنهاد دادید و کاربر موافقت کرد، این تابع را صدا بزنید تا فرم رسمی صادر و در صفحه او نمایش داده شود.',
       parameters: {
         type: 'OBJECT',
         properties: {
           formType: {
             type: 'STRING',
-            description: 'نوع فرم قضایی: dadkhast (دادخواست حقوقی), shekayat (شکواییه کیفری), ezharnameh (اظهارنامه رسمی), layehe (لایحه دفاعیه), shora (شورای حل اختلاف), divan (دیوان عدالت اداری), tamin (تامین خواسته)',
+            description: 'نوع فرم یا نامه: dadkhast (دادخواست حقوقی), shekayat (شکواییه کیفری), ezharnameh (اظهارنامه رسمی), layehe (لایحه دفاعیه), nameh_edari (نامه رسمی اداری و شرکتی), darkhast_edari (درخواست رسمی به اداره کار/بانک/شهرداری), etelaieh_hoghooghi (اخطاریه رسمی حقوقی), shora (شورای حل اختلاف), divan (دیوان عدالت اداری), tamin (تامین خواسته), qarardad_solh (سازش‌نامه و صلح‌نامه)',
           },
           title: {
             type: 'STRING',
-            description: 'عنوان کامل فرم (مثال: برگ دادخواست نخستین به دادگاه عمومی حقوقی تهران)',
+            description: 'عنوان کامل فرم یا نامه (مثال: برگ دادخواست نخستین به دادگاه عمومی حقوقی تهران یا نامه رسمی به ریاست اداره کار)',
           },
           authorityName: {
             type: 'STRING',
-            description: 'نام مرجع قضایی صالح (مثال: دادگاه عمومی حقوقی تهران یا دادسرای عمومی و انقلاب ناحیه ۲)',
+            description: 'نام مرجع قضایی یا سازمان اداری صالح (مثال: دادگاه عمومی حقوقی تهران یا ریاست محترم اداره تعاون، کار و رفاه اجتماعی)',
           },
-          claimantName: { type: 'STRING', description: 'نام خواهان یا شاکی یا اظهارکننده' },
-          claimantFatherName: { type: 'STRING', description: 'نام پدر خواهان' },
-          claimantNationalId: { type: 'STRING', description: 'کد ملی یا شناسه ثنای خواهان' },
-          claimantAddress: { type: 'STRING', description: 'نشانی و اقامتگاه قانونی خواهان' },
-          respondentName: { type: 'STRING', description: 'نام خوانده یا مشتکی‌عنه یا مخاطب' },
-          respondentAddress: { type: 'STRING', description: 'نشانی یا اقامتگاه خوانده' },
-          subject: { type: 'STRING', description: 'تعیین خواسته و بهای آن یا موضوع شکایت' },
+          claimantName: { type: 'STRING', description: 'نام خواهان یا شاکی یا فرستنده نامه' },
+          claimantFatherName: { type: 'STRING', description: 'نام پدر یا شماره ثبت شرکت' },
+          claimantNationalId: { type: 'STRING', description: 'کد ملی یا شناسه ملی فرستنده' },
+          claimantAddress: { type: 'STRING', description: 'نشانی و اقامتگاه قانونی فرستنده/خواهان' },
+          respondentName: { type: 'STRING', description: 'نام خوانده یا مشتکی‌عنه یا مخاطب/گیرنده نامه' },
+          respondentAddress: { type: 'STRING', description: 'نشانی یا اقامتگاه طرف مقابل/سازمان مخاطب' },
+          subject: { type: 'STRING', description: 'موضوع دقیق خواسته، شکایت یا موضوع نامه رسمی' },
           evidences: {
             type: 'ARRAY',
             items: { type: 'STRING' },
-            description: 'فهرست دلایل و منضمات قانونی (اسناد، مبایعه‌نامه، شهادت شهود، کارشناسی و...)',
+            description: 'فهرست دلایل، پیوست‌ها و منضمات قانونی (اسناد، مدارک، قرارداد، استعلام‌ها)',
           },
-          legalBasis: { type: 'STRING', description: 'مستندات قانونی و مواد قوانین مربوطه' },
+          legalBasis: { type: 'STRING', description: 'مستندات قانونی، مواد قوانین یا بخشنامه‌های مربوطه' },
           bodyText: {
             type: 'STRING',
-            description: 'متن مشروح، بندبندی‌شده، فصیح و مستدل دادخواست، شکواییه، اظهارنامه یا لایحه به قلم وکیل پایه یک دادگستری با ذکر وقایع، استدلالات فقهی و حقوقی و تقاضای صدور دادنامه',
+            description: 'متن مشروح، بندبندی‌شده، فصیح و مستدل دادخواست، شکواییه، اظهارنامه، لایحه یا نامه رسمی اداری به قلم وکیل پایه یک دادگستری',
           },
         },
         required: ['formType', 'title', 'authorityName', 'subject', 'bodyText'],
@@ -3596,6 +3663,134 @@ export class GdmLiveAudio extends LitElement {
     if (e) e.stopPropagation();
     this.selectedTemplateType = type;
     this.activeJudicialForm = generateSampleJudicialForm(type);
+  }
+
+  private async handleDownloadPDF(e?: Event) {
+    if (e) e.stopPropagation();
+    if (!this.activeJudicialForm) return;
+    try {
+      this.isGeneratingPDF = true;
+      this.showToast('در حال آماده‌سازی و ساخت فایل PDF استاندارد A4...');
+      const targetEl = this.shadowRoot?.querySelector('#officialJudicialPaperDocument') as HTMLElement | null;
+      await downloadJudicialPDF(this.activeJudicialForm, targetEl, (msg) => {
+        this.showToast(msg);
+      });
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      this.showToast('خطا در صدور فایل PDF. لطفاً مجدداً تلاش فرمایید.');
+    } finally {
+      this.isGeneratingPDF = false;
+    }
+  }
+
+  private async handleGenerateDraftFromConversation(e?: Event) {
+    if (e) e.stopPropagation();
+    if (this.isGeneratingDraft) return;
+
+    try {
+      this.isGeneratingDraft = true;
+      this.showToast('در حال تحلیل گفتگوی جلسه و تنظیم پیش‌نویس رسمی سند/نامه...');
+
+      const transcriptText = this.modelTranscript.trim();
+      const factsText = this.memoryFacts.map(f => `${f.key}: ${f.content}`).join('\n');
+      const docsSummary = this.scannedDocs.map(d => `سند: ${d.title} (${d.extractedText?.slice(0, 300) || ''})`).join('\n');
+      const clientName = this.currentUser?.displayName || 'موکل محترم';
+
+      const aiPrompt = `شما وکیل پایه یک دادگستری و مشاور ارشد حقوقی مسلط به آیین دادرسی مدنی و کیفری ایران و آیین‌نامه‌ها و مکاتبات اداری کشور هستید.
+بر اساس متن گفتگوی زیر و سوابق پرونده، مناسب‌ترین و رسمی‌ترین پیش‌نویس (دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶ ق.آ.د.م، لایحه دفاعیه، دادخواست دیوان عدالت یا شورای حل اختلاف، تامین خواسته، یا نامه رسمی اداری و درخواست سازمانی مانند اداره کار/تامین اجتماعی/شهرداری/بانک) را تنظیم کنید.
+
+متن گفتگوی جلسه مشاوره:
+${transcriptText || 'جلسه مشاوره حقوقی جهت تنظیم دادخواست و مطالبه حقوق قانونی'}
+
+نکات و سوابق پرونده:
+${factsText || 'سوابق اولیه پرونده حقوقی'}
+
+اسناد ارائه‌شده:
+${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
+
+نام متقاضی/موکل: ${clientName}
+
+پاسخ شما باید صرفاً یک آبجکت JSON معتبر، دقیق، کامل و بدون هیچ متن توضیحی اضافه باشد (بدون تگ‌های اضافی مارک‌داون):
+{
+  "formType": "dadkhast",
+  "title": "عنوان رسمی و دقیق برگه یا نامه",
+  "authorityName": "نام دقیق مرجع قضایی صالح یا سازمان دریافت‌کننده نامه",
+  "claimantName": "نام و نام خانوادگی خواهان / شاکی / فرستنده",
+  "claimantFatherName": "نام پدر یا شناسه ثبت",
+  "claimantNationalId": "کد ملی ده رقمی در صورت وجود یا خالی",
+  "claimantAddress": "نشانی فرستنده/خواهان",
+  "respondentName": "نام خوانده / مشتکی‌عنه / گیرنده نامه یا سازمان",
+  "respondentAddress": "نشانی طرف مقابل / سازمان مربوطه",
+  "subject": "موضوع دقیق خواسته، شکایت یا درخواست اداری",
+  "evidences": ["دلیل و مدرک ۱", "دلیل و مدرک ۲", "دلیل و مدرک ۳"],
+  "legalBasis": "استنادات و مواد قانونی مصوب (مثال: مواد ۱۰، ۲۱۹، ۲۲۰ و ۵۲۲ قانون مدنی یا قانون کار)",
+  "bodyText": "متن مشروح، بندبندی‌شده، فصیح، مستدل و حرفه‌ای با ادبیات فاخر حقوقی وکیل پایه یک دادگستری شامل شرح ماوقع، استدلالات قانونی و نتیجه‌گیری و درخواست صدور حکم/دستور"
+}
+توجه: فیلد formType باید دقیقاً یکی از مقادیر زیر باشد:
+"dadkhast" | "shekayat" | "ezharnameh" | "layehe" | "nameh_edari" | "darkhast_edari" | "etelaieh_hoghooghi" | "shora" | "divan" | "tamin" | "qarardad_solh"
+`;
+
+      const response = await this.client.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: aiPrompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        },
+      });
+
+      const responseText = response.text?.trim() || '';
+      let jsonStr = responseText;
+      if (jsonStr.startsWith('```json')) {
+        jsonStr = jsonStr.replace(/^```json/, '').replace(/```$/, '').trim();
+      } else if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/^```/, '').replace(/```$/, '').trim();
+      }
+
+      const parsed = JSON.parse(jsonStr);
+      const generatedForm: JudicialFormData = {
+        id: 'form_' + Date.now(),
+        formType: parsed.formType || 'dadkhast',
+        title: parsed.title || 'پیش‌نویس رسمی سند قضایی',
+        trackingCode: 'IR-' + Math.floor(10000000 + Math.random() * 90000000),
+        filingDate: new Intl.DateTimeFormat('fa-IR', { dateStyle: 'full' }).format(new Date()),
+        authorityName: parsed.authorityName || 'دادگاه عمومی حقوقی',
+        claimant: {
+          name: parsed.claimantName || clientName,
+          fatherName: parsed.claimantFatherName || '—',
+          nationalId: parsed.claimantNationalId || '',
+          address: parsed.claimantAddress || 'اقامتگاه قانونی اعلامی در ثنا',
+        },
+        respondent: {
+          name: parsed.respondentName || 'خوانده / طرف دعوی',
+          address: parsed.respondentAddress || 'نشانی اعلامی',
+        },
+        subject: parsed.subject || 'مطالبه حقوق قانونی و خسارات وارده',
+        evidences: Array.isArray(parsed.evidences) && parsed.evidences.length > 0 ? parsed.evidences : ['مدارک پیوست پرونده', 'استعلام مراجع ذی‌صلاح'],
+        legalBasis: parsed.legalBasis || 'قوانین و مقررات موضوعه کشور',
+        bodyText: parsed.bodyText || 'ریاست محترم، احتراماً به استحضار می‌رساند...',
+        createdAt: new Date().toISOString(),
+      };
+
+      this.activeJudicialForm = generatedForm;
+      this.selectedTemplateType = generatedForm.formType;
+      this.isJudicialFormModalOpen = true;
+      this.isFormEditing = false;
+      this.formGeneratedNotification = `پیش‌نویس «${generatedForm.title}» با موفقیت تنظیم شد.`;
+
+      if (this.currentUser?.uid) {
+        saveJudicialFormRecord(this.currentUser.uid, generatedForm).catch(console.error);
+      }
+
+      this.showToast(`پیش‌نویس رسمی با موفقیت تنظیم شد ✓`);
+    } catch (err) {
+      console.error('Error generating AI draft from conversation:', err);
+      this.activeJudicialForm = generateSampleJudicialForm(this.selectedTemplateType);
+      this.isJudicialFormModalOpen = true;
+      this.showToast('پیش‌نویس حقوقی بارگذاری شد ✓');
+    } finally {
+      this.isGeneratingDraft = false;
+    }
   }
 
   private handlePrintForm(e?: Event) {
@@ -4468,6 +4663,8 @@ export class GdmLiveAudio extends LitElement {
       <justice-scale-3d
         ?isSpeaking=${this.isSpeaking}
         ?isUserSpeaking=${this.isUserSpeaking}
+        .outputNode=${this.outputNode}
+        .inputNode=${this.inputNode}
       ></justice-scale-3d>
 
       <!-- Middle-Third Transcript & Is-Typing Effect (Borderless, Typewriter Font, Blinking Underline Cursor) -->
@@ -4493,6 +4690,16 @@ export class GdmLiveAudio extends LitElement {
           `}
         </div>
       ` : ''}
+
+      <!-- Dynamic Real-time Audio Visualizer (Frequency & Intensity Display) -->
+      <div class="audio-visualizer-container" id="audioVisualizerContainer">
+        <dynamic-audio-visualizer
+          .outputNode=${this.outputNode}
+          .inputNode=${this.inputNode}
+          ?isSpeaking=${this.isSpeaking}
+          ?isUserSpeaking=${this.isUserSpeaking}
+        ></dynamic-audio-visualizer>
+      </div>
 
 
 
@@ -4565,7 +4772,29 @@ export class GdmLiveAudio extends LitElement {
                     <span class="menu-item-mini-badge">${this.scannedDocs.length} سند</span>
                   </button>
 
-                  <!-- Judicial Forms Linear Option -->
+                  <!-- AI Auto-Draft from Conversation Linear Option -->
+                  <button
+                    class="menu-linear-item"
+                    id="menuAutoDraftBtn"
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this.isMainMenuOpen = false;
+                      this.handleGenerateDraftFromConversation(e);
+                    }}>
+                    <div class="menu-item-start">
+                      <span class="menu-item-icon-svg" style="color: #a855f7;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
+                          <path d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                        </svg>
+                      </span>
+                      <span class="menu-item-text-label">تنظیم هوشمند پیش‌نویس از گفتگو (PDF)</span>
+                    </div>
+                    <span class="menu-item-mini-badge highlight" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">
+                      هوش مصنوعی ✨
+                    </span>
+                  </button>
+
+                  <!-- Judicial Forms & Official Letters Linear Option -->
                   <button
                     class="menu-linear-item"
                     id="menuJudicialFormBtn"
@@ -4575,14 +4804,14 @@ export class GdmLiveAudio extends LitElement {
                       this.openJudicialFormStudio(undefined, e);
                     }}>
                     <div class="menu-item-start">
-                      <span class="menu-item-icon-svg">
+                      <span class="menu-item-icon-svg" style="color: #ffd700;">
                         <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
                           <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
                         </svg>
                       </span>
-                      <span class="menu-item-text-label">تنظیم فرم رسمی قضایی</span>
+                      <span class="menu-item-text-label">اوراق قضایی و نامه‌های رسمی (PDF)</span>
                     </div>
-                    <span class="menu-item-mini-badge">${this.judicialFormsList.length}</span>
+                    <span class="menu-item-mini-badge">${this.judicialFormsList.length} سند</span>
                   </button>
 
                   <!-- Live Camera Linear Option -->
@@ -5036,7 +5265,7 @@ export class GdmLiveAudio extends LitElement {
                     <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="#ffd700">
                       <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
                     </svg>
-                    <span>سامانه تنظیم و صدور اوراق رسمی قضایی قوه قضاییه</span>
+                    <span>سامانه تنظیم، پیش‌نویس و صدور اوراق قضایی و نامه‌های رسمی</span>
                   </div>
                   <button
                     class="pip-btn-icon"
@@ -5064,17 +5293,33 @@ export class GdmLiveAudio extends LitElement {
                   </div>
 
                   <div class="toolbar-actions">
+                    <!-- AI Auto-Draft from Conversation -->
                     <button
-                      class="action-btn-print"
-                      id="printJudicialFormBtn"
-                      @click=${this.handlePrintForm}
-                      title="چاپ مستقیم روی کاغذ A4 یا خروجی PDF">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-580H200q-17 0-28.5 11.5T160-540v160h80v-80h480v80h80Z"/>
+                      class="action-btn-ai-draft"
+                      id="studioAutoDraftBtn"
+                      @click=${this.handleGenerateDraftFromConversation}
+                      ?disabled=${this.isGeneratingDraft}
+                      title="تنظیم خودکار متن پیش‌نویس بر اساس آخرین صحبت‌های جلسه مشاوره">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="#ffd700">
+                        <path d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
                       </svg>
-                      <span>چاپ و خروجی PDF (A4)</span>
+                      <span>${this.isGeneratingDraft ? 'در حال تنظیم...' : 'تنظیم از مکالمه ✨'}</span>
                     </button>
 
+                    <!-- Direct PDF Download Button -->
+                    <button
+                      class="action-btn-pdf"
+                      id="downloadPdfBtn"
+                      @click=${this.handleDownloadPDF}
+                      ?disabled=${this.isGeneratingPDF}
+                      title="ذخیره و دانلود مستقیم سند در قالب فایل استاندارد PDF">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
+                        <path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
+                      </svg>
+                      <span>${this.isGeneratingPDF ? 'در حال صدور PDF...' : 'دانلود فایل PDF (A4)'}</span>
+                    </button>
+
+                    <!-- Word Doc Download Button -->
                     <button
                       class="action-btn-word"
                       id="downloadWordDocBtn"
@@ -5086,6 +5331,19 @@ export class GdmLiveAudio extends LitElement {
                       <span>دانلود فایل Word (.doc)</span>
                     </button>
 
+                    <!-- Direct Print -->
+                    <button
+                      class="action-btn-print"
+                      id="printJudicialFormBtn"
+                      @click=${this.handlePrintForm}
+                      title="پیش‌نمایش چاپ پرینتر">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
+                        <path d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-580H200q-17 0-28.5 11.5T160-540v160h80v-80h480v80h80Z"/>
+                      </svg>
+                      <span>چاپ (Print)</span>
+                    </button>
+
+                    <!-- Copy Text -->
                     <button
                       class="action-btn-neutral"
                       @click=${this.handleCopyForm}
@@ -5096,21 +5354,23 @@ export class GdmLiveAudio extends LitElement {
                       <span>کپی متن</span>
                     </button>
 
+                    <!-- Toggle Edit Mode -->
                     <button
                       class="action-btn-neutral"
                       @click=${() => (this.isFormEditing = !this.isFormEditing)}>
                       <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
                         <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
                       </svg>
-                      <span>${this.isFormEditing ? 'مشاهده سربرگ رسمی' : 'ویرایش مشخصات'}</span>
+                      <span>${this.isFormEditing ? 'مشاهده سربرگ رسمی' : 'ویرایش دستی'}</span>
                     </button>
 
+                    <!-- Cloud Save -->
                     <button
                       class="action-btn-neutral"
                       style="border-color: rgba(212, 175, 55, 0.4); color: #ffd700;"
                       @click=${this.handleSaveFormRecord}
                       ?disabled=${this.isSavingForm}>
-                      <span>${this.isSavingForm ? 'در حال ذخیره...' : 'ذخیره در پرونده ابری'}</span>
+                      <span>${this.isSavingForm ? 'در حال ذخیره...' : 'ذخیره در پرونده'}</span>
                     </button>
                   </div>
                 </div>
@@ -5121,97 +5381,166 @@ export class GdmLiveAudio extends LitElement {
                     ? html`
                         <!-- Official Parchment Paper Simulation -->
                         <div class="judicial-paper" id="officialJudicialPaperDocument">
-                          <!-- Official Header -->
-                          <div class="paper-header">
-                            <div class="paper-meta-box">
-                              <div><strong>شماره پرونده / پیگیری:</strong> ${this.activeJudicialForm.trackingCode}</div>
-                              <div><strong>تاریخ ثبت:</strong> ${this.activeJudicialForm.filingDate}</div>
-                              <div><strong>شعبه رسیدگی:</strong> ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}</div>
-                              <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
-                            </div>
+                          ${['nameh_edari', 'darkhast_edari', 'etelaieh_hoghooghi', 'qarardad_solh'].includes(this.activeJudicialForm.formType)
+                            ? html`
+                                <!-- Formal Administrative Letter Header Layout -->
+                                <div class="paper-header" style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
+                                  <div class="paper-meta-box" style="border: none; background: transparent; padding: 0;">
+                                    <div style="font-size: 11px;"><strong>شماره نامه:</strong> ${this.activeJudicialForm.trackingCode}</div>
+                                    <div style="font-size: 11px;"><strong>تاریخ:</strong> ${this.activeJudicialForm.filingDate}</div>
+                                    <div style="font-size: 11px;"><strong>پیوست:</strong> ${this.activeJudicialForm.evidences.length > 0 ? 'دارد' : 'ندارد'}</div>
+                                  </div>
 
-                            <div class="paper-emblem">
-                              <div class="paper-country-title">جمهوری اسلامی ایران</div>
-                              <div class="paper-main-title">${this.activeJudicialForm.title}</div>
-                              <div class="paper-authority">${this.activeJudicialForm.authorityName}</div>
-                            </div>
+                                  <div class="paper-emblem">
+                                    <div style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 4px;">« بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ »</div>
+                                    <div class="paper-main-title" style="color: #0f172a; font-size: 16px;">${this.activeJudicialForm.title}</div>
+                                  </div>
 
-                            <div class="paper-meta-box" style="text-align: center;">
-                              <div style="font-size: 11px; font-weight: bold; color: #1e3a8a;">قوه قضاییه</div>
-                              <div style="font-size: 9px; color: #64748b; margin-top: 2px;">سامانه خدمات الکترونیک قضایی (عدل ایران)</div>
-                              <div style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">
-                                ||||| | |||| ||| ||
-                              </div>
-                            </div>
-                          </div>
+                                  <div class="paper-meta-box" style="text-align: center; border: none; background: transparent; min-width: 120px;">
+                                    <div style="font-size: 11px; font-weight: bold; color: #1e3a8a;">جمهوری اسلامی ایران</div>
+                                    <div style="font-size: 9px; color: #64748b; margin-top: 2px;">مکاتبات رسمی و اداری</div>
+                                  </div>
+                                </div>
 
-                          <!-- Parties Information Table -->
-                          <table class="paper-table">
-                            <tbody>
-                              <tr>
-                                <th>خواهان / شاکی / اظهارکننده</th>
-                                <td colspan="3">
-                                  <strong>${this.activeJudicialForm.claimant.name}</strong> - فرزند: ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'} - کدملی: ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'} - نشانی: ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>خوانده / مشتکی‌عنه / مخاطب</th>
-                                <td colspan="3">
-                                  <strong>${this.activeJudicialForm.respondent.name}</strong> - نشانی: ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>وکیل یا نماینده قانونی</th>
-                                <td colspan="3">
-                                  <strong>${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong> - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>تعیین موضوع و خواسته</th>
-                                <td colspan="3" style="color: #1e3a8a; font-weight: 800;">
-                                  ${this.activeJudicialForm.subject}
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>دلایل و منضمات قانونی</th>
-                                <td colspan="3">
-                                  ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                                <!-- Letter Recipient -->
+                                <div style="margin-bottom: 12px; padding: 6px 0; font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.8;">
+                                  <div><strong>به:</strong> ${this.activeJudicialForm.authorityName}</div>
+                                  <div><strong>از طرف:</strong> ${this.activeJudicialForm.claimant.name} ${this.activeJudicialForm.claimant.nationalId ? `(کد ملی / شناسه: ${this.activeJudicialForm.claimant.nationalId})` : ''}</div>
+                                  <div style="margin-top: 4px; color: #1e3a8a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;">
+                                    <strong>موضوع:</strong> ${this.activeJudicialForm.subject}
+                                  </div>
+                                </div>
 
-                          <!-- Main Text Section -->
-                          <div class="paper-section-title">
-                            شرح و دلایل دادخواست / شکواییه / لایحه قانونی
-                          </div>
-                          <div class="paper-body-box">
+                                <div style="font-size: 13px; font-weight: 700; margin: 8px 0; color: #334155;">
+                                  با سلام و احترام؛
+                                </div>
+
+                                <!-- Letter Body Content -->
+                                <div class="paper-body-box" style="border: none; padding: 6px 0; font-size: 13px; line-height: 2.1; min-height: 200px;">
 ${this.activeJudicialForm.bodyText}
-                          </div>
+                                </div>
 
-                          <!-- Signatures & Official Footer -->
-                          <div class="paper-footer-signatures">
-                            <div class="signature-slot">
-                              <div><strong>امضا و اثر انگشت خواهان / شاکی:</strong></div>
-                              <div class="fingerprint-box">محل اثر انگشت</div>
-                              <div>${this.activeJudicialForm.claimant.name}</div>
-                            </div>
+                                <!-- Legal Basis & Attachments if any -->
+                                ${this.activeJudicialForm.legalBasis || (this.activeJudicialForm.evidences && this.activeJudicialForm.evidences.length > 0)
+                                  ? html`
+                                      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; line-height: 1.8;">
+                                        ${this.activeJudicialForm.legalBasis ? html`<div><strong>مستندات قانونی:</strong> ${this.activeJudicialForm.legalBasis}</div>` : ''}
+                                        ${this.activeJudicialForm.evidences && this.activeJudicialForm.evidences.length > 0
+                                          ? html`<div><strong>پیوست‌ها و ضمائم:</strong> ${this.activeJudicialForm.evidences.join(' - ')}</div>`
+                                          : ''}
+                                      </div>
+                                    `
+                                  : ''}
 
-                            <div class="signature-slot" style="font-size: 10px; color: #64748b;">
-                              <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
-                              <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                                تایید اصالت الکترونیک
-                              </div>
-                            </div>
+                                <!-- Letter Signatures & Seal Footer -->
+                                <div class="paper-footer-signatures" style="margin-top: 30px;">
+                                  <div class="signature-slot" style="text-align: right; width: 250px;">
+                                    <div style="font-size: 11px; color: #64748b;"><strong>نشانی و اطلاعات تماس فرستنده:</strong></div>
+                                    <div style="font-size: 10px; color: #475569;">${this.activeJudicialForm.claimant.address || 'نشانی اعلامی در مکاتبه'}</div>
+                                  </div>
 
-                            <div class="signature-slot">
-                              <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
-                              <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;">
-                                امضای الکترونیک وکیل
-                              </div>
-                              <div>${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}</div>
-                            </div>
-                          </div>
+                                  <div class="signature-slot" style="text-align: center; width: 200px;">
+                                    <div><strong>با تجدید احترام و سپاس</strong></div>
+                                    <div style="margin-top: 6px; font-weight: 800; font-size: 13px; color: #0f172a;">${this.activeJudicialForm.claimant.name}</div>
+                                    <div class="fingerprint-box" style="margin: 8px auto 0; height: 50px; border: 1px dashed #94a3b8; font-size: 10px;">
+                                      محل امضا و مهر
+                                    </div>
+                                  </div>
+                                </div>
+                              `
+                            : html`
+                                <!-- Official Judicial Court Document Layout -->
+                                <div class="paper-header">
+                                  <div class="paper-meta-box">
+                                    <div><strong>شماره پرونده / پیگیری:</strong> ${this.activeJudicialForm.trackingCode}</div>
+                                    <div><strong>تاریخ ثبت:</strong> ${this.activeJudicialForm.filingDate}</div>
+                                    <div><strong>شعبه رسیدگی:</strong> ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}</div>
+                                    <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
+                                  </div>
+
+                                  <div class="paper-emblem">
+                                    <div class="paper-country-title">جمهوری اسلامی ایران</div>
+                                    <div class="paper-main-title">${this.activeJudicialForm.title}</div>
+                                    <div class="paper-authority">${this.activeJudicialForm.authorityName}</div>
+                                  </div>
+
+                                  <div class="paper-meta-box" style="text-align: center;">
+                                    <div style="font-size: 11px; font-weight: bold; color: #1e3a8a;">قوه قضاییه</div>
+                                    <div style="font-size: 9px; color: #64748b; margin-top: 2px;">سامانه خدمات الکترونیک قضایی (عدل ایران)</div>
+                                    <div style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">
+                                      ||||| | |||| ||| ||
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- Parties Information Table -->
+                                <table class="paper-table">
+                                  <tbody>
+                                    <tr>
+                                      <th>خواهان / شاکی / اظهارکننده</th>
+                                      <td colspan="3">
+                                        <strong>${this.activeJudicialForm.claimant.name}</strong> - فرزند: ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'} - کدملی: ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'} - نشانی: ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>خوانده / مشتکی‌عنه / مخاطب</th>
+                                      <td colspan="3">
+                                        <strong>${this.activeJudicialForm.respondent.name}</strong> - نشانی: ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>وکیل یا نماینده قانونی</th>
+                                      <td colspan="3">
+                                        <strong>${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong> - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>تعیین موضوع و خواسته</th>
+                                      <td colspan="3" style="color: #1e3a8a; font-weight: 800;">
+                                        ${this.activeJudicialForm.subject}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>دلایل و منضمات قانونی</th>
+                                      <td colspan="3">
+                                        ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+
+                                <!-- Main Text Section -->
+                                <div class="paper-section-title">
+                                  شرح و دلایل دادخواست / شکواییه / لایحه قانونی
+                                </div>
+                                <div class="paper-body-box">
+${this.activeJudicialForm.bodyText}
+                                </div>
+
+                                <!-- Signatures & Official Footer -->
+                                <div class="paper-footer-signatures">
+                                  <div class="signature-slot">
+                                    <div><strong>امضا و اثر انگشت خواهان / شاکی:</strong></div>
+                                    <div class="fingerprint-box">محل اثر انگشت</div>
+                                    <div>${this.activeJudicialForm.claimant.name}</div>
+                                  </div>
+
+                                  <div class="signature-slot" style="font-size: 10px; color: #64748b;">
+                                    <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
+                                    <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                      تایید اصالت الکترونیک
+                                    </div>
+                                  </div>
+
+                                  <div class="signature-slot">
+                                    <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
+                                    <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;">
+                                      امضای الکترونیک وکیل
+                                    </div>
+                                    <div>${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}</div>
+                                  </div>
+                                </div>
+                              `}
                         </div>
                       `
                     : html`

@@ -1,4 +1,6 @@
 import { JudicialFormData } from './firebase';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export interface FormTypeOption {
   id: JudicialFormData['formType'];
@@ -6,6 +8,7 @@ export interface FormTypeOption {
   shortName: string;
   authority: string;
   badgeColor: string;
+  category: 'court' | 'letter' | 'notice';
 }
 
 export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
@@ -15,6 +18,7 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'دادخواست حقوقی',
     authority: 'دادگاه عمومی حقوقی دادگستری',
     badgeColor: '#d4af37',
+    category: 'court',
   },
   {
     id: 'shekayat',
@@ -22,6 +26,7 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'شکواییه کیفری',
     authority: 'دادسرا و دادگاه کیفری دو',
     badgeColor: '#ef4444',
+    category: 'court',
   },
   {
     id: 'ezharnameh',
@@ -29,6 +34,7 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'اظهارنامه رسمی',
     authority: 'دفتر خدمات الکترونیک قضایی / دادگستری',
     badgeColor: '#3b82f6',
+    category: 'court',
   },
   {
     id: 'layehe',
@@ -36,6 +42,31 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'لایحه دفاعیه',
     authority: 'شعبه رسیدگی‌کننده دادگاه / تجدیدنظر',
     badgeColor: '#10b981',
+    category: 'court',
+  },
+  {
+    id: 'nameh_edari',
+    title: 'نامه رسمی اداری و حقوقی (مکاتبات رسمی و سازمانی)',
+    shortName: 'نامه رسمی اداری',
+    authority: 'سازمان‌ها، نهادهای دولتی و شرکت‌ها',
+    badgeColor: '#0ea5e9',
+    category: 'letter',
+  },
+  {
+    id: 'darkhast_edari',
+    title: 'درخواست رسمی به مراجع دولتی، اداره کار، تامین اجتماعی و بانک‌ها',
+    shortName: 'درخواست رسمی اداری',
+    authority: 'اداره کار / تامین اجتماعی / شهرداری / بانک',
+    badgeColor: '#6366f1',
+    category: 'letter',
+  },
+  {
+    id: 'etelaieh_hoghooghi',
+    title: 'اخطاریه رسمی و اعلامیه حقوقی پیش از طرح دعوا',
+    shortName: 'اخطاریه حقوقی',
+    authority: 'مخاطب حقیقی یا حقوقی / طرف قرارداد',
+    badgeColor: '#f97316',
+    category: 'notice',
   },
   {
     id: 'shora',
@@ -43,6 +74,7 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'دادخواست شورای حل اختلاف',
     authority: 'شورای حل اختلاف دادگستری',
     badgeColor: '#8b5cf6',
+    category: 'court',
   },
   {
     id: 'tamin',
@@ -50,6 +82,7 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'تامین خواسته',
     authority: 'دادگاه عمومی حقوقی',
     badgeColor: '#f59e0b',
+    category: 'court',
   },
   {
     id: 'divan',
@@ -57,6 +90,15 @@ export const JUDICIAL_FORM_TYPES: FormTypeOption[] = [
     shortName: 'دادخواست دیوان عدالت',
     authority: 'شعب بدوی و تجدیدنظر دیوان عدالت اداری',
     badgeColor: '#06b6d4',
+    category: 'court',
+  },
+  {
+    id: 'qarardad_solh',
+    title: 'سازش‌نامه و صورت‌جلسه صلح و توافق رسمی',
+    shortName: 'صلح‌نامه و توافق‌نامه',
+    authority: 'مراجع قضایی / حل اختلاف / طرفین قرارداد',
+    badgeColor: '#14b8a6',
+    category: 'notice',
   },
 ];
 
@@ -70,6 +112,158 @@ export function generateSampleJudicialForm(type: JudicialFormData['formType'] = 
   const trackingNum = '1405' + Math.floor(1000000000 + Math.random() * 9000000000).toString();
 
   switch (type) {
+    case 'nameh_edari':
+      return {
+        formType: 'nameh_edari',
+        title: 'نامه رسمی اداری و حقوقی',
+        authorityName: 'ریاست محترم سازمان / اداره کل / شرکت طرف مکاتبه',
+        trackingCode: `نامه-${Math.floor(1000 + Math.random() * 9000)}/ح-۱۴۰۵`,
+        filingDate: dateStr,
+        branchNumber: 'دبیرخانه مرکزی',
+        claimant: {
+          name: 'نام متقاضی / شرکت متبوع',
+          fatherName: 'نام پدر / شماره ثبت شرکت',
+          nationalId: 'کد ملی / شناسه ملی شرکت',
+          job: 'متقاضی / مدیرعامل',
+          address: 'نشانی دقیق فرستنده جهت مکاتبه و ابلاغ',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'سازمان، اداره یا شرکت مخاطب',
+          fatherName: '-',
+          nationalId: 'شناسه ملی مرجع مربوطه',
+          job: 'دستگاه اجرایی / بخش خصوصی',
+          address: 'تهران، نشانی واحد اداری یا حقوقی سازمان',
+          phone: '۰۲۱-------',
+        },
+        attorney: {
+          name: 'وکیل و مشاور ارشد حقوقی',
+          licenseNumber: 'پروانه وکالت رسمی دادگستری',
+        },
+        subject: 'درخواست بررسی و پیگیری مطالبات قانونی / اجرای تعهدات فی‌مابین',
+        evidences: [
+          'تصویر مصدق قرارداد و ضمائم فنی',
+          'تصویر صورت‌جلسات تحویل و مکاتبات سابق',
+          'گواهی تاییدیه حسابرسی مالی و فنی',
+        ],
+        legalBasis: 'مقررات قانون مدنی و بخشنامه‌های اداری مراجع ذی‌ربط',
+        bodyText: `جناب آقای / سرکار خانم ...\nریاست محترم ...\n\nبا سلام و احترام و آرزوی توفیقات روزافزون؛\n\nاحتراماً پیرو مذاکرات قبلی و مفاد اسناد و تعهدات موجود، به استحضار عالی می‌رساند که اینجانب / این شرکت با التزام کامل به تعهدات قراردادی و مقررات حاکم، کلیه الزامات مربوطه را در موعد مقرر به انجام رسانده است.\n\nبا عنایت به ضرورت تسریع در فرآیند اداری و جلوگیری از بروز هرگونه وقفه، مستدعی است دستور فرمایید اقدامات مقتضی در خصوص موضوع به عمل آمده و نتیجه به صورت مکتوب به این واحد اعلام گردد.\n\nپیشاپیش از حسن توجه، همکاری و مساعدت جنابعالی و مجموعه محترم کمال امتنان و تشکر را دارم.`,
+      };
+
+    case 'darkhast_edari':
+      return {
+        formType: 'darkhast_edari',
+        title: 'برگ درخواست رسمی به اداره کار / تامین اجتماعی / مراجع دولتی',
+        authorityName: 'اداره تعاون، کار و رفاه اجتماعی / سازمان تامین اجتماعی',
+        trackingCode: `درخواست-${Math.floor(10000 + Math.random() * 90000)}`,
+        filingDate: dateStr,
+        branchNumber: 'دایره بازرسی و روابط کار',
+        claimant: {
+          name: 'نام و نام خانوادگی کارگر / بیمه‌گذار / متقاضی',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی ده رقمی',
+          job: 'شاغل / کارگر / بازنشسته',
+          address: 'اقامتگاه متقاضی',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'کارفرما / کارگاه / شعبه سازمان',
+          fatherName: '-',
+          nationalId: 'کد کارگاهی / شناسه ملی',
+          job: 'کارفرما',
+          address: 'نشانی محل کارگاه یا اداره مربوطه',
+          phone: '۰۲۱-------',
+        },
+        attorney: {
+          name: 'وکیل و نماینده قانونی',
+          licenseNumber: 'پروانه وکالت رسمی',
+        },
+        subject: 'تقاضای رسیدگی به سنوات خدمت، مطالبات معوق، بیمه و حقوق قانونی',
+        evidences: [
+          'پرینت سوابق بیمه تامین اجتماعی',
+          'تصویر قرارداد کار و فیش‌های حقوقی و بانکی',
+          'کارت تردد و استشهاد همکاران کارگاه',
+        ],
+        legalBasis: 'مواد ۲، ۳، ۷، ۲۴، ۳۴ و ۱۴۸ قانون کار جمهوری اسلامی ایران',
+        bodyText: `ریاست و اعضای محترم هیات تشخیص و حل اختلاف اداره کار\n\nبا سلام و تحیات وافره؛\nاحتراماً به استحضار می‌رساند:\n\nاینجانب از تاریخ ... لغایت ... در کارگاه / شرکت موصوف به عنوان ... اشتغال به کار داشته‌ام، اما متاسفانه کارفرمای محترم از پرداخت کامل حق بیمه، مزایای پایان کار (سنوات)، عیدی و پاداش قانونی استنکاف ورزیده‌اند.\n\nلذا مستنداً به قانون کار و تامین اجتماعی، تقاضای رسیدگی عاجل، الزام کارفرما به واریز حق بیمه ایام اشتغال و پرداخت کلیه مطالبات و حقوق معوقه را استدعا دارم.`,
+      };
+
+    case 'etelaieh_hoghooghi':
+      return {
+        formType: 'etelaieh_hoghooghi',
+        title: 'اخطاریه و اعلامیه رسمی حقوقی پیش از اقدام قضایی',
+        authorityName: 'مخاطب حقیقی یا حقوقی / متعهد قرارداد',
+        trackingCode: `اخطار-${Math.floor(100000 + Math.random() * 900000)}`,
+        filingDate: dateStr,
+        branchNumber: 'دایره امور حقوقی و قراردادها',
+        claimant: {
+          name: 'اخطاردهنده (موکل / ذی‌حق)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی ده رقمی',
+          job: 'متعهدله',
+          address: 'نشانی قانونی اخطاردهنده',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'مخاطب اخطاریه (متعهد / بدهکار / مستاجر)',
+          fatherName: 'نام پدر مخاطب',
+          nationalId: 'کد ملی',
+          job: 'آزاد',
+          address: 'اقامتگاه قانونی مخاطب',
+          phone: '۰۹۱۲-------',
+        },
+        attorney: {
+          name: 'وکیل پایه یک دادگستری',
+          licenseNumber: 'پروانه وکالت رسمی دادگستری',
+        },
+        subject: 'اخطار نهایی جهت ایفای تعهدات قراردادی، پرداخت دیون و تسویه‌حساب',
+        evidences: [
+          'قرارداد منعقده فی‌مابین مورخ ...',
+          'اسناد واریزی و رسیدهای مالی',
+          'اخطارها و مکاتبات پیشین',
+        ],
+        legalBasis: 'مواد ۱۰، ۲۱۹، ۲۲۰ و ۲۲۱ قانون مدنی',
+        bodyText: `مخاطب محترم، جناب آقای / شرکت ...\n\nبا سلام؛\nبدین‌وسیله به اطلاع جنابعالی می‌رساند که علیرغم انقضای مواعد مصرح در توافقات و تذکرات مکرر شفاهی و کتبی، تاکنون به تعهدات خود عمل ننموده‌اید.\n\nلذا به موجب این اخطاریه رسمی، حداکثر ظرف مدت ۷ روز کاری از تاریخ ابلاغ به شما فرصت داده می‌شود تا نسبت به تسویه کامل و ایفای تعهدات اقدام فرمایید. بدیهی است در صورت سپری شدن موعد و عدم اقدام، بدون هرگونه اخطار مجدد، پرونده به مراجع قضایی ارجاع گردیده و کلیه هزینه‌های دادرسی، خسارت تاخیر تادیه و حق‌الوکاله وکیل از شما مطالبه خواهد شد.`,
+      };
+
+    case 'qarardad_solh':
+      return {
+        formType: 'qarardad_solh',
+        title: 'سازش‌نامه و صورت‌جلسه صلح و توافق رسمی',
+        authorityName: 'مراجع صالح قضایی / شعبه شورای حل اختلاف / دفترخانه اسناد رسمی',
+        trackingCode: `صلح-${Math.floor(100000 + Math.random() * 900000)}`,
+        filingDate: dateStr,
+        branchNumber: 'دایره اصلاح ذات‌البین',
+        claimant: {
+          name: 'طرف اول (مُصالح / خواهان)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'شاغل',
+          address: 'اقامتگاه طرف اول',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'طرف دوم (مُتصالح / خوانده)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'شاغل',
+          address: 'اقامتگاه طرف دوم',
+          phone: '۰۹۱۲-------',
+        },
+        attorney: {
+          name: 'وکیل و داور مرضی‌الطرفین',
+          licenseNumber: 'پروانه وکالت دادگستری',
+        },
+        subject: 'صلح و سازش قطعی و اسقاط کافه خیارات در کلیه دعاوی مالی و حقوقی فی‌مابین',
+        evidences: [
+          'مدارک هویتی طرفین',
+          'اسناد پرونده‌های مطروحه',
+          'رسید پرداخت مبلغ مال‌الصلح',
+        ],
+        legalBasis: 'مواد ۷۵۲ لغایت ۷۷۰ قانون مدنی و ماده ۱۷۸ قانون آیین دادرسی مدنی',
+        bodyText: `در تاریخ فوق، طرفین در کمال صحت عقل، بلوغ و اختیار حاضر شده و با توافق یکدیگر در خصوص موضوع مطروحه به صلح و سازش قطعی و غیرقابل بازگشت رسیدند.\n\nطرفین اقرار نمودند که با اجرای کامل بندهای این سازش‌نامه، کلیه دعاوی موجود و احتمالی آینده خاتمه یافته و هیچ‌یک از طرفین حق هرگونه ادعای مالی یا حقوقی بعدی را نخواهند داشت و کلیه خیارات از جمله خیار غبن ولو فاحش اسقاط گردید.`,
+      };
+
     case 'shekayat':
       return {
         formType: 'shekayat',
@@ -186,6 +380,118 @@ export function generateSampleJudicialForm(type: JudicialFormData['formType'] = 
         bodyText: `ریاست و مستشاران محترم دادگاه صالحه؛\nبا سلام و اهدای تحیات شایسته قضایی؛\nاحتراماً در خصوص پرونده کلاسه فوق‌الذکر، دفاعیات موکل به شرح ذیل به حضور اعلام می‌گردد:\n\n۱. ادعای طرف مقابل مبنی بر عدم انجام تعهد از اساس فاقد وجاهت قانونی است؛ چرا که طبق بند ۳ قرارداد، پرداخت اقساط ثمن منوط به تحویل مبیع بوده که از انجام آن استنکاف ورزیده‌اند.\n۲. مطابق ماده ۲۱۹ قانون مدنی، عقودی که بر طبق قانون واقع شده باشد بین متعاملین و قائم‌مقام آنها لازم‌الاتباع است.\n۳. وجه التزام قراردادی طبق ماده ۲۳۰ قانون مدنی توسط طرفین معین شده و حاکم دادگاه نمی‌تواند متعهد را به بیشتر یا کمتر از آنچه تقویم شده محکوم نماید.\n\nبنا به مراتب یادشده، رد ادعای بی‌اساس خوانده و اصدار دادنامه شایسته مبنی بر محکومیت ایشان بر اساس خواسته تقدیمی مورد تمناست.`,
       };
 
+    case 'shora':
+      return {
+        formType: 'shora',
+        title: 'برگ دادخواست به شورای حل اختلاف',
+        authorityName: 'شورای حل اختلاف مجتمع قضایی شهید مطهری',
+        trackingCode: trackingNum,
+        filingDate: dateStr,
+        branchNumber: 'شعبه شورای حل اختلاف',
+        claimant: {
+          name: 'خواهان (موکل)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی ده رقمی',
+          job: 'شاغل',
+          address: 'اقامتگاه خواهان در سامانه ثنا',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'خوانده (مستاجر / بدهکار)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'آزاد',
+          address: 'اقامتگاه خوانده',
+          phone: '۰۹۱۲-------',
+        },
+        attorney: {
+          name: 'وکیل پایه یک دادگستری',
+          licenseNumber: 'پروانه وکالت رسمی دادگستری',
+        },
+        subject: 'تقاضای صدور دستور تخلیه عین مستاجره و مطالبه اجور معوقه به انضمام خسارات دادرسی',
+        evidences: [
+          'تصویر مصدق قرارداد اجاره تنظیمی با امضای دو شاهد',
+          'تصویر سند مالکیت عین مستاجره',
+          'گواهی عدم پرداخت مال‌الاجاره',
+        ],
+        legalBasis: 'قانون روابط موجر و مستاجر مصوب ۱۳۷۶ و قانون شوراهای حل اختلاف',
+        bodyText: `ریاست محترم شورای حل اختلاف\n\nبا سلام و احترام؛\nاحتراماً به وکالت از خواهان به استحضار می‌رساند:\n\n۱. به موجب قرارداد اجاره پیوست، یک باب واحد مسکونی به خوانده واگذار گردیده بود که مدت آن منقضی شده است.\n۲. علیرغم اتمام موعد و مراجعات مکرر، خوانده از تخلیه و تحویل ملک استنکاف ورزیده است.\n\nلذا مستنداً به ماده ۲ و ۳ قانون روابط موجر و مستاجر مصوب ۱۳۷۶، صدور دستور فوری تخلیه عین مستاجره و پرداخت اجور معوقه را استدعا دارد.`,
+      };
+
+    case 'tamin':
+      return {
+        formType: 'tamin',
+        title: 'برگ درخواست صدور قرار تامین خواسته / توقیف اموال',
+        authorityName: 'دادگاه عمومی حقوقی مجتمع قضایی',
+        trackingCode: trackingNum,
+        filingDate: dateStr,
+        branchNumber: 'شعبه حقوقی ویژه',
+        claimant: {
+          name: 'خواهان (متقاضی تامین خواسته)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'شاغل',
+          address: 'اقامتگاه قانونی در سامانه ثنا',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'خوانده (بدهکار / متعهد)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'آزاد',
+          address: 'نشانی خوانده',
+          phone: '۰۹۱۲-------',
+        },
+        attorney: {
+          name: 'وکیل پایه یک دادگستری',
+          licenseNumber: 'پروانه وکالت رسمی',
+        },
+        subject: 'تقاضای صدور قرار تامین خواسته معادل مبلغ طلب قبل از تقدیم دادخواست اصلی',
+        evidences: [
+          'تصویر مصدق اسناد تجاری / چک و سفته واخواست‌شده',
+          'تصویر قرارداد متضمن دین قطعی',
+        ],
+        legalBasis: 'مواد ۱۰۸ لغایت ۱۲۹ قانون آیین دادرسی دادگاه‌های عمومی و انقلاب در امور مدنی',
+        bodyText: `ریاست محترم دادگاه عمومی حقوقی\n\nبا سلام و تحیات وافره؛\nاحتراماً به استحضار می‌رساند موکل از خوانده محترم طلب قطعی به میزان مندرج در اسناد پیوست داشته که خوانده در شرف تضییع و تفریط اموال می‌باشد.\n\nبنابراین مستنداً به ماده ۱۰۸ قانون آیین دادرسی مدنی، صدور قرار تامین خواسته و توقیف پلاک ثبتی یا حساب‌های بانکی خوانده تا میزان طلب قبل از ابلاغ استدعا می‌شود.`,
+      };
+
+    case 'divan':
+      return {
+        formType: 'divan',
+        title: 'برگ دادخواست به دیوان عدالت اداری',
+        authorityName: 'دیوان عدالت اداری جمهوری اسلامی ایران',
+        trackingCode: trackingNum,
+        filingDate: dateStr,
+        branchNumber: 'شعب بدوی دیوان عدالت اداری',
+        claimant: {
+          name: 'شاکی (شخص حقیقی یا حقوقی)',
+          fatherName: 'نام پدر',
+          nationalId: 'کد ملی',
+          job: 'کارمند / بازنشسته / شهروند',
+          address: 'اقامتگاه شاکی در سامانه ثنا',
+          phone: '۰۹۱۲۰۰۰۰۰۰۰',
+        },
+        respondent: {
+          name: 'طرف شکایت (سازمان، وزارتخانه، شهرداری یا نهاد دولتی)',
+          fatherName: '-',
+          nationalId: 'شناسه ملی سازمان',
+          job: 'دستگاه اجرایی',
+          address: 'نشانی دستگاه طرف شکایت',
+          phone: '۰۲۱-------',
+        },
+        attorney: {
+          name: 'وکیل پایه یک دادگستری',
+          licenseNumber: 'پروانه وکالت دادگستری',
+        },
+        subject: 'ابطال تصمیم / رای غیرقانونی کمیسیون و احقاق حقوق قانونی شاکی',
+        evidences: [
+          'تصویر مصدق رای قطعی کمیسیون / بخشنامه معترض‌عنه',
+          'تصویر مدارک و مستندات دال بر تخلف از قوانین آمره',
+        ],
+        legalBasis: 'اصل ۱۷۳ قانون اساسی و قانون دیوان عدالت اداری مصوب ۱۳۹۲',
+        bodyText: `ریاست و مستشاران محترم دیوان عدالت اداری\n\nبا سلام و احترام؛\nاحتراماً به وکالت از شاکی معروض می‌دارد:\n\nتصمیم متخذه از سوی دستگاه طرف شکایت بر خلاف قوانین و مقررات موضوعه و خارج از حدود اختیارات قانونی بوده و موجب تضییع حقوق حقه موکل گردیده است.\n\nفلذا مستنداً به قانون تشکیلات و آیین دادرسی دیوان عدالت اداری، نقض و ابطال تصمیم معترض‌عنه و الزام طرف شکایت به صدور حکم قانونی مورد تمناست.`,
+      };
+
     case 'dadkhast':
     default:
       return {
@@ -229,16 +535,146 @@ export function generateSampleJudicialForm(type: JudicialFormData['formType'] = 
 }
 
 /**
- * Generates high-resolution, print-ready HTML for official judiciary document
+ * Generates high-resolution, print-ready HTML for official judiciary document or official administrative letter
  */
 export function renderJudicialFormHTML(form: JudicialFormData): string {
   const claimant = form.claimant || {};
   const respondent = form.respondent || {};
   const attorney = form.attorney || {};
+  const isLetter = ['nameh_edari', 'darkhast_edari', 'etelaieh_hoghooghi'].includes(form.formType);
+  const isSettlement = form.formType === 'qarardad_solh';
+
   const evidencesList = (form.evidences || [])
-    .map((e, idx) => `<tr><td style="width: 30px; text-align: center; border: 1px solid #000; padding: 4px;">${idx + 1}</td><td style="border: 1px solid #000; padding: 4px;">${e}</td></tr>`)
+    .map((e, idx) => `<tr><td style="width: 30px; text-align: center; border: 1px solid #1e293b; padding: 4px; font-weight: bold;">${idx + 1}</td><td style="border: 1px solid #1e293b; padding: 4px;">${e}</td></tr>`)
     .join('');
 
+  if (isLetter) {
+    // Official Administrative Letter Layout
+    return `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>${form.title || 'نامه رسمی اداری'}</title>
+  <style>
+    @page { size: A4 portrait; margin: 15mm 20mm 15mm 20mm; }
+    body {
+      font-family: "Vazirmatn", "IRANSans", "B Nazanin", "Tahoma", sans-serif;
+      direction: rtl;
+      background: #fff;
+      color: #0f172a;
+      margin: 0;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .letter-container {
+      border: 1px solid #cbd5e1;
+      padding: 28px 32px;
+      background: #ffffff;
+      max-width: 820px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .meta-box {
+      font-size: 11px;
+      line-height: 2;
+    }
+    .title-box {
+      text-align: center;
+      flex: 1;
+    }
+    .letter-recipient {
+      background: #f8fafc;
+      border-right: 4px solid #0284c7;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+    .letter-body {
+      font-size: 13.5px;
+      line-height: 2.1;
+      text-align: justify;
+      white-space: pre-wrap;
+      min-height: 380px;
+      color: #1e293b;
+    }
+    .letter-sign {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+    }
+    .sign-box {
+      width: 45%;
+      border-top: 1px dashed #94a3b8;
+      padding-top: 8px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="letter-container" id="officialJudicialPaperDocument">
+    <div class="letter-header">
+      <div class="meta-box" style="text-align: right;">
+        <div><strong>شماره:</strong> ${form.trackingCode || '۱۴۰۵/ح/۱۰۰'}</div>
+        <div><strong>تاریخ:</strong> ${form.filingDate || 'امروز'}</div>
+        <div><strong>پیوست:</strong> ${form.evidences?.length ? 'دارد' : 'ندارد'}</div>
+      </div>
+      <div class="title-box">
+        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">بسمه تعالی</div>
+        <div style="font-size: 17px; font-weight: bold; color: #0369a1;">${form.title}</div>
+        <div style="font-size: 11px; color: #64748b;">واحد امور حقوقی و قراردادها</div>
+      </div>
+      <div class="meta-box" style="text-align: left; direction: ltr;">
+        <div style="border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; background: #f8fafc;">
+          <div style="font-size: 9px; color: #64748b;">شناسه دبیرخانه</div>
+          <div style="font-weight: bold; font-family: monospace;">${form.trackingCode || 'SEC-1405'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="letter-recipient">
+      <div><strong>به:</strong> ${form.authorityName || 'مقام محترم رسیدگی‌کننده'}</div>
+      <div><strong>از:</strong> ${claimant.name || 'فرستنده'} ${claimant.job ? `(${claimant.job})` : ''}</div>
+      <div><strong>موضوع:</strong> <span style="font-weight: bold; color: #0369a1;">${form.subject}</span></div>
+    </div>
+
+    <div class="letter-body">
+${form.bodyText}
+    </div>
+
+    ${form.legalBasis ? `
+    <div style="margin-top: 15px; padding: 8px 12px; background: #f1f5f9; border-radius: 4px; font-size: 11px; color: #334155;">
+      <strong>مستندات و مقررات قانونی:</strong> ${form.legalBasis}
+    </div>` : ''}
+
+    <div class="letter-sign">
+      <div class="sign-box">
+        <strong>تنظیم‌کننده / مشاور حقوقی</strong><br>
+        ${attorney.name || 'وکیل پایه یک دادگستری'}<br>
+        <span style="font-size: 10px; color: #64748b;">امضا و مهر معتبر</span>
+      </div>
+      <div class="sign-box">
+        <strong>امضای متقاضی / موکل</strong><br>
+        ${claimant.name || 'نام و نام خانوادگی'}<br>
+        <span style="font-size: 10px; color: #64748b;">اثر انگشت و امضا</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  // Official Judiciary Court Paper (دادخواست، شکواییه، اظهارنامه، لایحه)
   return `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -247,25 +683,25 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
   <style>
     @page {
       size: A4 portrait;
-      margin: 12mm 15mm 12mm 15mm;
+      margin: 10mm 12mm 10mm 12mm;
     }
     body {
-      font-family: "IRANSans", "B Nazanin", "Tahoma", sans-serif;
+      font-family: "Vazirmatn", "IRANSans", "B Nazanin", "Tahoma", sans-serif;
       direction: rtl;
       background: #fff;
       color: #000;
       margin: 0;
-      padding: 10px;
-      font-size: 13px;
+      padding: 8px;
+      font-size: 12.5px;
       line-height: 1.6;
     }
     .form-container {
       border: 3px double #1a365d;
-      padding: 16px;
+      padding: 14px;
       position: relative;
       background: #ffffff;
       box-sizing: border-box;
-      max-width: 800px;
+      max-width: 820px;
       margin: 0 auto;
     }
     .watermark {
@@ -273,8 +709,8 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 55px;
-      color: rgba(26, 54, 93, 0.04);
+      font-size: 50px;
+      color: rgba(26, 54, 93, 0.035);
       font-weight: 900;
       pointer-events: none;
       z-index: 0;
@@ -283,7 +719,7 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
     .header-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .header-table td {
       vertical-align: middle;
@@ -291,37 +727,32 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
     .header-center {
       text-align: center;
     }
-    .emblem-img {
-      width: 55px;
-      height: auto;
-      margin-bottom: 4px;
-    }
     .header-title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       color: #1a365d;
-      margin: 4px 0;
+      margin: 3px 0;
     }
     .header-subtitle {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: normal;
       color: #333;
     }
     .info-box {
       font-size: 11px;
-      line-height: 1.8;
+      line-height: 1.7;
       text-align: right;
     }
     .grid-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       border: 1px solid #1a365d;
-      font-size: 12px;
+      font-size: 11.5px;
     }
     .grid-table th, .grid-table td {
       border: 1px solid #1a365d;
-      padding: 6px 8px;
+      padding: 5px 7px;
       vertical-align: top;
     }
     .grid-table th {
@@ -329,15 +760,15 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
       color: #1a365d;
       font-weight: bold;
       text-align: center;
-      width: 13%;
+      width: 14%;
     }
     .body-section {
       border: 1px solid #1a365d;
-      padding: 12px 16px;
-      min-height: 280px;
-      margin-bottom: 12px;
-      font-size: 13px;
-      line-height: 1.8;
+      padding: 12px 14px;
+      min-height: 250px;
+      margin-bottom: 10px;
+      font-size: 12.5px;
+      line-height: 1.85;
       text-align: justify;
       white-space: pre-wrap;
       background: #fafbfc;
@@ -345,37 +776,23 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
     .footer-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 11px;
+      margin-top: 8px;
+      font-size: 10.5px;
     }
     .footer-table td {
       border: 1px dashed #718096;
-      padding: 10px;
+      padding: 8px;
       vertical-align: top;
-      height: 70px;
+      height: 60px;
     }
     .seal-box {
       text-align: center;
       color: #4a5568;
     }
-    @media print {
-      body {
-        padding: 0;
-        background: none;
-      }
-      .form-container {
-        border: 2px solid #000;
-        max-width: 100%;
-        padding: 12px;
-      }
-      .no-print {
-        display: none !important;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="form-container">
+  <div class="form-container" id="officialJudicialPaperDocument">
     <div class="watermark">قوه قضاییه جمهوری اسلامی ایران</div>
 
     <table class="header-table">
@@ -387,17 +804,17 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
           <div><strong>پیوست:</strong> دارد (تصاویر مصدق)</div>
         </td>
         <td style="width: 50%;" class="header-center">
-          <div style="font-size: 11px; font-weight: bold; margin-bottom: 2px;">بسمه تعالی</div>
+          <div style="font-size: 11px; font-weight: bold; margin-bottom: 1px;">بسمه تعالی</div>
           <div style="font-size: 13px; font-weight: bold; color: #1a365d;">جمهوری اسلامی ایران</div>
-          <div style="font-size: 11px; color: #4a5568; margin-bottom: 4px;">قوه قضاییه - دادگستری کل</div>
+          <div style="font-size: 11px; color: #4a5568; margin-bottom: 2px;">قوه قضاییه - دادگستری کل</div>
           <div class="header-title">${form.title || 'برگ رسمی قضایی'}</div>
           <div class="header-subtitle">مرجع رسیدگی‌کننده: <strong>${form.authorityName || 'مراجع صالح قضایی دادگستری'}</strong></div>
         </td>
         <td style="width: 25%; text-align: left;" class="info-box">
           <div style="border: 1px solid #1a365d; padding: 4px 6px; text-align: center; background: #f8fafc; border-radius: 4px;">
-            <div style="font-size: 10px; font-weight: bold; color: #1a365d;">شناسه رهگیری ثنا / عدل‌ایران</div>
+            <div style="font-size: 9.5px; font-weight: bold; color: #1a365d;">شناسه رهگیری ثنا / عدل‌ایران</div>
             <div style="font-family: monospace; font-size: 11px; direction: ltr; margin-top: 2px;">${form.trackingCode || '140598765432'}</div>
-            <div style="font-size: 9px; color: #718096; margin-top: 2px;">سامانه خدمات الکترونیک قضایی</div>
+            <div style="font-size: 8.5px; color: #718096; margin-top: 2px;">سامانه خدمات الکترونیک قضایی</div>
           </div>
         </td>
       </tr>
@@ -436,12 +853,12 @@ export function renderJudicialFormHTML(form: JudicialFormData): string {
           <table style="width: 100%; border-collapse: collapse;">
             ${evidencesList}
           </table>
-          ${form.legalBasis ? `<div style="margin-top: 6px; font-size: 11px; color: #2d3748;"><strong>مستندات قانونی:</strong> ${form.legalBasis}</div>` : ''}
+          ${form.legalBasis ? `<div style="margin-top: 4px; font-size: 10.5px; color: #2d3748;"><strong>مستندات قانونی:</strong> ${form.legalBasis}</div>` : ''}
         </td>
       </tr>
     </table>
 
-    <div style="font-weight: bold; color: #1a365d; margin: 8px 0 4px 0; font-size: 13px;">
+    <div style="font-weight: bold; color: #1a365d; margin: 6px 0 3px 0; font-size: 12px;">
       شرح دادخواست / شکواییه / لایحه به قلم وکیل پایه یک دادگستری:
     </div>
 
@@ -453,24 +870,111 @@ ${form.bodyText || 'متن دادخواست'}
       <tr>
         <td style="width: 33%;" class="seal-box">
           <strong>محل امضا و اثر انگشت</strong><br>
-          خواهان / شاکی / وکیل دادگستری
-          <div style="margin-top: 25px; font-size: 10px; color: #718096;">امضا و اثر انگشت الکترونیک</div>
+          خواهان / شاکی / متقاضی
+          <div style="margin-top: 18px; font-size: 9.5px; color: #718096;">امضا و اثر انگشت الکترونیک</div>
         </td>
         <td style="width: 34%;" class="seal-box">
           <strong>محل گواهی و ابطال تمبر</strong><br>
           تمبر مالیاتی و هزینه‌های دادرسی
-          <div style="margin-top: 25px; font-size: 10px; color: #718096;">پرداخت الکترونیک در سامانه ثنا</div>
+          <div style="margin-top: 18px; font-size: 9.5px; color: #718096;">پرداخت الکترونیک در سامانه ثنا</div>
         </td>
         <td style="width: 33%;" class="seal-box">
           <strong>دفتر خدمات الکترونیک قضایی</strong><br>
           تایید اصالت و ثبت در پایگاه عدل ایران
-          <div style="margin-top: 25px; font-size: 10px; color: #718096;">کد دفتر: ۵۴۹۸ - ثبت شده</div>
+          <div style="margin-top: 18px; font-size: 9.5px; color: #718096;">کد دفتر: ۵۴۹۸ - ثبت شده</div>
         </td>
       </tr>
     </table>
   </div>
 </body>
 </html>`;
+}
+
+/**
+ * High-Quality Client-Side PDF Generation and Direct Download
+ */
+export async function downloadJudicialPDF(
+  form: JudicialFormData,
+  targetElement?: HTMLElement | null,
+  onProgress?: (msg: string) => void
+): Promise<boolean> {
+  try {
+    if (onProgress) onProgress('در حال آماده‌سازی سند و پردازش نگاشت‌های حقوقی...');
+
+    // If an existing DOM element is provided, use it; otherwise create temporary container
+    let container: HTMLElement;
+    let removeAfter = false;
+
+    if (targetElement) {
+      container = targetElement;
+    } else {
+      container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '820px';
+      container.style.background = '#ffffff';
+      container.style.zIndex = '-1000';
+      container.innerHTML = renderJudicialFormHTML(form);
+      document.body.appendChild(container);
+      removeAfter = true;
+    }
+
+    if (onProgress) onProgress('در حال رندر گرافیکی کیفیت بالای A4...');
+
+    const canvas = await html2canvas(container, {
+      scale: 2.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+    });
+
+    if (removeAfter && container.parentNode) {
+      container.parentNode.removeChild(container);
+    }
+
+    if (onProgress) onProgress('در حال تولید فایل PDF استاندارد...');
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress: true,
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgProps = pdf.getImageProperties(imgData);
+    const renderHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    let heightLeft = renderHeight;
+    let position = 0;
+
+    // First Page
+    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, renderHeight, undefined, 'FAST');
+    heightLeft -= pdfHeight;
+
+    // Subsequent pages if long document
+    while (heightLeft > 5) {
+      position = heightLeft - renderHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, renderHeight, undefined, 'FAST');
+      heightLeft -= pdfHeight;
+    }
+
+    const filename = `${form.title.replace(/[\/\s\\:*?"<>|]+/g, '_')}_${Date.now()}.pdf`;
+    pdf.save(filename);
+
+    if (onProgress) onProgress('فایل PDF با موفقیت دانلود شد.');
+    return true;
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    // Fallback to print
+    printJudicialForm(form);
+    return false;
+  }
 }
 
 /**
@@ -484,7 +988,7 @@ export function downloadJudicialDoc(form: JudicialFormData) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${form.title.replace(/\s+/g, '_')}_${Date.now()}.doc`;
+  link.download = `${form.title.replace(/[\/\s\\:*?"<>|]+/g, '_')}_${Date.now()}.doc`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
