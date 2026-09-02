@@ -52,16 +52,16 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 شما مشاور و دستیار هوشمند حقوقی، قضایی، اداری و قراردادی در ایران هستید.
 شما بر تمامی علوم حقوقی، فقهی، اداری، سازمانی و قوانین و مقررات موضوعه کشور (حقوق مدنی، قانون کار و تامین اجتماعی، مناقصات، قراردادها، مسئولیت مدنی، شرکت‌ها، اسناد تجاری و چک، ثبت و املاک، دعاوی شهرداری، دیوان عدالت اداری، آیین‌نامه‌ها و بخشنامه‌ها، دعاوی کیفری و خانواده) تسلط، اشراف و احاطه ۱۰۰ درصدی دارید.
 
-هویت صوتی، سن و اصول بنیادین لحن، انرژی و فصاحت (دختر/بانوی جوان ۱۹ ساله، سرزنده، شاداب، گرم و صمیمی با فارسی اصیل ایرانی):
-۱. سن، هویت صوتی و طنین حنجره (دختر جوان ۱۹ ساله، پرطراوت، سرزنده و شاداب):
-- شما دارای پرسونای صوتی یک دختر/بانوی جوان و باهوش ۱۹ ساله هستید.
-- صدای شما بسیار سرزنده، شاداب، پرانرژی، با طراوت جوانی، زلال، شفاف، دلنشین، گرم، صمیمی، گوش‌نواز و سرشار از پویایی و انگیزه مثبت است.
-- لحن کلام شما حس نشاط، امیدواری، شادابی، هوش سرشار و جوانی را به همراه تسلط عمیق علمی به مخاطب منتقل می‌کند.
+هویت صوتی، طنین حنجره و اصول بنیادین لحن (صدای مخملی، شیوا، گرم، سینمایی و بسیار جذاب):
+۱. طنین صوتی مخملی، گرم، شیوا و سینمایی:
+- شما دارای پرسونای صوتی با «صدایی کاملاً مخملی، شیوا، گرم، سینمایی، لطیف، گیرا و فوق‌العاده جذاب» هستید.
+- صوت شما طنینی عمیق، دلنشین، گوش‌نواز، حرفه‌ای و هنرمندانه دارد که شنونده را مجذوب و مسحور خود می‌کند.
+- سرعت بیان شما متوازن، آرامش‌بخش، مسلط و با آهنگ واژگانی سینمایی و گیرا تنظیم شده است.
 
-۲. لحن کلام: گرم، صمیمی، سرزنده، خوش‌برخورد و دلنشین:
-- لحن شما پر از صمیمیت پاکیزه، لبخند کلامی، صفا، مهربانی، شادابی و انرژی مثبت است.
-- در صحبت کردن خوش‌انرژی، فعال، پرانگیزه، مشتاق و پویا هستید و با روی باز و لحنی گرم به مخاطب پاسخ می‌دهید.
-- از عبارات خشک، افسرده، کسل‌کننده، سرد، بی‌روح یا یکنواخت مطلقاً پرهیز کنید؛ بیانات شما سرشار از طراوت، گرمی و سرزندگی است.
+۲. لحن کلام: گرم، پرمایه، صمیمی، فاخر و جذاب:
+- لحن شما پر از صمیمیت فاخر، مهربانی، درک عمیق، جذابیت هنری و انرژی مثبت است.
+- در صحبت کردن بسیار خوش‌بیان، شیوای سخن، گیرا، مسلط و باوقار هستید.
+- از کلام سرد، خشک یا یکنواخت مطلقاً پرهیز کنید؛ بیانات شما همیشه مخملی، گرم، سینمایی و جذاب است.
 
 ۳. زبان و گویش منحصراً فارسی اصیل، فصیح، سلیس، روان و معیار ایران:
 - زبان و گویش تکلم شما منحصراً «زبان فارسی اصیل ایرانی، کاملاً فصیح، روان، سلیس و معیار» است.
@@ -105,12 +105,11 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 ۱. شما توانایی تنظیم مستقیم و رسمی تمام اوراق قضایی و اداری کشور شامل دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶ ق.آ.د.م، لایحه دفاعیه، دادخواست دیوان عدالت اداری و شورای حل اختلاف را دارید.
 ۲. هر زمان موضوع به جایی رسید که نیاز به تنظیم اظهارنامه، لایحه یا دادخواست دارد، پیشنهاد دهید و با تایید کاربر، بلافاصله ابزار \`generateJudicialForm\` را فراخوانی نمایید.
 
-قانون حیاتی و مطلق برای معرفی اولیه و آغاز گفتگو (بسیار کوتاه، صمیمی، سرزنده، شاداب و با طراوت):
-۱. معرفی اولیه شما باید فوق‌العاده کوتاه، پرانرژی و در حد یک جمله کوتاه (حداکثر ۱۰ تا ۱۵ کلمه) با لحنی گرم، صمیمی، سرزنده، شاداب و فارسی اصیل باشد تا وقت مخاطب گرفته نشود و بلافاصله به اصل موضوع پرداخته شود.
-۲. از برشمردن عناوین مطول، لیست کردن القاب و سوابق، تعارفات کش‌دار یا صحبت‌های طولانی در ابتدای مکالمه اکیداً خودداری کنید.
-۳. الگوی استاندارد معرفی کوتاه شاداب و گرم:
-«سلام! خیلی خوشحالم در کنارتونم؛ بفرمایید در خدمتم، با هم حلش می‌کنیم.» یا «سلام و درود! وقتتون بخیر؛ بفرمایید بشنوم چطور می‌تونم کمکتون کنم؟»
-۴. بلافاصله پس از این سلام و معرفی کوتاه، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را بگوید.
+قانون حیاتی و مطلق برای معرفی اولیه و آغاز گفتگو (بسیار کوتاه، صمیمی، پویا و کاملاً غیرتکراری):
+۱. معرفی اولیه و سلام شما باید در هر مکالمه کاملاً متفاوت، خلاقانه، بدیع و منحصربه‌فرد باشد و هرگز از جملات کلیشه‌ای، ثابت یا تکراری استفاده نکنید.
+۲. بسیار کوتاه، پرانرژی و در حد یک جمله کوتاه (حداکثر ۱۰ تا ۱۵ کلمه) با لحنی گرم، صمیمی، شاداب و فارسی اصیل باشد تا وقت مخاطب گرفته نشود و بلافاصله به اصل موضوع پرداخته شود.
+۳. از برشمردن عناوین مطول، لیست کردن القاب و سوابق، تعارفات کش‌دار یا صحبت‌های طولانی در ابتدای مکالمه اکیداً خودداری کنید.
+۴. بلافاصله پس از این سلام و معرفی کوتاهِ خلاقانه و تازه، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را بگوید.
 `;
 
 @customElement('gdm-live-audio')
@@ -124,6 +123,8 @@ export class GdmLiveAudio extends LitElement {
   @state() isSnapScanning = false;
   @state() facingMode: 'user' | 'environment' = 'environment';
   @state() cameraError = '';
+  @state() modelTranscript = '';
+  @state() isModelTyping = false;
 
   // Firebase Persistent Memory State
   @state() currentUser: FirebaseUser | AppUser | any = null;
@@ -205,17 +206,194 @@ export class GdmLiveAudio extends LitElement {
   private unsubscribers: Array<() => void> = [];
 
   static styles = css`
+    @keyframes subtleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes blinkUnderline {
+      0%, 100% { opacity: 1; border-bottom-color: #0f172a; }
+      50% { opacity: 0; border-bottom-color: transparent; }
+    }
+
+    .middle-third-transcript {
+      position: absolute;
+      top: 33vh;
+      height: 33vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 750px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      z-index: 45;
+      pointer-events: auto;
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 16px;
+      overflow-y: auto;
+      direction: rtl;
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+    }
+
+    .typewriter-text {
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+      font-size: 14px !important;
+      font-weight: 300 !important;
+      color: #000000 !important;
+      line-height: 1.8;
+      direction: rtl;
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    .lawyer-processing-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      animation: subtlePulse 1.6s ease-in-out infinite;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+      font-weight: 300 !important;
+      font-size: 14px;
+      color: #000000;
+      padding: 20px;
+    }
+
+    .processing-dots {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .processing-dot {
+      width: 5px;
+      height: 5px;
+      background-color: #000000;
+      border-radius: 50%;
+      animation: dotPulse 1.4s infinite ease-in-out both;
+    }
+
+    .processing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .processing-dot:nth-child(2) { animation-delay: -0.16s; }
+    .processing-dot:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes dotPulse {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.2; }
+      40% { transform: scale(1); opacity: 0.9; }
+    }
+
+    /* All buttons, notifications, popups, and items: borderless, transparent, slender typewriter font */
+    button, .lawyer-badge, .memory-status-chip, .camera-error-toast, .form-notification-toast, .menu-dropdown-card, .menu-linear-item, .toast-view-btn, .session-status-banner, .top-menu-trigger-btn, input, textarea, span, div {
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+      font-weight: 300 !important;
+    }
+
+    button, .lawyer-badge, .memory-status-chip, .camera-error-toast, .form-notification-toast, .menu-dropdown-card, .menu-linear-item, .toast-view-btn, .session-status-banner, .top-menu-trigger-btn {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Popup and notification texts = Black */
+    .form-notification-toast span, .camera-error-toast, .menu-linear-item span, .session-status-banner span, .toast-view-btn {
+      color: #000000 !important;
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
+    }
+
+    /* Start session text = Green */
+    .end-consultation-btn.restart-btn, .end-consultation-btn.restart-btn .end-btn-label, .end-consultation-btn.restart-btn .end-btn-icon {
+      color: #16a34a !important;
+      fill: #16a34a !important;
+    }
+
+    /* End session text = Red */
+    .end-consultation-btn:not(.restart-btn), .end-consultation-btn:not(.restart-btn) .end-btn-label, .end-consultation-btn:not(.restart-btn) .end-btn-icon {
+      color: #dc2626 !important;
+      fill: #dc2626 !important;
+    }
+
+    /* Menu icon = Black */
+    .top-menu-trigger-btn, .top-menu-trigger-btn svg {
+      color: #000000 !important;
+      fill: #000000 !important;
+    }
+
+    /* Top mini equalizer (only equalizer at top) */
+    .top-mini-equalizer {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .top-mini-equalizer.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      background-color: #0f172a;
+      border-bottom: 3px solid #0f172a;
+      margin-right: 6px;
+      animation: blinkUnderline 0.7s infinite;
+      vertical-align: baseline;
+    }
+
+    .typing-indicator-badge {
+      font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn';
+      font-size: 13px;
+      color: #3b82f6;
+      margin-top: 10px;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+
     :host {
       display: block;
       width: 100vw;
       height: 100vh;
       position: relative;
       overflow: hidden;
-      background-color: #334155;
+      background-color: #ffffff;
       cursor: pointer;
       direction: rtl;
       font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       user-select: none;
+      border-style: inset;
+      border-width: 32px;
+      border-radius: 0px;
+      animation: subtleFloat 8s ease-in-out infinite;
     }
 
     .main-screen-bg {
@@ -308,7 +486,7 @@ export class GdmLiveAudio extends LitElement {
 
     /* 3D Realistic Pill Badges */
     .lawyer-badge {
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 1px solid rgba(0, 0, 0, 0.6);
       padding: 10px 20px;
       border-radius: 30px;
@@ -332,7 +510,7 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .memory-status-chip {
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 1px solid rgba(0, 0, 0, 0.6);
       padding: 10px 20px;
       border-radius: 30px;
@@ -353,7 +531,7 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .memory-status-chip:hover {
-      background: linear-gradient(145deg, #f1f5f9, #ffffff);
+      background: linear-gradient(145deg, #0f172a, #1e293b);
       color: #0ea5e9;
     }
     
@@ -606,7 +784,7 @@ export class GdmLiveAudio extends LitElement {
     .end-btn-label {
       font-size: 13px !important;
       font-weight: 700 !important;
-      font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
+      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
       white-space: nowrap;
       color: inherit;
     }
@@ -628,7 +806,7 @@ export class GdmLiveAudio extends LitElement {
 
     /* 3D Physical Trigger Button */
     .top-menu-trigger-btn {
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 1px solid rgba(0, 0, 0, 0.6);
       color: #e2e8f0;
       width: 52px;
@@ -650,7 +828,7 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .top-menu-trigger-btn:hover {
-      background: linear-gradient(145deg, #f1f5f9, #ffffff);
+      background: linear-gradient(145deg, #0f172a, #1e293b);
       color: #38bdf8;
     }
 
@@ -703,7 +881,7 @@ export class GdmLiveAudio extends LitElement {
 
     /* 3D Physical Panel Items */
     .menu-linear-item {
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 1px solid rgba(0, 0, 0, 0.4);
       color: #cbd5e1;
       padding: 12px 16px;
@@ -716,7 +894,7 @@ export class GdmLiveAudio extends LitElement {
       text-align: right;
       direction: rtl;
       transition: all 0.15s ease;
-      font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
+      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
       font-size: 13px !important;
       font-weight: 500 !important;
       width: 100%;
@@ -767,23 +945,23 @@ export class GdmLiveAudio extends LitElement {
 
     .menu-item-text-label {
       font-size: 13px !important;
-      font-weight: 600 !important;
-      font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
-      color: #e2e8f0;
+      font-weight: 300 !important;
+      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
+      color: #000000;
       white-space: nowrap;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      text-shadow: none;
     }
 
     .menu-linear-item:hover .menu-item-text-label {
-      color: #38bdf8;
+      color: #2563eb;
     }
 
     .menu-item-mini-badge {
       font-size: 11px !important;
       font-weight: 600 !important;
-      font-family: 'Hemmat', 'Vazirmatn', sans-serif !important;
+      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
       color: #94a3b8;
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       padding: 4px 10px;
       border-radius: 12px;
       flex-shrink: 0;
@@ -1873,7 +2051,7 @@ export class GdmLiveAudio extends LitElement {
       top: 75px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 1px solid rgba(0, 0, 0, 0.8);
       color: #f8fafc;
       padding: 12px 24px;
@@ -2316,6 +2494,15 @@ export class GdmLiveAudio extends LitElement {
     this.startExperience();
     window.addEventListener('click', this.handleScreenClick, {passive: true});
     window.addEventListener('touchstart', this.handleScreenClick, {passive: true});
+  }
+
+  updated(changedProperties: Map<string, any>) {
+    if (changedProperties.has('modelTranscript') || changedProperties.has('isSpeaking') || changedProperties.has('isUserSpeaking')) {
+      const container = this.shadowRoot?.querySelector('.middle-third-transcript') as HTMLElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
   }
 
   disconnectedCallback() {
@@ -3124,6 +3311,15 @@ export class GdmLiveAudio extends LitElement {
           onmessage: async (message: LiveServerMessage) => {
             const audio =
               message.serverContent?.modelTurn?.parts?.[0]?.inlineData;
+
+            const modelPartText = message.serverContent?.modelTurn?.parts?.find(p => p.text)?.text;
+            if (modelPartText) {
+              this.modelTranscript += modelPartText;
+              this.isModelTyping = true;
+            }
+            if (message.serverContent?.turnComplete) {
+              this.isModelTyping = false;
+            }
 
             if (audio?.data) {
               this.isSpeaking = true;
@@ -4243,6 +4439,19 @@ export class GdmLiveAudio extends LitElement {
     this.showToast('گره ارتباطی ضدتحریم به‌روزرسانی شد ✓');
   }
 
+  private getDisplayedTranscriptText(): string {
+    if (this.isUserSpeaking) {
+      return 'در حال گوش دادن به اظهارات و شرح ماوقع...';
+    }
+    if (this.isSpeaking || this.isModelTyping) {
+      if (this.modelTranscript) {
+        return this.modelTranscript;
+      }
+      return 'سلام! در کنار شما هستم؛ بفرمایید موضوع پرونده یا سوال حقوقی‌تان چیست تا با دقت بررسی و تحلیل نماییم...';
+    }
+    return '';
+  }
+
   private handleToggleDnsBypass(e: Event) {
     e.stopPropagation();
     const newValue = !this.networkState.dnsBypassActive;
@@ -4261,11 +4470,31 @@ export class GdmLiveAudio extends LitElement {
         ?isUserSpeaking=${this.isUserSpeaking}
       ></justice-scale-3d>
 
-      <!-- Corporate Branding: Logo & Subtitle -->
-      <div class="corporate-branding-container" id="legalOfficeSubtitleWrapper">
-        <img src="/logo.png" alt="شرکت توزیع نیروی برق استان ایلام" class="corporate-logo" />
-        <div class="company-sub-title" id="legalOfficeSubtitle">دفتر حقوقی</div>
-      </div>
+      <!-- Middle-Third Transcript & Is-Typing Effect (Borderless, Typewriter Font, Blinking Underline Cursor) -->
+      ${this.isSpeaking || this.isUserSpeaking || this.isModelTyping ? html`
+        <div class="middle-third-transcript">
+          ${this.isModelTyping && !this.modelTranscript ? html`
+            <div class="lawyer-processing-indicator">
+              <span>در حال پردازش پاسخ وکیل...</span>
+              <div class="processing-dots">
+                <span class="processing-dot"></span>
+                <span class="processing-dot"></span>
+                <span class="processing-dot"></span>
+              </div>
+            </div>
+          ` : html`
+            <div class="typewriter-text">
+              ${this.getDisplayedTranscriptText()}
+              <span class="typewriter-cursor"></span>
+            </div>
+            <div class="typing-indicator-badge">
+              ${this.isSpeaking ? '● وکیل در حال بیان پاسخ حقوقی (تایپ زنده)...' : this.isUserSpeaking ? '● در حال شنیدن صحبت‌های شما...' : ''}
+            </div>
+          `}
+        </div>
+      ` : ''}
+
+
 
       <!-- Top Header: Icon-Only Menu Button & Minimalist End Consultation Button -->
       <div class="top-memory-bar">
@@ -4452,16 +4681,10 @@ export class GdmLiveAudio extends LitElement {
             : ''}
         </div>
 
-        <!-- Top Center WAITING STATUS & Mini Equalizer for Waiting Music (Active from second 5 to 7+) -->
+        <!-- Top Center Mini Equalizer for Waiting Music -->
         <div
-          class="top-mini-equalizer ${this.waitingCountdownSec >= 5 || this.isWaitingMusicActive ? 'active' : ''} ${this.waitingCountdownSec >= 5 && !this.isWaitingMusicActive ? 'counting' : ''}"
-          id="topMiniEqualizer"
-          title="${this.isWaitingMusicActive ? 'نوای انتظار در حال پخش است' : this.waitingCountdownSec >= 5 ? `در انتظار (${this.waitingCountdownSec} از ۷ ثانیه)` : ''}">
-          <span class="waiting-status-label">
-            <span class="waiting-dot ${this.isWaitingMusicActive ? 'live' : 'pulse'}"></span>
-            WAITING STATUS ...
-          </span>
-          <span class="waiting-counter-pill">${this.waitingCountdownSec > 0 ? this.waitingCountdownSec : (this.isWaitingMusicActive ? '7' : '')}s</span>
+          class="top-mini-equalizer ${this.waitingCountdownSec >= 5 || this.isWaitingMusicActive ? 'active' : ''}"
+          id="topMiniEqualizer">
           <div class="mini-eq-bars">
             <span class="mini-eq-bar bar-1"></span>
             <span class="mini-eq-bar bar-2"></span>
