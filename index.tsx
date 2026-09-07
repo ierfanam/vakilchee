@@ -49,6 +49,7 @@ import { PERSONA_TONES, PersonaToneConfig, getToneById } from './tone-manager';
 import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './document-upload-manager';
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
 import discordAudioUrl from './discord.mp3';
+import appLogoUrl from './logo.png';
 
 const LAWYER_SYSTEM_INSTRUCTION = `
 شما مشاور و دستیار هوشمند حقوقی، قضایی، اداری و قراردادی در ایران هستید.
@@ -422,67 +423,101 @@ export class GdmLiveAudio extends LitElement {
       pointer-events: none;
     }
 
-    /* Top Corporate Branding - Minimal White 3D */
-    .corporate-branding-container {
+    /* Center Logo - کالبد و لوگوی برنامه و هوش مصنوعی */
+    .center-logo-container {
       position: absolute;
-      top: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 50;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      z-index: 10;
       pointer-events: auto;
-      text-align: center;
-      gap: 16px;
-      background: linear-gradient(145deg, #ffffff, #f1f5f9);
-      padding: 24px 48px;
-      border-radius: 32px;
-      box-shadow: 
-        12px 12px 30px rgba(0, 0, 0, 0.05), 
-        -6px -6px 20px rgba(255, 255, 255, 1),
-        inset 2px 2px 4px rgba(255, 255, 255, 0.8),
-        inset -2px -2px 6px rgba(0, 0, 0, 0.02);
-      border: 1px solid rgba(0, 0, 0, 0.02);
+      cursor: pointer;
     }
 
-    .corporate-logo {
-      width: 120px;
+    .center-logo-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 16px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .center-logo-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0) 70%);
+      opacity: 0.7;
+      transition: all 0.6s ease;
+      z-index: -1;
+    }
+
+    .center-logo-wrapper.speaking {
+      transform: scale(1.05);
+    }
+
+    .center-logo-wrapper.speaking::before {
+      opacity: 1;
+      inset: -40px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, rgba(212, 175, 55, 0.08) 60%, transparent 75%);
+      animation: logoAuraPulse 1.8s infinite ease-in-out;
+    }
+
+    .center-logo-wrapper.listening {
+      transform: scale(1.03);
+    }
+
+    .center-logo-wrapper.listening::before {
+      opacity: 0.95;
+      inset: -32px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(56, 189, 248, 0.05) 60%, transparent 75%);
+      animation: logoAuraPulse 2.2s infinite ease-in-out;
+    }
+
+    .center-logo-wrapper.thinking::before {
+      opacity: 0.9;
+      inset: -32px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, transparent 70%);
+      animation: logoAuraPulse 2.5s infinite ease-in-out;
+    }
+
+    @keyframes logoAuraPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.65;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    .center-logo-img {
+      width: min(340px, 75vw);
       height: auto;
+      max-height: 50vh;
       object-fit: contain;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      border-radius: 24px;
+      filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.08));
+      transition: all 0.4s ease;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
-    .company-sub-title {
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: #334155;
-      letter-spacing: 1px;
-      background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      padding: 8px 32px;
-      border-radius: 24px;
-      background-color: #f8fafc;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      box-shadow: 
-        inset 4px 4px 8px rgba(0, 0, 0, 0.05),
-        inset -2px -2px 4px rgba(255, 255, 255, 1),
-        0 2px 4px rgba(255, 255, 255, 0.5);
+    .center-logo-wrapper:hover .center-logo-img {
+      filter: drop-shadow(0 18px 40px rgba(212, 175, 55, 0.25));
     }
 
     @media (max-width: 768px) {
-      .corporate-branding-container {
-        top: 24px;
-        padding: 16px 32px;
-      }
-      .corporate-logo {
-        width: 90px;
-      }
-      .company-sub-title {
-        font-size: 14px;
-        padding: 6px 20px;
+      .center-logo-img {
+        width: min(280px, 78vw);
+        max-height: 44vh;
       }
     }
 
@@ -3730,16 +3765,40 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 "dadkhast" | "shekayat" | "ezharnameh" | "layehe" | "nameh_edari" | "darkhast_edari" | "etelaieh_hoghooghi" | "shora" | "divan" | "tamin" | "qarardad_solh"
 `;
 
-      const response = await this.client.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: aiPrompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-      });
+      if (!this.client) {
+        this.client = new GoogleGenAI({
+          apiKey: process.env.GEMINI_API_KEY,
+        });
+      }
 
-      const responseText = response.text?.trim() || '';
+      const candidateModels = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
+      let response: any = null;
+      let lastModelError: any = null;
+
+      for (const m of candidateModels) {
+        try {
+          response = await this.client.models.generateContent({
+            model: m,
+            contents: aiPrompt,
+            config: {
+              responseMimeType: 'application/json',
+              temperature: 0.2,
+            },
+          });
+          if (response?.text) {
+            break;
+          }
+        } catch (mErr) {
+          lastModelError = mErr;
+          console.warn(`Model generation with ${m} failed, trying next candidate:`, mErr);
+        }
+      }
+
+      if (!response && lastModelError) {
+        throw lastModelError;
+      }
+
+      const responseText = response?.text?.trim() || '';
       let jsonStr = responseText;
       if (jsonStr.startsWith('```json')) {
         jsonStr = jsonStr.replace(/^```json/, '').replace(/```$/, '').trim();
@@ -4659,46 +4718,16 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
       <!-- Main Screen Background: شرکت توزیع نیروی برق استان ایلام -->
       <div class="main-screen-bg" id="mainScreenBg"></div>
 
-      <!-- 3D Realistic Scale of Justice Background -->
-      <justice-scale-3d
-        ?isSpeaking=${this.isSpeaking}
-        ?isUserSpeaking=${this.isUserSpeaking}
-        .outputNode=${this.outputNode}
-        .inputNode=${this.inputNode}
-      ></justice-scale-3d>
-
-      <!-- Middle-Third Transcript & Is-Typing Effect (Borderless, Typewriter Font, Blinking Underline Cursor) -->
-      ${this.isSpeaking || this.isUserSpeaking || this.isModelTyping ? html`
-        <div class="middle-third-transcript">
-          ${this.isModelTyping && !this.modelTranscript ? html`
-            <div class="lawyer-processing-indicator">
-              <span>در حال پردازش پاسخ وکیل...</span>
-              <div class="processing-dots">
-                <span class="processing-dot"></span>
-                <span class="processing-dot"></span>
-                <span class="processing-dot"></span>
-              </div>
-            </div>
-          ` : html`
-            <div class="typewriter-text">
-              ${this.getDisplayedTranscriptText()}
-              <span class="typewriter-cursor"></span>
-            </div>
-            <div class="typing-indicator-badge">
-              ${this.isSpeaking ? '● وکیل در حال بیان پاسخ حقوقی (تایپ زنده)...' : this.isUserSpeaking ? '● در حال شنیدن صحبت‌های شما...' : ''}
-            </div>
-          `}
+      <!-- Center Logo: کالبد و لوگوی برنامه و هوش مصنوعی (logo.png در وسط صفحه) -->
+      <div class="center-logo-container" id="centerLogoContainer" @click=${this.handleScreenClick} title="کلیک جهت آغاز یا ادامه گفتگو با وکیل">
+        <div class="center-logo-wrapper ${this.isSpeaking ? 'speaking' : this.isUserSpeaking ? 'listening' : this.isModelTyping ? 'thinking' : ''}">
+          <img
+            src="${appLogoUrl}"
+            alt="کالبد و لوگوی برنامه و هوش مصنوعی"
+            class="center-logo-img"
+            id="centerLogoImg"
+          />
         </div>
-      ` : ''}
-
-      <!-- Dynamic Real-time Audio Visualizer (Frequency & Intensity Display) -->
-      <div class="audio-visualizer-container" id="audioVisualizerContainer">
-        <dynamic-audio-visualizer
-          .outputNode=${this.outputNode}
-          .inputNode=${this.inputNode}
-          ?isSpeaking=${this.isSpeaking}
-          ?isUserSpeaking=${this.isUserSpeaking}
-        ></dynamic-audio-visualizer>
       </div>
 
 
@@ -4908,19 +4937,6 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                 </div>
               `
             : ''}
-        </div>
-
-        <!-- Top Center Mini Equalizer for Waiting Music -->
-        <div
-          class="top-mini-equalizer ${this.waitingCountdownSec >= 5 || this.isWaitingMusicActive ? 'active' : ''}"
-          id="topMiniEqualizer">
-          <div class="mini-eq-bars">
-            <span class="mini-eq-bar bar-1"></span>
-            <span class="mini-eq-bar bar-2"></span>
-            <span class="mini-eq-bar bar-3"></span>
-            <span class="mini-eq-bar bar-4"></span>
-            <span class="mini-eq-bar bar-5"></span>
-          </div>
         </div>
 
         <!-- Left side: Minimal 'پایان جلسه' (End Session) / 'شروع مجدد' Button -->
