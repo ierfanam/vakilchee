@@ -7,14 +7,11 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      // A user can only access their own profile document.
       allow read: if signedInAs(userId);
       allow create, update: if signedInAs(userId)
         && request.resource.data.uid == userId;
       allow delete: if signedInAs(userId);
 
-      // Keep the public data model explicit; do not expose arbitrary
-      // user/{uid}/{collection}/{doc} paths to clients.
       match /memories/{docId} {
         allow read: if signedInAs(userId);
         allow create: if signedInAs(userId)
@@ -45,7 +42,7 @@ service cloud.firestore {
         allow delete: if signedInAs(userId) && resource.data.userId == userId;
       }
 
-      match /forms/{docId} {
+      match /judicial_forms/{docId} {
         allow read: if signedInAs(userId);
         allow create: if signedInAs(userId)
           && request.resource.data.userId == userId;
