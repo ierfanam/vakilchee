@@ -1,21 +1,36 @@
+# Dependencies / build output
+node_modules/
+dist/
+dist-ssr/
+.dart_tool/
+build/
+.pub-cache/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+*.local
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
+bun-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Firebase / generated local state
+.firebase/
+firestore-debug.log
+firebase-debug.log
+ui-debug.log
 
-# Editor directories and files
+# IDE / OS
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
