@@ -13,23 +13,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/index.css">
   <script>
-    // The browser never receives the long-lived Gemini API key. The backend
-    // provisions a short-lived Live API token and refreshes it periodically.
     globalThis.__VAKILCHEE_LIVE_TOKEN__ = '';
     globalThis.__VAKILCHEE_TOKEN_READY__ = false;
     globalThis.__VAKILCHEE_REFRESH_TOKEN__ = async function () {
       try {
-        const response = await fetch('/api/live-token', {
-          method: 'GET',
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: { 'Accept': 'application/json' }
-        });
+        const response = await fetch('/api/live-token', {method:'GET', credentials:'same-origin', cache:'no-store', headers:{Accept:'application/json'}});
         if (!response.ok) throw new Error('Live token endpoint returned ' + response.status);
         const data = await response.json();
         if (!data || typeof data.token !== 'string' || !data.token) throw new Error('Invalid live token response');
         globalThis.__VAKILCHEE_LIVE_TOKEN__ = data.token;
         globalThis.__VAKILCHEE_TOKEN_READY__ = true;
+        window.dispatchEvent(new CustomEvent('vakilchee:live-token-ready'));
         return data.token;
       } catch (error) {
         console.warn('[Vakilchee] Live token provisioning deferred:', error);
@@ -43,5 +37,6 @@
 <body>
   <gdm-live-audio></gdm-live-audio>
   <script type="module" src="/index.tsx"></script>
+  <script type="module" src="/productivity-engine.ts"></script>
 </body>
 </html>
