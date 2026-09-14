@@ -103,7 +103,7 @@ class ProxyManager {
           selectedNode: this.state.selectedNode,
           autoBypassEnabled: this.state.autoBypassEnabled,
           dnsBypassActive: this.state.dnsBypassActive,
-        }),
+        })
       );
     } catch {
       // ignore

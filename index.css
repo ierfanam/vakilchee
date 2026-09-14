@@ -1,7 +1,12 @@
 @font-face {
   font-family: 'Hemmat';
-  src: local('Hemmat'), local('B Hemmat'), local('B-Hemmat'), local('BHemmat'),
-       url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Light.woff2') format('woff2');
+  src:
+    local('Hemmat'),
+    local('B Hemmat'),
+    local('B-Hemmat'),
+    local('BHemmat'),
+    url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Light.woff2')
+      format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -9,8 +14,13 @@
 
 @font-face {
   font-family: 'Hemmat';
-  src: local('Hemmat'), local('B Hemmat'), local('B-Hemmat'), local('BHemmat'),
-       url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
+  src:
+    local('Hemmat'),
+    local('B Hemmat'),
+    local('B-Hemmat'),
+    local('BHemmat'),
+    url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2')
+      format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -20,10 +30,18 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Hemmat', 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Hemmat',
+    'Vazirmatn',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;

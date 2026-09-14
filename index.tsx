@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {GoogleGenAI, LiveServerMessage, Modality, Session} from '@google/genai';
-import {LitElement, css, html} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
-import {createBlob, decode, decodeAudioData} from './utils';
+import { GoogleGenAI, LiveServerMessage, Modality, Session } from '@google/genai';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { createBlob, decode, decodeAudioData } from './utils';
 import './visual-3d';
 import './neon-wave-visualizer';
 import './justice-scale-3d';
@@ -46,7 +46,11 @@ import {
   FormTypeOption,
 } from './judicial-form-templates';
 import { PERSONA_TONES, PersonaToneConfig, getToneById } from './tone-manager';
-import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './document-upload-manager';
+import {
+  processLocalDocumentFile,
+  ProcessedDocument,
+  formatFileSize,
+} from './document-upload-manager';
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
 import discordAudioUrl from './discord.mp3';
 import appLogoUrl from './logo.png';
@@ -134,15 +138,28 @@ export class GdmLiveAudio extends LitElement {
   @state() isAuthLoading = true;
   @state() isDossierOpen = false;
   @state() permanentDossierText = '';
-  @state() memoryFacts: Array<{ id: string; key: string; content: string; source?: string; createdAt?: any }> = [];
-  @state() pastSessions: Array<{ id: string; title: string; summary: string; turnsCount?: number; createdAt?: any }> = [];
+  @state() memoryFacts: Array<{
+    id: string;
+    key: string;
+    content: string;
+    source?: string;
+    createdAt?: any;
+  }> = [];
+  @state() pastSessions: Array<{
+    id: string;
+    title: string;
+    summary: string;
+    turnsCount?: number;
+    createdAt?: any;
+  }> = [];
   @state() scannedDocs: StoredDocItem[] = [];
   @state() currentSessionId: string = 'session_' + Date.now();
   @state() copyFeedback = false;
   @state() isSavingMemory = false;
   @state() newMemoryFactInput = '';
   @state() newMemoryKeyInput = 'نکته حقوقی';
-  @state() activeDossierTab: 'summary' | 'facts' | 'sessions' | 'docs' | 'forms' | 'sync' = 'summary';
+  @state() activeDossierTab: 'summary' | 'facts' | 'sessions' | 'docs' | 'forms' | 'sync' =
+    'summary';
 
   // Official Judicial Form & Official Letter Studio State
   @state() isJudicialFormModalOpen = false;
@@ -212,13 +229,25 @@ export class GdmLiveAudio extends LitElement {
 
   static styles = css`
     @keyframes subtleFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
     }
 
     @keyframes blinkUnderline {
-      0%, 100% { opacity: 1; border-bottom-color: #0f172a; }
-      50% { opacity: 0; border-bottom-color: transparent; }
+      0%,
+      100% {
+        opacity: 1;
+        border-bottom-color: #0f172a;
+      }
+      50% {
+        opacity: 0;
+        border-bottom-color: transparent;
+      }
     }
 
     .middle-third-transcript {
@@ -275,8 +304,15 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes subtlePulse {
-      0%, 100% { opacity: 0.4; transform: scale(0.98); }
-      50% { opacity: 1; transform: scale(1); }
+      0%,
+      100% {
+        opacity: 0.4;
+        transform: scale(0.98);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .lawyer-processing-indicator {
@@ -310,22 +346,58 @@ export class GdmLiveAudio extends LitElement {
       animation: dotPulse 1.4s infinite ease-in-out both;
     }
 
-    .processing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .processing-dot:nth-child(2) { animation-delay: -0.16s; }
-    .processing-dot:nth-child(3) { animation-delay: 0s; }
+    .processing-dot:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+    .processing-dot:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+    .processing-dot:nth-child(3) {
+      animation-delay: 0s;
+    }
 
     @keyframes dotPulse {
-      0%, 80%, 100% { transform: scale(0); opacity: 0.2; }
-      40% { transform: scale(1); opacity: 0.9; }
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+        opacity: 0.2;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
     }
 
     /* All buttons, notifications, popups, and items: borderless, transparent, slender typewriter font */
-    button, .lawyer-badge, .memory-status-chip, .camera-error-toast, .form-notification-toast, .menu-dropdown-card, .menu-linear-item, .toast-view-btn, .session-status-banner, .top-menu-trigger-btn, input, textarea, span, div {
+    button,
+    .lawyer-badge,
+    .memory-status-chip,
+    .camera-error-toast,
+    .form-notification-toast,
+    .menu-dropdown-card,
+    .menu-linear-item,
+    .toast-view-btn,
+    .session-status-banner,
+    .top-menu-trigger-btn,
+    input,
+    textarea,
+    span,
+    div {
       font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
       font-weight: 300 !important;
     }
 
-    button, .lawyer-badge, .memory-status-chip, .camera-error-toast, .form-notification-toast, .menu-dropdown-card, .menu-linear-item, .toast-view-btn, .session-status-banner, .top-menu-trigger-btn {
+    button,
+    .lawyer-badge,
+    .memory-status-chip,
+    .camera-error-toast,
+    .form-notification-toast,
+    .menu-dropdown-card,
+    .menu-linear-item,
+    .toast-view-btn,
+    .session-status-banner,
+    .top-menu-trigger-btn {
       background: transparent !important;
       background-color: transparent !important;
       background-image: none !important;
@@ -334,25 +406,34 @@ export class GdmLiveAudio extends LitElement {
     }
 
     /* Popup and notification texts = Black */
-    .form-notification-toast span, .camera-error-toast, .menu-linear-item span, .session-status-banner span, .toast-view-btn {
+    .form-notification-toast span,
+    .camera-error-toast,
+    .menu-linear-item span,
+    .session-status-banner span,
+    .toast-view-btn {
       color: #000000 !important;
       font-family: 'Courier Prime', 'Courier New', monospace, 'Vazirmatn' !important;
     }
 
     /* Start session text = Green */
-    .end-consultation-btn.restart-btn, .end-consultation-btn.restart-btn .end-btn-label, .end-consultation-btn.restart-btn .end-btn-icon {
+    .end-consultation-btn.restart-btn,
+    .end-consultation-btn.restart-btn .end-btn-label,
+    .end-consultation-btn.restart-btn .end-btn-icon {
       color: #16a34a !important;
       fill: #16a34a !important;
     }
 
     /* End session text = Red */
-    .end-consultation-btn:not(.restart-btn), .end-consultation-btn:not(.restart-btn) .end-btn-label, .end-consultation-btn:not(.restart-btn) .end-btn-icon {
+    .end-consultation-btn:not(.restart-btn),
+    .end-consultation-btn:not(.restart-btn) .end-btn-label,
+    .end-consultation-btn:not(.restart-btn) .end-btn-icon {
       color: #dc2626 !important;
       fill: #dc2626 !important;
     }
 
     /* Menu icon = Black */
-    .top-menu-trigger-btn, .top-menu-trigger-btn svg {
+    .top-menu-trigger-btn,
+    .top-menu-trigger-btn svg {
       color: #000000 !important;
       fill: #000000 !important;
     }
@@ -408,7 +489,13 @@ export class GdmLiveAudio extends LitElement {
       background-color: #ffffff;
       cursor: pointer;
       direction: rtl;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family:
+        'Vazirmatn',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        sans-serif;
       user-select: none;
       border: none;
     }
@@ -465,7 +552,12 @@ export class GdmLiveAudio extends LitElement {
     .center-logo-wrapper.speaking::before {
       opacity: 1;
       inset: -40px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, rgba(212, 175, 55, 0.08) 60%, transparent 75%);
+      background: radial-gradient(
+        circle,
+        rgba(212, 175, 55, 0.35) 0%,
+        rgba(212, 175, 55, 0.08) 60%,
+        transparent 75%
+      );
       animation: logoAuraPulse 1.8s infinite ease-in-out;
     }
 
@@ -476,7 +568,12 @@ export class GdmLiveAudio extends LitElement {
     .center-logo-wrapper.listening::before {
       opacity: 0.95;
       inset: -32px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(56, 189, 248, 0.05) 60%, transparent 75%);
+      background: radial-gradient(
+        circle,
+        rgba(56, 189, 248, 0.3) 0%,
+        rgba(56, 189, 248, 0.05) 60%,
+        transparent 75%
+      );
       animation: logoAuraPulse 2.2s infinite ease-in-out;
     }
 
@@ -488,7 +585,8 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes logoAuraPulse {
-      0%, 100% {
+      0%,
+      100% {
         transform: scale(1);
         opacity: 0.65;
       }
@@ -545,8 +643,8 @@ export class GdmLiveAudio extends LitElement {
       align-items: center;
       gap: 12px;
       pointer-events: auto;
-      box-shadow: 
-        8px 8px 20px rgba(0, 0, 0, 0.6), 
+      box-shadow:
+        8px 8px 20px rgba(0, 0, 0, 0.6),
         -4px -4px 12px rgba(255, 255, 255, 0.03),
         inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04),
         inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.5);
@@ -574,8 +672,8 @@ export class GdmLiveAudio extends LitElement {
       font-size: 13px;
       font-weight: 700;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 
-        8px 8px 20px rgba(0, 0, 0, 0.6), 
+      box-shadow:
+        8px 8px 20px rgba(0, 0, 0, 0.6),
         -4px -4px 12px rgba(255, 255, 255, 0.03),
         inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04);
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -585,10 +683,10 @@ export class GdmLiveAudio extends LitElement {
       background: linear-gradient(145deg, #0f172a, #1e293b);
       color: #0ea5e9;
     }
-    
+
     .memory-status-chip:active {
-      box-shadow: 
-        inset 4px 4px 10px rgba(0, 0, 0, 0.6), 
+      box-shadow:
+        inset 4px 4px 10px rgba(0, 0, 0, 0.6),
         inset -2px -2px 6px rgba(255, 255, 255, 0.02);
       transform: scale(0.96);
     }
@@ -598,19 +696,39 @@ export class GdmLiveAudio extends LitElement {
       height: 10px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 12px #10b981, inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 0 12px #10b981,
+        inset 0 2px 4px rgba(255, 255, 255, 0.5);
       animation: pulse-cloud 2s infinite;
     }
 
     @keyframes pulse-cloud {
-      0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #10b981; }
-      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 20px #10b981; }
-      100% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #10b981; }
+      0% {
+        transform: scale(0.9);
+        opacity: 0.8;
+        box-shadow: 0 0 8px #10b981;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+        box-shadow: 0 0 20px #10b981;
+      }
+      100% {
+        transform: scale(0.9);
+        opacity: 0.8;
+        box-shadow: 0 0 8px #10b981;
+      }
     }
 
     /* Global Persian Button Styling - Hemmat Font 12px Slim/Thin */
     button {
-      font-family: 'Hemmat', 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif !important;
+      font-family:
+        'Hemmat',
+        'Vazirmatn',
+        -apple-system,
+        BlinkMacSystemFont,
+        Tahoma,
+        sans-serif !important;
       font-size: 13px !important;
       font-weight: 400 !important;
       letter-spacing: 0.5px !important;
@@ -627,7 +745,7 @@ export class GdmLiveAudio extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 
+      box-shadow:
         0 12px 24px rgba(0, 0, 0, 0.7),
         0 4px 8px rgba(0, 0, 0, 0.5),
         inset 0 4px 8px rgba(0, 0, 0, 0.1),
@@ -668,12 +786,16 @@ export class GdmLiveAudio extends LitElement {
       transform: translateX(-50%) translateY(0) scale(1);
       pointer-events: auto;
       border-color: rgba(0, 242, 254, 0.5);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(0, 242, 254, 0.25);
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        0 0 14px rgba(0, 242, 254, 0.25);
     }
 
     .top-mini-equalizer.counting {
       border-color: rgba(245, 158, 11, 0.55);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), 0 0 12px rgba(245, 158, 11, 0.22);
+      box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.35),
+        0 0 12px rgba(245, 158, 11, 0.22);
     }
 
     .waiting-status-label {
@@ -710,8 +832,14 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes waitingDotPulse {
-      0% { opacity: 0.4; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1.25); }
+      0% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1.25);
+      }
     }
 
     .waiting-counter-pill {
@@ -764,22 +892,51 @@ export class GdmLiveAudio extends LitElement {
       box-shadow: none;
     }
 
-    .top-mini-equalizer.active .bar-1 { animation-delay: 0.08s; animation-duration: 0.75s; background: #00f2fe; }
-    .top-mini-equalizer.active .bar-2 { animation-delay: 0.25s; animation-duration: 0.95s; background: #38bdf8; }
-    .top-mini-equalizer.active .bar-3 { animation-delay: 0.0s; animation-duration: 0.8s; background: #ffd700; }
-    .top-mini-equalizer.active .bar-4 { animation-delay: 0.35s; animation-duration: 1.05s; background: #38bdf8; }
-    .top-mini-equalizer.active .bar-5 { animation-delay: 0.18s; animation-duration: 0.7s; background: #00f2fe; }
+    .top-mini-equalizer.active .bar-1 {
+      animation-delay: 0.08s;
+      animation-duration: 0.75s;
+      background: #00f2fe;
+    }
+    .top-mini-equalizer.active .bar-2 {
+      animation-delay: 0.25s;
+      animation-duration: 0.95s;
+      background: #38bdf8;
+    }
+    .top-mini-equalizer.active .bar-3 {
+      animation-delay: 0s;
+      animation-duration: 0.8s;
+      background: #ffd700;
+    }
+    .top-mini-equalizer.active .bar-4 {
+      animation-delay: 0.35s;
+      animation-duration: 1.05s;
+      background: #38bdf8;
+    }
+    .top-mini-equalizer.active .bar-5 {
+      animation-delay: 0.18s;
+      animation-duration: 0.7s;
+      background: #00f2fe;
+    }
 
     @keyframes miniEqBounce {
-      0% { height: 2.5px; opacity: 0.5; }
-      50% { height: 11px; opacity: 1; }
-      100% { height: 5px; opacity: 0.75; }
+      0% {
+        height: 2.5px;
+        opacity: 0.5;
+      }
+      50% {
+        height: 11px;
+        opacity: 1;
+      }
+      100% {
+        height: 5px;
+        opacity: 0.75;
+      }
     }
 
     .end-consultation-btn:hover {
       background: linear-gradient(145deg, #b91c1c, #7f1d1d);
       color: #fee2e2;
-      box-shadow: 
+      box-shadow:
         0 14px 28px rgba(0, 0, 0, 0.8),
         0 6px 12px rgba(0, 0, 0, 0.6),
         inset 0 4px 8px rgba(255, 255, 255, 0.3),
@@ -788,7 +945,7 @@ export class GdmLiveAudio extends LitElement {
 
     .end-consultation-btn:active {
       transform: translateY(4px);
-      box-shadow: 
+      box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.8),
         inset 0 6px 16px rgba(0, 0, 0, 0.8),
         inset 0 2px 4px rgba(0, 0, 0, 0.9);
@@ -798,7 +955,7 @@ export class GdmLiveAudio extends LitElement {
       background: linear-gradient(145deg, #065f46, #022c22);
       border-color: rgba(0, 0, 0, 0.8);
       color: #a7f3d0;
-      box-shadow: 
+      box-shadow:
         0 12px 24px rgba(0, 0, 0, 0.7),
         0 4px 8px rgba(0, 0, 0, 0.5),
         inset 0 4px 8px rgba(0, 0, 0, 0.08),
@@ -808,7 +965,7 @@ export class GdmLiveAudio extends LitElement {
     .end-consultation-btn.restart-btn:hover {
       background: linear-gradient(145deg, #047857, #064e3b);
       color: #d1fae5;
-      box-shadow: 
+      box-shadow:
         0 14px 28px rgba(0, 0, 0, 0.8),
         0 6px 12px rgba(0, 0, 0, 0.6),
         inset 0 4px 8px rgba(255, 255, 255, 0.25),
@@ -868,8 +1025,8 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 
-        8px 8px 16px rgba(0, 0, 0, 0.6), 
+      box-shadow:
+        8px 8px 16px rgba(0, 0, 0, 0.6),
         -4px -4px 12px rgba(255, 255, 255, 0.03),
         inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04),
         inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.5);
@@ -883,9 +1040,10 @@ export class GdmLiveAudio extends LitElement {
       color: #38bdf8;
     }
 
-    .top-menu-trigger-btn:active, .top-menu-trigger-btn.active {
-      box-shadow: 
-        inset 4px 4px 12px rgba(0, 0, 0, 0.7), 
+    .top-menu-trigger-btn:active,
+    .top-menu-trigger-btn.active {
+      box-shadow:
+        inset 4px 4px 12px rgba(0, 0, 0, 0.7),
         inset -2px -2px 6px rgba(255, 255, 255, 0.02);
       transform: scale(0.95);
       color: #0ea5e9;
@@ -911,8 +1069,8 @@ export class GdmLiveAudio extends LitElement {
       background: #ffffff;
       border: 1px solid rgba(0, 0, 0, 0.8);
       border-radius: 20px;
-      box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.8), 
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.8),
         inset 2px 2px 4px rgba(0, 0, 0, 0.03),
         inset -2px -2px 6px rgba(0, 0, 0, 0.6);
       padding: 12px;
@@ -926,8 +1084,14 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes menuFadeIn {
-      0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* 3D Physical Panel Items */
@@ -952,15 +1116,15 @@ export class GdmLiveAudio extends LitElement {
       box-sizing: border-box;
       white-space: nowrap;
       pointer-events: auto;
-      box-shadow: 
-        4px 4px 10px rgba(0, 0, 0, 0.4), 
+      box-shadow:
+        4px 4px 10px rgba(0, 0, 0, 0.4),
         -2px -2px 6px rgba(255, 255, 255, 0.02),
         inset 1px 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     .menu-linear-item:active {
-      box-shadow: 
-        inset 3px 3px 8px rgba(0, 0, 0, 0.6), 
+      box-shadow:
+        inset 3px 3px 8px rgba(0, 0, 0, 0.6),
         inset -1px -1px 3px rgba(255, 255, 255, 0.02);
       transform: translateY(2px);
     }
@@ -1017,7 +1181,7 @@ export class GdmLiveAudio extends LitElement {
       border-radius: 12px;
       flex-shrink: 0;
       white-space: nowrap;
-      box-shadow: 
+      box-shadow:
         inset 2px 2px 4px rgba(0, 0, 0, 0.4),
         inset -1px -1px 2px rgba(0, 0, 0, 0.03);
       border: 1px solid rgba(0, 0, 0, 0.6);
@@ -1027,7 +1191,7 @@ export class GdmLiveAudio extends LitElement {
       color: #fde047;
       background: linear-gradient(145deg, #422006, #713f12);
       border: 1px solid rgba(0, 0, 0, 0.8);
-      box-shadow: 
+      box-shadow:
         inset 2px 2px 4px rgba(0, 0, 0, 0.6),
         0 2px 4px rgba(234, 179, 8, 0.2);
     }
@@ -1036,7 +1200,7 @@ export class GdmLiveAudio extends LitElement {
       color: #6ee7b7;
       background: linear-gradient(145deg, #064e3b, #022c22);
       border: 1px solid rgba(0, 0, 0, 0.8);
-      box-shadow: 
+      box-shadow:
         inset 2px 2px 4px rgba(0, 0, 0, 0.6),
         0 2px 4px rgba(16, 185, 129, 0.2);
     }
@@ -1081,7 +1245,9 @@ export class GdmLiveAudio extends LitElement {
       font-size: 11.5px;
       font-family: 'Hemmat', 'Vazirmatn', sans-serif;
       z-index: 50;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(245, 158, 11, 0.2);
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(245, 158, 11, 0.2);
       animation: fadeIn 0.3s ease;
       pointer-events: none;
       direction: rtl;
@@ -1104,8 +1270,15 @@ export class GdmLiveAudio extends LitElement {
       height: 10px;
     }
     @keyframes waveAnim {
-      0%, 100% { transform: scaleY(0.4); opacity: 0.6; }
-      50% { transform: scaleY(1.2); opacity: 1; }
+      0%,
+      100% {
+        transform: scaleY(0.4);
+        opacity: 0.6;
+      }
+      50% {
+        transform: scaleY(1.2);
+        opacity: 1;
+      }
     }
 
     .session-status-banner {
@@ -1171,7 +1344,9 @@ export class GdmLiveAudio extends LitElement {
     .tone-modal-card {
       background: #0f1422;
       border: 1px solid rgba(212, 175, 55, 0.45);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(212, 175, 55, 0.2);
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(212, 175, 55, 0.2);
       border-radius: 20px;
       width: 100%;
       max-width: 620px;
@@ -1276,7 +1451,9 @@ export class GdmLiveAudio extends LitElement {
     .proxy-modal-card {
       background: #0f1422;
       border: 1px solid rgba(59, 130, 246, 0.4);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(59, 130, 246, 0.2);
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(59, 130, 246, 0.2);
       border-radius: 20px;
       width: 100%;
       max-width: 620px;
@@ -1492,7 +1669,9 @@ export class GdmLiveAudio extends LitElement {
     .upload-modal-card {
       background: #0f1422;
       border: 1px solid rgba(212, 175, 55, 0.45);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(212, 175, 55, 0.2);
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(212, 175, 55, 0.2);
       border-radius: 20px;
       width: 100%;
       max-width: 680px;
@@ -1520,7 +1699,8 @@ export class GdmLiveAudio extends LitElement {
       margin-bottom: 16px;
     }
 
-    .upload-drop-zone:hover, .upload-drop-zone.drag-over {
+    .upload-drop-zone:hover,
+    .upload-drop-zone.drag-over {
       background: rgba(28, 36, 56, 0.85);
       border-color: #ffd700;
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
@@ -1650,9 +1830,18 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes pulse-camera {
-      0% { transform: scale(0.9); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.8; }
+      0% {
+        transform: scale(0.9);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.3);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.9);
+        opacity: 0.8;
+      }
     }
 
     /* Floating Picture-in-Picture Document Stream Preview */
@@ -1668,7 +1857,9 @@ export class GdmLiveAudio extends LitElement {
       border: 1px solid rgba(212, 175, 55, 0.4);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(212, 175, 55, 0.2);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.65),
+        0 0 20px rgba(212, 175, 55, 0.2);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: auto;
       display: flex;
@@ -1755,10 +1946,26 @@ export class GdmLiveAudio extends LitElement {
       border-style: solid;
     }
 
-    .corner-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
-    .corner-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; }
-    .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; }
-    .corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+    .corner-tl {
+      top: -2px;
+      left: -2px;
+      border-width: 3px 0 0 3px;
+    }
+    .corner-tr {
+      top: -2px;
+      right: -2px;
+      border-width: 3px 3px 0 0;
+    }
+    .corner-bl {
+      bottom: -2px;
+      left: -2px;
+      border-width: 0 0 3px 3px;
+    }
+    .corner-br {
+      bottom: -2px;
+      right: -2px;
+      border-width: 0 3px 3px 0;
+    }
 
     .scanline {
       position: absolute;
@@ -1773,9 +1980,18 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes scan-doc {
-      0% { top: 5%; opacity: 0.2; }
-      50% { top: 90%; opacity: 1; }
-      100% { top: 5%; opacity: 0.2; }
+      0% {
+        top: 5%;
+        opacity: 0.2;
+      }
+      50% {
+        top: 90%;
+        opacity: 1;
+      }
+      100% {
+        top: 5%;
+        opacity: 0.2;
+      }
     }
 
     .pip-footer {
@@ -1843,7 +2059,7 @@ export class GdmLiveAudio extends LitElement {
       font-size: 13px;
       font-weight: 700;
       z-index: 100;
-      box-shadow: 
+      box-shadow:
         0 14px 28px rgba(0, 0, 0, 0.8),
         inset 0 4px 8px rgba(0, 0, 0, 0.1),
         inset 0 -4px 8px rgba(0, 0, 0, 0.6);
@@ -1867,14 +2083,20 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
     .dossier-modal {
       background: #0f1422;
       border: 1px solid rgba(212, 175, 55, 0.4);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.15);
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(212, 175, 55, 0.15);
       border-radius: 20px;
       width: 100%;
       max-width: 640px;
@@ -2084,7 +2306,9 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 18px rgba(212, 175, 55, 0.25);
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.5),
+        0 0 18px rgba(212, 175, 55, 0.25);
       transition: all 0.25s ease;
       font-family: inherit;
     }
@@ -2110,7 +2334,7 @@ export class GdmLiveAudio extends LitElement {
       font-size: 13px;
       font-weight: 700;
       z-index: 55;
-      box-shadow: 
+      box-shadow:
         0 14px 28px rgba(0, 0, 0, 0.8),
         0 0 25px rgba(212, 175, 55, 0.35),
         inset 0 4px 8px rgba(0, 0, 0, 0.1),
@@ -2125,8 +2349,14 @@ export class GdmLiveAudio extends LitElement {
     }
 
     @keyframes slideDownToast {
-      from { transform: translate(-50%, -20px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
+      from {
+        transform: translate(-50%, -20px);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
     }
 
     .toast-view-btn {
@@ -2140,7 +2370,7 @@ export class GdmLiveAudio extends LitElement {
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s ease;
-      box-shadow: 
+      box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.6),
         inset 0 2px 4px rgba(255, 255, 255, 0.6),
         inset 0 -2px 4px rgba(0, 0, 0, 0.2);
@@ -2149,7 +2379,7 @@ export class GdmLiveAudio extends LitElement {
 
     .toast-view-btn:hover {
       background: linear-gradient(145deg, #fef08a, #eab308);
-      box-shadow: 
+      box-shadow:
         0 6px 12px rgba(0, 0, 0, 0.7),
         inset 0 2px 4px rgba(255, 255, 255, 0.8),
         inset 0 -2px 4px rgba(0, 0, 0, 0.2);
@@ -2157,7 +2387,7 @@ export class GdmLiveAudio extends LitElement {
 
     .toast-view-btn:active {
       transform: translateY(2px);
-      box-shadow: 
+      box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.6),
         inset 0 4px 8px rgba(0, 0, 0, 0.4);
     }
@@ -2181,7 +2411,9 @@ export class GdmLiveAudio extends LitElement {
     .judicial-modal {
       background: #0f1422;
       border: 1px solid rgba(212, 175, 55, 0.5);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.2);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(212, 175, 55, 0.2);
       border-radius: 20px;
       width: 100%;
       max-width: 960px;
@@ -2301,14 +2533,22 @@ export class GdmLiveAudio extends LitElement {
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4), 0 0 10px rgba(255, 215, 0, 0.2);
+      box-shadow:
+        0 4px 15px rgba(124, 58, 237, 0.4),
+        0 0 10px rgba(255, 215, 0, 0.2);
       transition: all 0.2s ease;
       animation: pulseGlow 3s infinite alternate;
     }
 
     @keyframes pulseGlow {
-      0% { box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
-      100% { box-shadow: 0 4px 20px rgba(124, 58, 237, 0.6), 0 0 16px rgba(255, 215, 0, 0.35); }
+      0% {
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+      }
+      100% {
+        box-shadow:
+          0 4px 20px rgba(124, 58, 237, 0.6),
+          0 0 16px rgba(255, 215, 0, 0.35);
+      }
     }
 
     .action-btn-ai-draft:hover {
@@ -2400,7 +2640,12 @@ export class GdmLiveAudio extends LitElement {
       padding: 32px 36px;
       border-radius: 4px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
+      font-family:
+        'Vazirmatn',
+        -apple-system,
+        BlinkMacSystemFont,
+        Tahoma,
+        sans-serif;
       position: relative;
       border: 3px double #1e3a8a;
       box-sizing: border-box;
@@ -2460,7 +2705,8 @@ export class GdmLiveAudio extends LitElement {
       font-size: 11px;
     }
 
-    .paper-table th, .paper-table td {
+    .paper-table th,
+    .paper-table td {
       border: 1px solid #334155;
       padding: 6px 8px;
       text-align: right;
@@ -2594,12 +2840,16 @@ export class GdmLiveAudio extends LitElement {
     });
     this.unsubscribers.push(unsubProxy);
     this.startExperience();
-    window.addEventListener('click', this.handleScreenClick, {passive: true});
-    window.addEventListener('touchstart', this.handleScreenClick, {passive: true});
+    window.addEventListener('click', this.handleScreenClick, { passive: true });
+    window.addEventListener('touchstart', this.handleScreenClick, { passive: true });
   }
 
   updated(changedProperties: Map<string, any>) {
-    if (changedProperties.has('modelTranscript') || changedProperties.has('isSpeaking') || changedProperties.has('isUserSpeaking')) {
+    if (
+      changedProperties.has('modelTranscript') ||
+      changedProperties.has('isSpeaking') ||
+      changedProperties.has('isUserSpeaking')
+    ) {
       const container = this.shadowRoot?.querySelector('.middle-third-transcript') as HTMLElement;
       if (container) {
         container.scrollTop = container.scrollHeight;
@@ -2682,7 +2932,7 @@ export class GdmLiveAudio extends LitElement {
         },
         (err) => {
           console.info('Dossier snapshot notice:', err?.message);
-        },
+        }
       );
       this.unsubscribers.push(unsubUser);
     } catch (e) {
@@ -2704,7 +2954,7 @@ export class GdmLiveAudio extends LitElement {
         },
         (err) => {
           console.info('Memories snapshot notice:', err?.message);
-        },
+        }
       );
       this.unsubscribers.push(unsubMem);
     } catch (e) {
@@ -2726,7 +2976,7 @@ export class GdmLiveAudio extends LitElement {
         },
         (err) => {
           console.info('Sessions snapshot notice:', err?.message);
-        },
+        }
       );
       this.unsubscribers.push(unsubSessions);
     } catch (e) {
@@ -2748,7 +2998,7 @@ export class GdmLiveAudio extends LitElement {
         },
         (err) => {
           console.info('Docs snapshot notice:', err?.message);
-        },
+        }
       );
       this.unsubscribers.push(unsubDocs);
     } catch (e) {
@@ -2770,7 +3020,7 @@ export class GdmLiveAudio extends LitElement {
         },
         (err) => {
           console.info('Forms snapshot notice:', err?.message);
-        },
+        }
       );
       this.unsubscribers.push(unsubForms);
     } catch (e) {
@@ -2799,10 +3049,9 @@ export class GdmLiveAudio extends LitElement {
     try {
       const AudioCtx =
         window.AudioContext ||
-        (window as unknown as {webkitAudioContext: typeof AudioContext})
-          .webkitAudioContext;
-      this.inputAudioContext = new AudioCtx({sampleRate: 16000});
-      this.outputAudioContext = new AudioCtx({sampleRate: 24000});
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      this.inputAudioContext = new AudioCtx({ sampleRate: 16000 });
+      this.outputAudioContext = new AudioCtx({ sampleRate: 24000 });
       this.inputNode = this.inputAudioContext.createGain();
       this.outputNode = this.outputAudioContext.createGain();
 
@@ -2949,7 +3198,13 @@ export class GdmLiveAudio extends LitElement {
     if (this.waitingAudioBuffer) return;
 
     // 2. Fetch and decode into WebAudio AudioBuffer with seamless mixing
-    const candidates = ['/discord.mp3', discordAudioUrl, './discord.mp3', 'discord.mp3', '/public/discord.mp3'];
+    const candidates = [
+      '/discord.mp3',
+      discordAudioUrl,
+      './discord.mp3',
+      'discord.mp3',
+      '/public/discord.mp3',
+    ];
     for (const url of candidates) {
       if (!url) continue;
       try {
@@ -2966,7 +3221,10 @@ export class GdmLiveAudio extends LitElement {
               });
             }
             if (rawBuffer) {
-              this.waitingAudioBuffer = this.createSeamlessLoopBuffer(this.outputAudioContext, rawBuffer);
+              this.waitingAudioBuffer = this.createSeamlessLoopBuffer(
+                this.outputAudioContext,
+                rawBuffer
+              );
               break;
             }
           }
@@ -3176,7 +3434,9 @@ export class GdmLiveAudio extends LitElement {
     this.reconnectTimeoutId = window.setTimeout(async () => {
       try {
         if (this.isSessionExplicitlyEnded) return;
-        console.info(`Attempting live session auto-reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+        console.info(
+          `Attempting live session auto-reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`
+        );
         await this.initSession(true);
         if (this.isConnected) {
           this.reconnectAttempts = 0;
@@ -3304,38 +3564,56 @@ export class GdmLiveAudio extends LitElement {
 
     const judicialFormToolDeclaration = {
       name: 'generateJudicialForm',
-      description: 'تنظیم و صدور رسمی برگ پیش‌نویس دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶، لایحه دفاعیه، دادخواست دیوان عدالت یا شورای حل اختلاف، و همچنین نامه‌های رسمی اداری، درخواست‌های سازمانی (اداره کار، تامین اجتماعی، شهرداری، بانک‌ها) و اخطاریه‌های حقوقی با خروجی قابل دانلود PDF و سربرگ معتبر. هرگاه کاربر درخواست تنظیم فرم رسمی یا نامه اداری کرد یا پس از اینکه پیشنهاد دادید و کاربر موافقت کرد، این تابع را صدا بزنید تا فرم رسمی صادر و در صفحه او نمایش داده شود.',
+      description:
+        'تنظیم و صدور رسمی برگ پیش‌نویس دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶، لایحه دفاعیه، دادخواست دیوان عدالت یا شورای حل اختلاف، و همچنین نامه‌های رسمی اداری، درخواست‌های سازمانی (اداره کار، تامین اجتماعی، شهرداری، بانک‌ها) و اخطاریه‌های حقوقی با خروجی قابل دانلود PDF و سربرگ معتبر. هرگاه کاربر درخواست تنظیم فرم رسمی یا نامه اداری کرد یا پس از اینکه پیشنهاد دادید و کاربر موافقت کرد، این تابع را صدا بزنید تا فرم رسمی صادر و در صفحه او نمایش داده شود.',
       parameters: {
         type: 'OBJECT',
         properties: {
           formType: {
             type: 'STRING',
-            description: 'نوع فرم یا نامه: dadkhast (دادخواست حقوقی), shekayat (شکواییه کیفری), ezharnameh (اظهارنامه رسمی), layehe (لایحه دفاعیه), nameh_edari (نامه رسمی اداری و شرکتی), darkhast_edari (درخواست رسمی به اداره کار/بانک/شهرداری), etelaieh_hoghooghi (اخطاریه رسمی حقوقی), shora (شورای حل اختلاف), divan (دیوان عدالت اداری), tamin (تامین خواسته), qarardad_solh (سازش‌نامه و صلح‌نامه)',
+            description:
+              'نوع فرم یا نامه: dadkhast (دادخواست حقوقی), shekayat (شکواییه کیفری), ezharnameh (اظهارنامه رسمی), layehe (لایحه دفاعیه), nameh_edari (نامه رسمی اداری و شرکتی), darkhast_edari (درخواست رسمی به اداره کار/بانک/شهرداری), etelaieh_hoghooghi (اخطاریه رسمی حقوقی), shora (شورای حل اختلاف), divan (دیوان عدالت اداری), tamin (تامین خواسته), qarardad_solh (سازش‌نامه و صلح‌نامه)',
           },
           title: {
             type: 'STRING',
-            description: 'عنوان کامل فرم یا نامه (مثال: برگ دادخواست نخستین به دادگاه عمومی حقوقی تهران یا نامه رسمی به ریاست اداره کار)',
+            description:
+              'عنوان کامل فرم یا نامه (مثال: برگ دادخواست نخستین به دادگاه عمومی حقوقی تهران یا نامه رسمی به ریاست اداره کار)',
           },
           authorityName: {
             type: 'STRING',
-            description: 'نام مرجع قضایی یا سازمان اداری صالح (مثال: دادگاه عمومی حقوقی تهران یا ریاست محترم اداره تعاون، کار و رفاه اجتماعی)',
+            description:
+              'نام مرجع قضایی یا سازمان اداری صالح (مثال: دادگاه عمومی حقوقی تهران یا ریاست محترم اداره تعاون، کار و رفاه اجتماعی)',
           },
           claimantName: { type: 'STRING', description: 'نام خواهان یا شاکی یا فرستنده نامه' },
           claimantFatherName: { type: 'STRING', description: 'نام پدر یا شماره ثبت شرکت' },
           claimantNationalId: { type: 'STRING', description: 'کد ملی یا شناسه ملی فرستنده' },
-          claimantAddress: { type: 'STRING', description: 'نشانی و اقامتگاه قانونی فرستنده/خواهان' },
-          respondentName: { type: 'STRING', description: 'نام خوانده یا مشتکی‌عنه یا مخاطب/گیرنده نامه' },
-          respondentAddress: { type: 'STRING', description: 'نشانی یا اقامتگاه طرف مقابل/سازمان مخاطب' },
+          claimantAddress: {
+            type: 'STRING',
+            description: 'نشانی و اقامتگاه قانونی فرستنده/خواهان',
+          },
+          respondentName: {
+            type: 'STRING',
+            description: 'نام خوانده یا مشتکی‌عنه یا مخاطب/گیرنده نامه',
+          },
+          respondentAddress: {
+            type: 'STRING',
+            description: 'نشانی یا اقامتگاه طرف مقابل/سازمان مخاطب',
+          },
           subject: { type: 'STRING', description: 'موضوع دقیق خواسته، شکایت یا موضوع نامه رسمی' },
           evidences: {
             type: 'ARRAY',
             items: { type: 'STRING' },
-            description: 'فهرست دلایل، پیوست‌ها و منضمات قانونی (اسناد، مدارک، قرارداد، استعلام‌ها)',
+            description:
+              'فهرست دلایل، پیوست‌ها و منضمات قانونی (اسناد، مدارک، قرارداد، استعلام‌ها)',
           },
-          legalBasis: { type: 'STRING', description: 'مستندات قانونی، مواد قوانین یا بخشنامه‌های مربوطه' },
+          legalBasis: {
+            type: 'STRING',
+            description: 'مستندات قانونی، مواد قوانین یا بخشنامه‌های مربوطه',
+          },
           bodyText: {
             type: 'STRING',
-            description: 'متن مشروح، بندبندی‌شده، فصیح و مستدل دادخواست، شکواییه، اظهارنامه، لایحه یا نامه رسمی اداری به قلم وکیل پایه یک دادگستری',
+            description:
+              'متن مشروح، بندبندی‌شده، فصیح و مستدل دادخواست، شکواییه، اظهارنامه، لایحه یا نامه رسمی اداری به قلم وکیل پایه یک دادگستری',
           },
         },
         required: ['formType', 'title', 'authorityName', 'subject', 'bodyText'],
@@ -3344,13 +3622,15 @@ export class GdmLiveAudio extends LitElement {
 
     const requestDocUploadToolDeclaration = {
       name: 'requestDocumentUpload',
-      description: 'درخواست از کاربر برای آپلود و بارگذاری اسناد، قراردادها، چک‌ها، تصاویر مدارک یا اوراق اداری از حافظه سیستم یا گوشی. با صدا زدن این ابزار پنجره انتخاب فایل روی صفحه کاربر به صورت خودکار باز می‌شود.',
+      description:
+        'درخواست از کاربر برای آپلود و بارگذاری اسناد، قراردادها، چک‌ها، تصاویر مدارک یا اوراق اداری از حافظه سیستم یا گوشی. با صدا زدن این ابزار پنجره انتخاب فایل روی صفحه کاربر به صورت خودکار باز می‌شود.',
       parameters: {
         type: 'OBJECT',
         properties: {
           reason: {
             type: 'STRING',
-            description: 'علت و توضیح کوتاه نیاز به بارگذاری سند (مثال: جهت بررسی دقیق‌تر بندهای قرارداد و شروط تعهدآور)',
+            description:
+              'علت و توضیح کوتاه نیاز به بارگذاری سند (مثال: جهت بررسی دقیق‌تر بندهای قرارداد و شروط تعهدآور)',
           },
         },
         required: ['reason'],
@@ -3359,13 +3639,15 @@ export class GdmLiveAudio extends LitElement {
 
     const switchLawyerToneDeclaration = {
       name: 'switchLawyerTone',
-      description: 'تغییر لحن یا لهجه وکیل و مشاور حقوقی بنا به درخواست کاربر (مانند: لحن دوستانه و صمیمی، لحن حقوقی و مقتدر دادگاهی، یا لحن رسمی و آکادمیک).',
+      description:
+        'تغییر لحن یا لهجه وکیل و مشاور حقوقی بنا به درخواست کاربر (مانند: لحن دوستانه و صمیمی، لحن حقوقی و مقتدر دادگاهی، یا لحن رسمی و آکادمیک).',
       parameters: {
         type: 'OBJECT',
         properties: {
           toneId: {
             type: 'STRING',
-            description: 'شناسه لحن جدید: legal_strict (حقوقی و مقتدر), friendly (دوستانه و صمیمی), formal_academic (رسمی و آکادمیک)',
+            description:
+              'شناسه لحن جدید: legal_strict (حقوقی و مقتدر), friendly (دوستانه و صمیمی), formal_academic (رسمی و آکادمیک)',
           },
         },
         required: ['toneId'],
@@ -3374,13 +3656,15 @@ export class GdmLiveAudio extends LitElement {
 
     const saveUserNameToolDeclaration = {
       name: 'saveUserName',
-      description: 'ثبت و ماندگار کردن نام شریف مخاطب در حافظه دائم سیستم. هرگاه در حین مکالمه نام مخاطب را جویا شدید یا مخاطب خودش نام خود را اعلام کرد، فوراً این تابع را صدا بزنید تا نام ایشان در حافظه دائم ذخیره شود و در تمام جلسات آینده همیشه به یاد داشته باشید و ایشان را با نام محترمشان با وقار و صمیمیت صدا بزنید.',
+      description:
+        'ثبت و ماندگار کردن نام شریف مخاطب در حافظه دائم سیستم. هرگاه در حین مکالمه نام مخاطب را جویا شدید یا مخاطب خودش نام خود را اعلام کرد، فوراً این تابع را صدا بزنید تا نام ایشان در حافظه دائم ذخیره شود و در تمام جلسات آینده همیشه به یاد داشته باشید و ایشان را با نام محترمشان با وقار و صمیمیت صدا بزنید.',
       parameters: {
         type: 'OBJECT',
         properties: {
           name: {
             type: 'STRING',
-            description: 'نام و نام خانوادگی یا نام اعلام‌شده توسط مخاطب (مثلاً: عرفان رجب‌زاده یا آقای رجب‌زاده)',
+            description:
+              'نام و نام خانوادگی یا نام اعلام‌شده توسط مخاطب (مثلاً: عرفان رجب‌زاده یا آقای رجب‌زاده)',
           },
         },
         required: ['name'],
@@ -3406,15 +3690,16 @@ export class GdmLiveAudio extends LitElement {
                 this.currentSessionId,
                 'جلسه مشاوره حقوقی زنده',
                 'جلسه فعال در حال برگزاری است.',
-                1,
+                1
               );
             }
           },
           onmessage: async (message: LiveServerMessage) => {
-            const audio =
-              message.serverContent?.modelTurn?.parts?.[0]?.inlineData;
+            const audio = message.serverContent?.modelTurn?.parts?.[0]?.inlineData;
 
-            const modelPartText = message.serverContent?.modelTurn?.parts?.find(p => p.text)?.text;
+            const modelPartText = message.serverContent?.modelTurn?.parts?.find(
+              (p) => p.text
+            )?.text;
             if (modelPartText) {
               this.modelTranscript += modelPartText;
               this.isModelTyping = true;
@@ -3428,14 +3713,14 @@ export class GdmLiveAudio extends LitElement {
               this.notifyConversationActivity();
               this.nextStartTime = Math.max(
                 this.nextStartTime,
-                this.outputAudioContext.currentTime,
+                this.outputAudioContext.currentTime
               );
 
               const audioBuffer = await decodeAudioData(
                 decode(audio.data),
                 this.outputAudioContext,
                 24000,
-                1,
+                1
               );
               const source = this.outputAudioContext.createBufferSource();
               source.buffer = audioBuffer;
@@ -3513,7 +3798,8 @@ export class GdmLiveAudio extends LitElement {
                           response: {
                             output: {
                               success: true,
-                              message: 'پنجره انتخاب و بارگذاری اسناد از حافظه داخلی برای مخاطب گشوده شد.',
+                              message:
+                                'پنجره انتخاب و بارگذاری اسناد از حافظه داخلی برای مخاطب گشوده شد.',
                             },
                           },
                         },
@@ -3618,7 +3904,7 @@ export class GdmLiveAudio extends LitElement {
       filingDate: dateStr,
       branchNumber: 'شعبه صالحه دادگستری',
       claimant: {
-        name: args.claimantName || (this.currentUser?.displayName || 'خواهان (موکل)'),
+        name: args.claimantName || this.currentUser?.displayName || 'خواهان (موکل)',
         fatherName: args.claimantFatherName || 'ثبت در سامانه ثنا',
         nationalId: args.claimantNationalId || 'ثبت در سامانه ثنا',
         job: 'شاغل',
@@ -3637,7 +3923,10 @@ export class GdmLiveAudio extends LitElement {
         licenseNumber: 'پروانه وکالت رسمی دادگستری',
       },
       subject: args.subject || 'خواسته دعوا',
-      evidences: Array.isArray(args.evidences) && args.evidences.length > 0 ? args.evidences : ['مدارک و اسناد پیوست', 'استعلام‌های قانونی'],
+      evidences:
+        Array.isArray(args.evidences) && args.evidences.length > 0
+          ? args.evidences
+          : ['مدارک و اسناد پیوست', 'استعلام‌های قانونی'],
       legalBasis: args.legalBasis || 'مقررات قانون مدنی و قانون آیین دادرسی مدنی',
       bodyText: args.bodyText || '',
     };
@@ -3661,7 +3950,8 @@ export class GdmLiveAudio extends LitElement {
             response: {
               output: {
                 success: true,
-                message: 'برگ رسمی قضایی با موفقیت تنظیم، صادر و در صفحه موکل بارگذاری شد و آماده چاپ و دانلود است.',
+                message:
+                  'برگ رسمی قضایی با موفقیت تنظیم، صادر و در صفحه موکل بارگذاری شد و آماده چاپ و دانلود است.',
               },
             },
           },
@@ -3706,7 +3996,9 @@ export class GdmLiveAudio extends LitElement {
     try {
       this.isGeneratingPDF = true;
       this.showToast('در حال آماده‌سازی و ساخت فایل PDF استاندارد A4...');
-      const targetEl = this.shadowRoot?.querySelector('#officialJudicialPaperDocument') as HTMLElement | null;
+      const targetEl = this.shadowRoot?.querySelector(
+        '#officialJudicialPaperDocument'
+      ) as HTMLElement | null;
       await downloadJudicialPDF(this.activeJudicialForm, targetEl, (msg) => {
         this.showToast(msg);
       });
@@ -3727,8 +4019,10 @@ export class GdmLiveAudio extends LitElement {
       this.showToast('در حال تحلیل گفتگوی جلسه و تنظیم پیش‌نویس رسمی سند/نامه...');
 
       const transcriptText = this.modelTranscript.trim();
-      const factsText = this.memoryFacts.map(f => `${f.key}: ${f.content}`).join('\n');
-      const docsSummary = this.scannedDocs.map(d => `سند: ${d.title} (${d.extractedText?.slice(0, 300) || ''})`).join('\n');
+      const factsText = this.memoryFacts.map((f) => `${f.key}: ${f.content}`).join('\n');
+      const docsSummary = this.scannedDocs
+        .map((d) => `سند: ${d.title} (${d.extractedText?.slice(0, 300) || ''})`)
+        .join('\n');
       const clientName = this.currentUser?.displayName || 'موکل محترم';
 
       const aiPrompt = `شما وکیل پایه یک دادگستری و مشاور ارشد حقوقی مسلط به آیین دادرسی مدنی و کیفری ایران و آیین‌نامه‌ها و مکاتبات اداری کشور هستید.
@@ -3801,7 +4095,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
       const responseText = response?.text?.trim() || '';
       let jsonStr = responseText;
       if (jsonStr.startsWith('```json')) {
-        jsonStr = jsonStr.replace(/^```json/, '').replace(/```$/, '').trim();
+        jsonStr = jsonStr
+          .replace(/^```json/, '')
+          .replace(/```$/, '')
+          .trim();
       } else if (jsonStr.startsWith('```')) {
         jsonStr = jsonStr.replace(/^```/, '').replace(/```$/, '').trim();
       }
@@ -3825,7 +4122,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           address: parsed.respondentAddress || 'نشانی اعلامی',
         },
         subject: parsed.subject || 'مطالبه حقوق قانونی و خسارات وارده',
-        evidences: Array.isArray(parsed.evidences) && parsed.evidences.length > 0 ? parsed.evidences : ['مدارک پیوست پرونده', 'استعلام مراجع ذی‌صلاح'],
+        evidences:
+          Array.isArray(parsed.evidences) && parsed.evidences.length > 0
+            ? parsed.evidences
+            : ['مدارک پیوست پرونده', 'استعلام مراجع ذی‌صلاح'],
         legalBasis: parsed.legalBasis || 'قوانین و مقررات موضوعه کشور',
         bodyText: parsed.bodyText || 'ریاست محترم، احتراماً به استحضار می‌رساند...',
         createdAt: new Date().toISOString(),
@@ -3964,7 +4264,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
         video: false,
       });
     } catch (primaryErr: any) {
-      console.warn('Optimal microphone constraints failed, attempting fallback:', primaryErr?.message || primaryErr);
+      console.warn(
+        'Optimal microphone constraints failed, attempting fallback:',
+        primaryErr?.message || primaryErr
+      );
       // Stage 2: Fallback to basic audio constraints without restrictive ideal options
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -3972,7 +4275,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           video: false,
         });
       } catch (fallbackErr: any) {
-        console.warn('Microphone hardware not found or permission pending:', fallbackErr?.message || fallbackErr);
+        console.warn(
+          'Microphone hardware not found or permission pending:',
+          fallbackErr?.message || fallbackErr
+        );
         return;
       }
     }
@@ -3986,9 +4292,7 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
         await this.inputAudioContext.resume();
       }
 
-      this.sourceNode = this.inputAudioContext.createMediaStreamSource(
-        this.mediaStream,
-      );
+      this.sourceNode = this.inputAudioContext.createMediaStreamSource(this.mediaStream);
 
       // DSP Stage 1: Highpass Filter (85 Hz) to eliminate sub-frequency rumble, AC hum, desk thumps & traffic noise
       const highPassFilter = this.inputAudioContext.createBiquadFilter();
@@ -4027,11 +4331,7 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
       compressor.connect(this.inputNode);
 
       const bufferSize = 2048;
-      this.scriptProcessorNode = this.inputAudioContext.createScriptProcessor(
-        bufferSize,
-        1,
-        1,
-      );
+      this.scriptProcessorNode = this.inputAudioContext.createScriptProcessor(bufferSize, 1, 1);
 
       const currentSampleRate = this.inputAudioContext.sampleRate || 16000;
 
@@ -4096,7 +4396,8 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     this.cameraError = '';
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      this.cameraError = 'مرورگر شما از قابلیت وبکم یا دوربین پشتیبانی نمی‌کند. لطفاً تصویر سند را بارگذاری فرمایید.';
+      this.cameraError =
+        'مرورگر شما از قابلیت وبکم یا دوربین پشتیبانی نمی‌کند. لطفاً تصویر سند را بارگذاری فرمایید.';
       this.showToast(this.cameraError);
       return false;
     }
@@ -4114,7 +4415,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
         audio: false,
       });
     } catch (stage1Err: any) {
-      console.warn('Optimal camera constraints unavailable, attempting fallback:', stage1Err?.message || stage1Err);
+      console.warn(
+        'Optimal camera constraints unavailable, attempting fallback:',
+        stage1Err?.message || stage1Err
+      );
 
       // Stage 2: Fallback to basic facingMode without resolution requirements
       try {
@@ -4125,7 +4429,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           audio: false,
         });
       } catch (stage2Err: any) {
-        console.warn('FacingMode camera constraint unavailable, attempting generic fallback:', stage2Err?.message || stage2Err);
+        console.warn(
+          'FacingMode camera constraint unavailable, attempting generic fallback:',
+          stage2Err?.message || stage2Err
+        );
 
         // Stage 3: Universal fallback to any available video input device
         try {
@@ -4143,16 +4450,19 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
             errMsg.toLowerCase().includes('not found') ||
             errMsg.toLowerCase().includes('device not found')
           ) {
-            this.cameraError = 'دوربین در دستگاه شما یافت نشد. می‌توانید تصویر سند یا مدارک را مستقیماً بارگذاری نمایید.';
+            this.cameraError =
+              'دوربین در دستگاه شما یافت نشد. می‌توانید تصویر سند یا مدارک را مستقیماً بارگذاری نمایید.';
           } else if (
             errName === 'NotAllowedError' ||
             errName === 'PermissionDeniedError' ||
             errMsg.toLowerCase().includes('permission') ||
             errMsg.toLowerCase().includes('denied')
           ) {
-            this.cameraError = 'دسترسی به دوربین در مرورگر تأیید نشد. لطفاً مجوز دوربین را در تنظیمات مرورگر فعال فرمایید.';
+            this.cameraError =
+              'دسترسی به دوربین در مرورگر تأیید نشد. لطفاً مجوز دوربین را در تنظیمات مرورگر فعال فرمایید.';
           } else {
-            this.cameraError = 'امکان فعال‌سازی دوربین در حال حاضر فراهم نشد. لطفاً مدارک را بارگذاری نمایید.';
+            this.cameraError =
+              'امکان فعال‌سازی دوربین در حال حاضر فراهم نشد. لطفاً مدارک را بارگذاری نمایید.';
           }
 
           console.warn('Camera device unavailable notice:', errMsg || errName);
@@ -4187,7 +4497,9 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
         this.initSession().catch((err) => console.warn('Deferred session init:', err));
       }
 
-      this.showToast('دوربین فعال شد؛ سند یا قرارداد را روبروی کادر قرار دهید و روی «اسکن و ارسال به وکیل» کلیک کنید ✓');
+      this.showToast(
+        'دوربین فعال شد؛ سند یا قرارداد را روبروی کادر قرار دهید و روی «اسکن و ارسال به وکیل» کلیک کنید ✓'
+      );
       this.startVideoStreaming();
       return true;
     } catch (err: any) {
@@ -4413,7 +4725,7 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
         this.currentUser.uid,
         this.newMemoryKeyInput.trim() || 'نکته حقوقی موکل',
         this.newMemoryFactInput.trim(),
-        'یادداشت دستی موکل',
+        'یادداشت دستی موکل'
       );
       this.newMemoryFactInput = '';
     } catch (err) {
@@ -4463,7 +4775,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     return getToneById(this.selectedTone).title;
   }
 
-  private async handleSelectTone(toneId: 'legal_strict' | 'friendly' | 'formal_academic', e?: Event) {
+  private async handleSelectTone(
+    toneId: 'legal_strict' | 'friendly' | 'formal_academic',
+    e?: Event
+  ) {
     if (e) e.stopPropagation();
     this.selectedTone = toneId;
     const toneConfig = getToneById(toneId);
@@ -4684,7 +4999,9 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     e.stopPropagation();
     const newValue = !this.networkState.autoBypassEnabled;
     proxyManager.setAutoBypass(newValue);
-    this.showToast(newValue ? 'دورزدن خودکار تحریم و پراکسی هوشمند فعال شد 🛡️' : 'پراکسی خودکار غیرفعال گردید.');
+    this.showToast(
+      newValue ? 'دورزدن خودکار تحریم و پراکسی هوشمند فعال شد 🛡️' : 'پراکسی خودکار غیرفعال گردید.'
+    );
   }
 
   private handleSelectProxyNode(nodeId: string, e: Event) {
@@ -4719,8 +5036,15 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
       <div class="main-screen-bg" id="mainScreenBg"></div>
 
       <!-- Center Logo: کالبد و لوگوی برنامه و هوش مصنوعی (logo.png در وسط صفحه) -->
-      <div class="center-logo-container" id="centerLogoContainer" @click=${this.handleScreenClick} title="کلیک جهت آغاز یا ادامه گفتگو با وکیل">
-        <div class="center-logo-wrapper ${this.isSpeaking ? 'speaking' : this.isUserSpeaking ? 'listening' : this.isModelTyping ? 'thinking' : ''}">
+      <div
+        class="center-logo-container"
+        id="centerLogoContainer"
+        @click=${this.handleScreenClick}
+        title="کلیک جهت آغاز یا ادامه گفتگو با وکیل"
+      >
+        <div
+          class="center-logo-wrapper ${this.isSpeaking ? 'speaking' : this.isUserSpeaking ? 'listening' : this.isModelTyping ? 'thinking' : ''}"
+        >
           <img
             src="${appLogoUrl}"
             alt="کالبد و لوگوی برنامه و هوش مصنوعی"
@@ -4729,8 +5053,6 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           />
         </div>
       </div>
-
-
 
       <!-- Top Header: Icon-Only Menu Button & Minimalist End Consultation Button -->
       <div class="top-memory-bar">
@@ -4742,156 +5064,236 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
               e.stopPropagation();
               this.toggleMainMenu(e);
             }}
-            title="منوی امکانات">
-            <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
-              <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+            title="منوی امکانات"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="22"
+              viewBox="0 -960 960 960"
+              width="22"
+              fill="currentColor"
+            >
+              <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z" />
             </svg>
           </button>
 
-          ${this.isMainMenuOpen
-            ? html`
-                <div
-                  class="main-menu-backdrop"
-                  @click=${(e: Event) => {
+          ${
+            this.isMainMenuOpen
+              ? html`
+                  <div
+                    class="main-menu-backdrop"
+                    @click=${(e: Event) => {
                     e.stopPropagation();
                     this.isMainMenuOpen = false;
-                  }}></div>
-                <div
-                  class="top-menu-dropdown"
-                  id="topMenuDropdown"
-                  @click=${(e: Event) => e.stopPropagation()}>
-                  
-                  <!-- Tone Switcher Linear Option -->
-                  <button
-                    class="menu-linear-item"
-                    id="menuToneBtn"
-                    @click=${(e: Event) => {
+                  }}
+                  ></div>
+                  <div
+                    class="top-menu-dropdown"
+                    id="topMenuDropdown"
+                    @click=${(e: Event) => e.stopPropagation()}
+                  >
+                    <!-- Tone Switcher Linear Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuToneBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openToneModal(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82v560Z"/>
-                        </svg>
-                      </span>
-                      <span class="menu-item-text-label">تنظیم لحن و فصاحت کلام</span>
-                    </div>
-                    <span class="menu-item-mini-badge highlight">${this.getCurrentToneBadge()}</span>
-                  </button>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82v560Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">تنظیم لحن و فصاحت کلام</span>
+                      </div>
+                      <span class="menu-item-mini-badge highlight"
+                        >${this.getCurrentToneBadge()}</span
+                      >
+                    </button>
 
-                  <!-- Document Upload Linear Option -->
-                  <button
-                    class="menu-linear-item"
-                    id="menuUploadBtn"
-                    @click=${(e: Event) => {
+                    <!-- Document Upload Linear Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuUploadBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openUploadModal(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                        </svg>
-                      </span>
-                      <span class="menu-item-text-label">بارگذاری اسناد و مدارک</span>
-                    </div>
-                    <span class="menu-item-mini-badge">${this.scannedDocs.length} سند</span>
-                  </button>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">بارگذاری اسناد و مدارک</span>
+                      </div>
+                      <span class="menu-item-mini-badge">${this.scannedDocs.length} سند</span>
+                    </button>
 
-                  <!-- AI Auto-Draft from Conversation Linear Option -->
-                  <button
-                    class="menu-linear-item"
-                    id="menuAutoDraftBtn"
-                    @click=${(e: Event) => {
+                    <!-- AI Auto-Draft from Conversation Linear Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuAutoDraftBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.handleGenerateDraftFromConversation(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: #a855f7;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                        </svg>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg" style="color: #a855f7;">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label"
+                          >تنظیم هوشمند پیش‌نویس از گفتگو (PDF)</span
+                        >
+                      </div>
+                      <span
+                        class="menu-item-mini-badge highlight"
+                        style="background: rgba(168, 85, 247, 0.2); color: #c084fc;"
+                      >
+                        هوش مصنوعی ✨
                       </span>
-                      <span class="menu-item-text-label">تنظیم هوشمند پیش‌نویس از گفتگو (PDF)</span>
-                    </div>
-                    <span class="menu-item-mini-badge highlight" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">
-                      هوش مصنوعی ✨
-                    </span>
-                  </button>
+                    </button>
 
-                  <!-- Judicial Forms & Official Letters Linear Option -->
-                  <button
-                    class="menu-linear-item"
-                    id="menuJudicialFormBtn"
-                    @click=${(e: Event) => {
+                    <!-- Judicial Forms & Official Letters Linear Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuJudicialFormBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openJudicialFormStudio(undefined, e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: #ffd700;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
-                        </svg>
-                      </span>
-                      <span class="menu-item-text-label">اوراق قضایی و نامه‌های رسمی (PDF)</span>
-                    </div>
-                    <span class="menu-item-mini-badge">${this.judicialFormsList.length} سند</span>
-                  </button>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg" style="color: #ffd700;">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">اوراق قضایی و نامه‌های رسمی (PDF)</span>
+                      </div>
+                      <span class="menu-item-mini-badge">${this.judicialFormsList.length} سند</span>
+                    </button>
 
-                  <!-- Live Camera Linear Option -->
-                  <button
-                    class="menu-linear-item ${this.isCameraActive ? 'active-camera' : ''}"
-                    id="menuCameraBtn"
-                    @click=${(e: Event) => {
+                    <!-- Live Camera Linear Option -->
+                    <button
+                      class="menu-linear-item ${this.isCameraActive ? 'active-camera' : ''}"
+                      id="menuCameraBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.toggleCamera(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: ${this.isCameraActive ? '#10b981' : '#d97706'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Z"/>
-                        </svg>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span
+                          class="menu-item-icon-svg"
+                          style="color: ${this.isCameraActive ? '#10b981' : '#d97706'}"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">اسکن و تحلیل اسناد (دوربین)</span>
+                      </div>
+                      <span
+                        class="menu-item-mini-badge ${this.isCameraActive ? 'highlight-green' : 'highlight'}"
+                      >
+                        ${this.isCameraActive ? '🟢 فعال' : '📸 اسکن زنده'}
                       </span>
-                      <span class="menu-item-text-label">اسکن و تحلیل اسناد (دوربین)</span>
-                    </div>
-                    <span class="menu-item-mini-badge ${this.isCameraActive ? 'highlight-green' : 'highlight'}">
-                      ${this.isCameraActive ? '🟢 فعال' : '📸 اسکن زنده'}
-                    </span>
-                  </button>
+                    </button>
 
-                  <!-- In-App Anti-Sanction Proxy Menu Option -->
-                  <button
-                    class="menu-linear-item ${this.networkState.autoBypassEnabled ? 'active-camera' : ''}"
-                    id="menuProxyBtn"
-                    @click=${(e: Event) => {
+                    <!-- In-App Anti-Sanction Proxy Menu Option -->
+                    <button
+                      class="menu-linear-item ${this.networkState.autoBypassEnabled ? 'active-camera' : ''}"
+                      id="menuProxyBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.openProxyModal(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: ${this.networkState.autoBypassEnabled ? '#10b981' : '#3b82f6'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/>
-                        </svg>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span
+                          class="menu-item-icon-svg"
+                          style="color: ${this.networkState.autoBypassEnabled ? '#10b981' : '#3b82f6'}"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">پراکسی و تونل ضدتحریم هوشمند</span>
+                      </div>
+                      <span
+                        class="menu-item-mini-badge ${this.networkState.autoBypassEnabled ? 'highlight-green' : ''}"
+                      >
+                        ${this.networkState.autoBypassEnabled ? `🛡️ فعال (${this.networkState.latencyMs}ms)` : 'خاموش'}
                       </span>
-                      <span class="menu-item-text-label">پراکسی و تونل ضدتحریم هوشمند</span>
-                    </div>
-                    <span class="menu-item-mini-badge ${this.networkState.autoBypassEnabled ? 'highlight-green' : ''}">
-                      ${this.networkState.autoBypassEnabled ? `🛡️ فعال (${this.networkState.latencyMs}ms)` : 'خاموش'}
-                    </span>
-                  </button>
+                    </button>
 
-                  <!-- Waiting Sound (discord.mp3) Linear Option -->
-                  <button
-                    class="menu-linear-item ${this.waitingMusicEnabled ? 'active-camera' : ''}"
-                    id="menuWaitingMusicBtn"
-                    @click=${(e: Event) => {
+                    <!-- Waiting Sound (discord.mp3) Linear Option -->
+                    <button
+                      class="menu-linear-item ${this.waitingMusicEnabled ? 'active-camera' : ''}"
+                      id="menuWaitingMusicBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.waitingMusicEnabled = !this.waitingMusicEnabled;
                       if (!this.waitingMusicEnabled) {
@@ -4899,903 +5301,1341 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       } else {
                         this.lastConversationActivityTime = Date.now();
                       }
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: ${this.waitingMusicEnabled ? '#f59e0b' : '#64748b'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v440q0 66-47 113t-113 47Z"/>
-                        </svg>
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span
+                          class="menu-item-icon-svg"
+                          style="color: ${this.waitingMusicEnabled ? '#f59e0b' : '#64748b'}"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v440q0 66-47 113t-113 47Z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">نوای انتظار و مکث (discord.mp3)</span>
+                      </div>
+                      <span
+                        class="menu-item-mini-badge ${this.waitingMusicEnabled ? 'highlight' : ''}"
+                      >
+                        ${this.waitingMusicEnabled ? (this.isWaitingMusicActive ? '🎵 در حال پخش' : 'خودکار (>۷ ثانیه)') : 'غیرفعال'}
                       </span>
-                      <span class="menu-item-text-label">نوای انتظار و مکث (discord.mp3)</span>
-                    </div>
-                    <span class="menu-item-mini-badge ${this.waitingMusicEnabled ? 'highlight' : ''}">
-                      ${this.waitingMusicEnabled ? (this.isWaitingMusicActive ? '🎵 در حال پخش' : 'خودکار (>۷ ثانیه)') : 'غیرفعال'}
-                    </span>
-                  </button>
+                    </button>
 
-                  <div style="height: 1px; background: rgba(0, 0, 0, 0.08); margin: 4px 0;"></div>
+                    <div style="height: 1px; background: rgba(0, 0, 0, 0.08); margin: 4px 0;"></div>
 
-                  <!-- End Consultation Inside Menu Option -->
-                  <button
-                    class="menu-linear-item"
-                    id="menuEndConsultationBtn"
-                    @click=${(e: Event) => {
+                    <!-- End Consultation Inside Menu Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuEndConsultationBtn"
+                      @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isMainMenuOpen = false;
                       this.handleEndConsultation(e);
-                    }}>
-                    <div class="menu-item-start">
-                      <span class="menu-item-icon-svg" style="color: #ef4444;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
-                        </svg>
-                      </span>
-                      <span class="menu-item-text-label" style="color: #dc2626; font-weight: 600 !important;">پایان جلسه</span>
-                    </div>
-                    <span class="menu-item-mini-badge" style="color: #dc2626; background: rgba(239, 68, 68, 0.1);">خاتمه</span>
-                  </button>
-                </div>
-              `
-            : ''}
+                    }}
+                    >
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg" style="color: #ef4444;">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"
+                            />
+                          </svg>
+                        </span>
+                        <span
+                          class="menu-item-text-label"
+                          style="color: #dc2626; font-weight: 600 !important;"
+                          >پایان جلسه</span
+                        >
+                      </div>
+                      <span
+                        class="menu-item-mini-badge"
+                        style="color: #dc2626; background: rgba(239, 68, 68, 0.1);"
+                        >خاتمه</span
+                      >
+                    </button>
+                  </div>
+                `
+              : ''
+          }
         </div>
 
         <!-- Left side: Minimal 'پایان جلسه' (End Session) / 'شروع مجدد' Button -->
         <div>
-          ${!this.isSessionExplicitlyEnded && (this.isConnected || this.isListening)
-            ? html`
-                <button
-                  class="end-consultation-btn"
-                  id="endConsultationBtn"
-                  @click=${(e: Event) => {
+          ${
+            !this.isSessionExplicitlyEnded && (this.isConnected || this.isListening)
+              ? html`
+                  <button
+                    class="end-consultation-btn"
+                    id="endConsultationBtn"
+                    @click=${(e: Event) => {
                     e.stopPropagation();
                     this.handleEndConsultation(e);
                   }}
-                  title="پایان فوری و ایمن جلسه">
-                  <span class="end-btn-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
-                      <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
-                    </svg>
-                  </span>
-                  <span class="end-btn-label">پایان جلسه</span>
-                </button>
-              `
-            : html`
-                <button
-                  class="end-consultation-btn restart-btn"
-                  id="restartConsultationBtn"
-                  @click=${(e: Event) => {
+                    title="پایان فوری و ایمن جلسه"
+                  >
+                    <span class="end-btn-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="13"
+                        viewBox="0 -960 960 960"
+                        width="13"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="end-btn-label">پایان جلسه</span>
+                  </button>
+                `
+              : html`
+                  <button
+                    class="end-consultation-btn restart-btn"
+                    id="restartConsultationBtn"
+                    @click=${(e: Event) => {
                     e.stopPropagation();
                     this.handleRestartConsultation(e);
                   }}
-                  title="شروع مجدد گفتگو">
-                  <span class="end-btn-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
-                      <path d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"/>
-                    </svg>
-                  </span>
-                  <span class="end-btn-label">شروع جلسه</span>
-                </button>
-              `}
+                    title="شروع مجدد گفتگو"
+                  >
+                    <span class="end-btn-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="13"
+                        viewBox="0 -960 960 960"
+                        width="13"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="end-btn-label">شروع جلسه</span>
+                  </button>
+                `
+          }
         </div>
       </div>
 
       <!-- Live Session Auto-Recovery Banner -->
-      ${this.isSessionReconnecting
-        ? html`
-            <div class="session-status-banner reconnecting" id="sessionReconnectingBanner">
-              <span class="session-status-spin">⟳</span>
-              <span>در حال برقراری مجدد ارتباط صوتی پایدار...</span>
-            </div>
-          `
-        : this.sessionErrorMessage
-        ? html`
-            <div class="session-status-banner error" id="sessionErrorBanner" @click=${this.handleManualReconnect}>
-              <span>${this.sessionErrorMessage}</span>
-              <button class="session-retry-btn" id="sessionRetryBtn">تلاش مجدد 🔄</button>
-            </div>
-          `
-        : ''}
+      ${
+        this.isSessionReconnecting
+          ? html`
+              <div class="session-status-banner reconnecting" id="sessionReconnectingBanner">
+                <span class="session-status-spin">⟳</span>
+                <span>در حال برقراری مجدد ارتباط صوتی پایدار...</span>
+              </div>
+            `
+          : this.sessionErrorMessage
+            ? html`
+                <div
+                  class="session-status-banner error"
+                  id="sessionErrorBanner"
+                  @click=${this.handleManualReconnect}
+                >
+                  <span>${this.sessionErrorMessage}</span>
+                  <button class="session-retry-btn" id="sessionRetryBtn">تلاش مجدد 🔄</button>
+                </div>
+              `
+            : ''
+      }
 
       <!-- Camera Error Toast -->
-      ${this.cameraError
-        ? html`<div class="camera-error-toast">${this.cameraError}</div>`
-        : ''}
+      ${this.cameraError ? html`<div class="camera-error-toast">${this.cameraError}</div>` : ''}
 
       <!-- Floating PiP Camera Stream for Live Document Examination -->
-      ${this.isCameraActive
-        ? html`
-            <div
-              class="camera-pip-container ${this.isCameraMinimized ? 'minimized' : ''}"
-              @click=${(e: Event) => e.stopPropagation()}>
-              <div class="pip-header">
-                <div class="pip-title-badge">
-                  <div class="pulse-dot"></div>
-                  <span>پخش زنده سند به وکیل</span>
+      ${
+        this.isCameraActive
+          ? html`
+              <div
+                class="camera-pip-container ${this.isCameraMinimized ? 'minimized' : ''}"
+                @click=${(e: Event) => e.stopPropagation()}
+              >
+                <div class="pip-header">
+                  <div class="pip-title-badge">
+                    <div class="pulse-dot"></div>
+                    <span>پخش زنده سند به وکیل</span>
+                  </div>
+                  <div class="pip-actions">
+                    <button class="pip-btn-icon" @click=${this.switchCamera} title="تغییر دوربین">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="16"
+                        viewBox="0 -960 960 960"
+                        width="16"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      class="pip-btn-icon"
+                      @click=${this.toggleMinimizeCamera}
+                      title="${this.isCameraMinimized ? 'بزرگ‌نمایی' : 'کوچک‌نمایی'}"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="16"
+                        viewBox="0 -960 960 960"
+                        width="16"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="${this.isCameraMinimized ? 'M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z' : 'M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z'}"
+                        />
+                      </svg>
+                    </button>
+                    <button class="pip-btn-icon" @click=${this.stopCamera} title="بستن دوربین">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="16"
+                        viewBox="0 -960 960 960"
+                        width="16"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div class="pip-actions">
-                  <button
-                    class="pip-btn-icon"
-                    @click=${this.switchCamera}
-                    title="تغییر دوربین">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                      <path d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"/>
-                    </svg>
-                  </button>
-                  <button
-                    class="pip-btn-icon"
-                    @click=${this.toggleMinimizeCamera}
-                    title="${this.isCameraMinimized ? 'بزرگ‌نمایی' : 'کوچک‌نمایی'}">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                      <path d="${this.isCameraMinimized ? 'M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z' : 'M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z'}"/>
-                    </svg>
-                  </button>
-                  <button
-                    class="pip-btn-icon"
-                    @click=${this.stopCamera}
-                    title="بستن دوربین">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                  </button>
-                </div>
+
+                ${
+                !this.isCameraMinimized
+                  ? html`
+                      <div class="pip-video-wrapper">
+                        <video
+                          id="cameraPreview"
+                          class="pip-video"
+                          autoplay
+                          playsinline
+                          muted
+                        ></video>
+
+                        <!-- Document Alignment Guide Frame -->
+                        <div class="doc-target-frame">
+                          <span class="corner-bracket corner-tl"></span>
+                          <span class="corner-bracket corner-tr"></span>
+                          <span class="corner-bracket corner-bl"></span>
+                          <span class="corner-bracket corner-br"></span>
+                          <div class="scanline"></div>
+                        </div>
+                      </div>
+
+                      <div class="pip-footer">
+                        <button
+                          class="doc-snap-btn"
+                          id="snapScanButton"
+                          @click=${this.triggerDocumentSnapScan}
+                          ?disabled=${this.isSnapScanning}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="15"
+                            viewBox="0 -960 960 960"
+                            width="15"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M480-320q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm0-80q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h160l80-80h160l80 80h160q33 0 56.5 23.5T960-720v480q0 33-23.5 56.5T880-160H160Z"
+                            />
+                          </svg>
+                          <span
+                            >${this.isSnapScanning ? 'در حال بررسی و تحلیل حقوقی سند...' : 'اسکن و ارسال مستقیم به وکیل'}</span
+                          >
+                        </button>
+                        <div class="live-stream-tag">
+                          <span class="stream-indicator"></span>
+                          <span>ارسال و تحلیل بلادرنگ فریم‌ها توسط وکیل هوشمند</span>
+                        </div>
+                      </div>
+                    `
+                  : ''
+              }
               </div>
-
-              ${!this.isCameraMinimized
-                ? html`
-                    <div class="pip-video-wrapper">
-                      <video
-                        id="cameraPreview"
-                        class="pip-video"
-                        autoplay
-                        playsinline
-                        muted></video>
-
-                      <!-- Document Alignment Guide Frame -->
-                      <div class="doc-target-frame">
-                        <span class="corner-bracket corner-tl"></span>
-                        <span class="corner-bracket corner-tr"></span>
-                        <span class="corner-bracket corner-bl"></span>
-                        <span class="corner-bracket corner-br"></span>
-                        <div class="scanline"></div>
-                      </div>
-                    </div>
-
-                    <div class="pip-footer">
-                      <button
-                        class="doc-snap-btn"
-                        id="snapScanButton"
-                        @click=${this.triggerDocumentSnapScan}
-                        ?disabled=${this.isSnapScanning}>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                          <path d="M480-320q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm0-80q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h160l80-80h160l80 80h160q33 0 56.5 23.5T960-720v480q0 33-23.5 56.5T880-160H160Z"/>
-                        </svg>
-                        <span>${this.isSnapScanning ? 'در حال بررسی و تحلیل حقوقی سند...' : 'اسکن و ارسال مستقیم به وکیل'}</span>
-                      </button>
-                      <div class="live-stream-tag">
-                        <span class="stream-indicator"></span>
-                        <span>ارسال و تحلیل بلادرنگ فریم‌ها توسط وکیل هوشمند</span>
-                      </div>
-                    </div>
-                  `
-                : ''}
-            </div>
-          `
-        : ''}
+            `
+          : ''
+      }
 
       <!-- Tone Switcher Modal -->
-      ${this.isToneModalOpen
-        ? html`
-            <div class="tone-modal-backdrop" @click=${this.closeToneModal}>
-              <div class="tone-modal-card" id="toneModalCard" @click=${(e: Event) => e.stopPropagation()}>
-                <div class="tone-modal-header">
-                  <div class="tone-modal-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ffd700">
-                      <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82v560Z"/>
-                    </svg>
-                    <span>تنظیم لحن، فصاحت و استایل گفتار وکیل</span>
+      ${
+        this.isToneModalOpen
+          ? html`
+              <div class="tone-modal-backdrop" @click=${this.closeToneModal}>
+                <div
+                  class="tone-modal-card"
+                  id="toneModalCard"
+                  @click=${(e: Event) => e.stopPropagation()}
+                >
+                  <div class="tone-modal-header">
+                    <div class="tone-modal-title">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="20"
+                        viewBox="0 -960 960 960"
+                        width="20"
+                        fill="#ffd700"
+                      >
+                        <path
+                          d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82v560Z"
+                        />
+                      </svg>
+                      <span>تنظیم لحن، فصاحت و استایل گفتار وکیل</span>
+                    </div>
+                    <button class="pip-btn-icon" @click=${this.closeToneModal} title="بستن">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="18"
+                        viewBox="0 -960 960 960"
+                        width="18"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                        />
+                      </svg>
+                    </button>
                   </div>
-                  <button class="pip-btn-icon" @click=${this.closeToneModal} title="بستن">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
-                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                  </button>
-                </div>
 
-                <div class="tone-options-list">
-                  ${PERSONA_TONES.map(
+                  <div class="tone-options-list">
+                    ${PERSONA_TONES.map(
                     (t) => html`
                       <div
                         class="tone-option-card ${this.selectedTone === t.id ? 'active' : ''}"
-                        @click=${(e: Event) => this.handleSelectTone(t.id as any, e)}>
+                        @click=${(e: Event) => this.handleSelectTone(t.id as any, e)}
+                      >
                         <div class="tone-card-top">
                           <div class="tone-card-title">
                             <span class="tone-badge-icon">${t.icon || '⚖️'}</span>
                             <span>${t.title}</span>
                           </div>
-                          ${this.selectedTone === t.id
-                            ? html`<span class="tone-check-badge">فعال ✓</span>`
-                            : html`<button class="dossier-btn-secondary" style="padding: 4px 10px; font-size: 11px;">انتخاب</button>`}
+                          ${
+                            this.selectedTone === t.id
+                              ? html`<span class="tone-check-badge">فعال ✓</span>`
+                              : html`<button
+                                  class="dossier-btn-secondary"
+                                  style="padding: 4px 10px; font-size: 11px;"
+                                >
+                                  انتخاب
+                                </button>`
+                          }
                         </div>
                         <div class="tone-card-accent">بیان و فصاحت: ${t.accent}</div>
                         <div class="tone-card-desc">${t.description}</div>
                         <div class="tone-card-sample">«${t.samplePhrase}»</div>
                       </div>
-                    `,
+                    `
                   )}
+                  </div>
                 </div>
               </div>
-            </div>
-          `
-        : ''}
+            `
+          : ''
+      }
 
       <!-- Document Upload & Internal Storage Modal -->
-      ${this.isUploadModalOpen
-        ? html`
-            <div class="upload-modal-backdrop" @click=${this.closeUploadModal}>
-              <div class="upload-modal-card" id="uploadModalCard" @click=${(e: Event) => e.stopPropagation()}>
-                <div class="upload-modal-header">
-                  <div class="upload-modal-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ffd700">
-                      <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                    </svg>
-                    <span>بارگذاری اسناد و مدارک</span>
-                  </div>
-                  <button class="pip-btn-icon" @click=${this.closeUploadModal} title="بستن">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
-                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Hidden Input for file selection -->
-                <input
-                  type="file"
-                  id="localFileInput"
-                  multiple
-                  accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp,.bmp"
-                  @change=${this.handleFileInputChange}
-                  style="display: none;" />
-
-                <!-- Drag & Drop Zone -->
+      ${
+        this.isUploadModalOpen
+          ? html`
+              <div class="upload-modal-backdrop" @click=${this.closeUploadModal}>
                 <div
-                  class="upload-drop-zone"
-                  id="uploadDropZone"
-                  @dragover=${this.handleDragOver}
-                  @dragleave=${this.handleDragLeave}
-                  @drop=${this.handleDropFiles}
-                  @click=${this.triggerFileUploadInput}>
-                  <div class="upload-zone-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40" fill="#ffd700">
-                      <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                    </svg>
-                  </div>
-                  <div class="upload-zone-text">فایل‌های مورد نظر را به اینجا بکشید یا برای انتخاب کلیک کنید</div>
-                  <div class="upload-zone-hint">پشتیبانی از اسناد PDF، فایل‌های Word، متون، قراردادها، چک‌ها و تصاویر مدارک</div>
-                  <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 4px;">
-                    <button class="upload-action-btn" @click=${this.triggerFileUploadInput}>
-                      انتخاب فایل از دستگاه
+                  class="upload-modal-card"
+                  id="uploadModalCard"
+                  @click=${(e: Event) => e.stopPropagation()}
+                >
+                  <div class="upload-modal-header">
+                    <div class="upload-modal-title">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="20"
+                        viewBox="0 -960 960 960"
+                        width="20"
+                        fill="#ffd700"
+                      >
+                        <path
+                          d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+                        />
+                      </svg>
+                      <span>بارگذاری اسناد و مدارک</span>
+                    </div>
+                    <button class="pip-btn-icon" @click=${this.closeUploadModal} title="بستن">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="18"
+                        viewBox="0 -960 960 960"
+                        width="18"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                        />
+                      </svg>
                     </button>
-                    <button class="upload-action-btn camera-scan-btn" @click=${(e: Event) => {
+                  </div>
+
+                  <!-- Hidden Input for file selection -->
+                  <input
+                    type="file"
+                    id="localFileInput"
+                    multiple
+                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp,.bmp"
+                    @change=${this.handleFileInputChange}
+                    style="display: none;"
+                  />
+
+                  <!-- Drag & Drop Zone -->
+                  <div
+                    class="upload-drop-zone"
+                    id="uploadDropZone"
+                    @dragover=${this.handleDragOver}
+                    @dragleave=${this.handleDragLeave}
+                    @drop=${this.handleDropFiles}
+                    @click=${this.triggerFileUploadInput}
+                  >
+                    <div class="upload-zone-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="40"
+                        viewBox="0 -960 960 960"
+                        width="40"
+                        fill="#ffd700"
+                      >
+                        <path
+                          d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="upload-zone-text">
+                      فایل‌های مورد نظر را به اینجا بکشید یا برای انتخاب کلیک کنید
+                    </div>
+                    <div class="upload-zone-hint">
+                      پشتیبانی از اسناد PDF، فایل‌های Word، متون، قراردادها، چک‌ها و تصاویر مدارک
+                    </div>
+                    <div
+                      style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 4px;"
+                    >
+                      <button class="upload-action-btn" @click=${this.triggerFileUploadInput}>
+                        انتخاب فایل از دستگاه
+                      </button>
+                      <button
+                        class="upload-action-btn camera-scan-btn"
+                        @click=${(e: Event) => {
                       e.stopPropagation();
                       this.isUploadModalOpen = false;
                       this.startCamera();
-                    }}>
-                      📷 اسکن مستقیم با دوربین
-                    </button>
+                    }}
+                      >
+                        📷 اسکن مستقیم با دوربین
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                ${this.isUploadingFiles
-                  ? html`
-                      <div style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; margin-bottom: 12px;">
-                        ⏳ ${this.uploadStatusMessage || 'در حال بارگذاری و تحلیل اسناد...'}
-                      </div>
-                    `
-                  : ''}
+                  ${
+                  this.isUploadingFiles
+                    ? html`
+                        <div
+                          style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; margin-bottom: 12px;"
+                        >
+                          ⏳ ${this.uploadStatusMessage || 'در حال بارگذاری و تحلیل اسناد...'}
+                        </div>
+                      `
+                    : ''
+                }
 
-                <!-- Stored Documents List -->
-                <div class="upload-history-title">
-                  <span>اسناد و مدارک بارگذاری‌شده (${this.scannedDocs.length})</span>
-                </div>
+                  <!-- Stored Documents List -->
+                  <div class="upload-history-title">
+                    <span>اسناد و مدارک بارگذاری‌شده (${this.scannedDocs.length})</span>
+                  </div>
 
-                <div class="uploaded-docs-list">
-                  ${this.scannedDocs.length === 0
-                    ? html`<div style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;">هنوز فایلی بارگذاری نشده است. اسناد و مدارک خود را آپلود کنید تا وکیل آنها را بررسی کند.</div>`
-                    : this.scannedDocs.map(
-                        (doc) => html`
-                          <div class="doc-item-row">
-                            <div class="doc-item-info">
-                              <div class="doc-item-title">
-                                <span>${doc.fileType === 'pdf' ? '📕' : doc.fileType === 'doc' ? '📘' : doc.fileType === 'image' ? '🖼️' : '📄'}</span>
-                                <span>${doc.title}</span>
+                  <div class="uploaded-docs-list">
+                    ${
+                    this.scannedDocs.length === 0
+                      ? html`<div
+                          style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;"
+                        >
+                          هنوز فایلی بارگذاری نشده است. اسناد و مدارک خود را آپلود کنید تا وکیل آنها
+                          را بررسی کند.
+                        </div>`
+                      : this.scannedDocs.map(
+                          (doc) => html`
+                            <div class="doc-item-row">
+                              <div class="doc-item-info">
+                                <div class="doc-item-title">
+                                  <span
+                                    >${doc.fileType === 'pdf' ? '📕' : doc.fileType === 'doc' ? '📘' : doc.fileType === 'image' ? '🖼️' : '📄'}</span
+                                  >
+                                  <span>${doc.title}</span>
+                                </div>
+                                <div class="doc-item-meta">
+                                  <span>${doc.fileName || 'سند ارائه‌شده'}</span>
+                                  ${doc.fileSize ? html`<span>• ${formatFileSize(doc.fileSize)}</span>` : ''}
+                                </div>
+                                ${
+                                doc.extractedText
+                                  ? html`<div class="doc-item-preview">
+                                      ${doc.extractedText.substring(0, 180)}...
+                                    </div>`
+                                  : ''
+                              }
                               </div>
-                              <div class="doc-item-meta">
-                                <span>${doc.fileName || 'سند ارائه‌شده'}</span>
-                                ${doc.fileSize ? html`<span>• ${formatFileSize(doc.fileSize)}</span>` : ''}
+                              <div class="doc-item-actions">
+                                <button
+                                  class="doc-action-btn primary"
+                                  @click=${(e: Event) => this.handleSendDocToLiveSession(doc, e)}
+                                  title="ارسال مجدد به وکیل جهت تحلیل و بازبینی"
+                                >
+                                  تحویل به وکیل
+                                </button>
+                                <button
+                                  class="doc-action-btn danger"
+                                  @click=${(e: Event) => this.handleDeleteDocItem(doc.id || '', e)}
+                                  title="حذف فایل"
+                                >
+                                  حذف
+                                </button>
                               </div>
-                              ${doc.extractedText
-                                ? html`<div class="doc-item-preview">${doc.extractedText.substring(0, 180)}...</div>`
-                                : ''}
                             </div>
-                            <div class="doc-item-actions">
-                              <button
-                                class="doc-action-btn primary"
-                                @click=${(e: Event) => this.handleSendDocToLiveSession(doc, e)}
-                                title="ارسال مجدد به وکیل جهت تحلیل و بازبینی">
-                                تحویل به وکیل
-                              </button>
-                              <button
-                                class="doc-action-btn danger"
-                                @click=${(e: Event) => this.handleDeleteDocItem(doc.id || '', e)}
-                                title="حذف فایل">
-                                حذف
-                              </button>
-                            </div>
-                          </div>
-                        `,
-                      )}
+                          `
+                        )
+                  }
+                  </div>
                 </div>
               </div>
-            </div>
-          `
-        : ''}
+            `
+          : ''
+      }
 
       <!-- Judicial Form Live Generation Banner Toast -->
-      ${this.formGeneratedNotification
-        ? html`
-            <div
-              class="form-notification-toast"
-              @click=${() => this.openJudicialFormStudio(this.activeJudicialForm)}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ffd700">
-                <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520Z"/>
-              </svg>
-              <span>⚖️ ${this.formGeneratedNotification}</span>
-              <button class="toast-view-btn">مشاهده و دریافت فایل</button>
-            </div>
-          `
-        : ''}
+      ${
+        this.formGeneratedNotification
+          ? html`
+              <div
+                class="form-notification-toast"
+                @click=${() => this.openJudicialFormStudio(this.activeJudicialForm)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20"
+                  viewBox="0 -960 960 960"
+                  width="20"
+                  fill="#ffd700"
+                >
+                  <path
+                    d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520Z"
+                  />
+                </svg>
+                <span>⚖️ ${this.formGeneratedNotification}</span>
+                <button class="toast-view-btn">مشاهده و دریافت فایل</button>
+              </div>
+            `
+          : ''
+      }
 
       <!-- Generic Toast Feedback -->
-      ${this.formFeedbackToast
-        ? html`
-            <div class="form-notification-toast" style="top: auto; bottom: 85px; background: #ffffff;">
-              <span>${this.formFeedbackToast}</span>
-            </div>
-          `
-        : ''}
+      ${
+        this.formFeedbackToast
+          ? html`
+              <div
+                class="form-notification-toast"
+                style="top: auto; bottom: 85px; background: #ffffff;"
+              >
+                <span>${this.formFeedbackToast}</span>
+              </div>
+            `
+          : ''
+      }
 
       <!-- Official Judicial Form Studio Modal -->
-      ${this.isJudicialFormModalOpen && this.activeJudicialForm
-        ? html`
-            <div
-              class="judicial-modal-backdrop"
-              @click=${this.closeJudicialFormStudio}>
-              <div
-                class="judicial-modal"
-                id="judicialFormStudioModal"
-                @click=${(e: Event) => e.stopPropagation()}>
-                
-                <!-- Modal Header -->
-                <div class="judicial-modal-header">
-                  <div class="judicial-modal-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="#ffd700">
-                      <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
-                    </svg>
-                    <span>سامانه تنظیم، پیش‌نویس و صدور اوراق قضایی و نامه‌های رسمی</span>
+      ${
+        this.isJudicialFormModalOpen && this.activeJudicialForm
+          ? html`
+              <div class="judicial-modal-backdrop" @click=${this.closeJudicialFormStudio}>
+                <div
+                  class="judicial-modal"
+                  id="judicialFormStudioModal"
+                  @click=${(e: Event) => e.stopPropagation()}
+                >
+                  <!-- Modal Header -->
+                  <div class="judicial-modal-header">
+                    <div class="judicial-modal-title">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="22"
+                        viewBox="0 -960 960 960"
+                        width="22"
+                        fill="#ffd700"
+                      >
+                        <path
+                          d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                        />
+                      </svg>
+                      <span>سامانه تنظیم، پیش‌نویس و صدور اوراق قضایی و نامه‌های رسمی</span>
+                    </div>
+                    <button
+                      class="pip-btn-icon"
+                      id="closeJudicialStudioBtn"
+                      @click=${this.closeJudicialFormStudio}
+                      title="بستن"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="20"
+                        viewBox="0 -960 960 960"
+                        width="20"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                        />
+                      </svg>
+                    </button>
                   </div>
-                  <button
-                    class="pip-btn-icon"
-                    id="closeJudicialStudioBtn"
-                    @click=${this.closeJudicialFormStudio}
-                    title="بستن">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
-                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                  </button>
-                </div>
 
-                <!-- Template Selector & Action Toolbar -->
-                <div class="judicial-toolbar">
-                  <div class="form-types-scroll">
-                    ${JUDICIAL_FORM_TYPES.map(
+                  <!-- Template Selector & Action Toolbar -->
+                  <div class="judicial-toolbar">
+                    <div class="form-types-scroll">
+                      ${JUDICIAL_FORM_TYPES.map(
                       (t) => html`
                         <button
                           class="form-type-chip ${this.selectedTemplateType === t.id ? 'active' : ''}"
-                          @click=${(e: Event) => this.handleSelectFormType(t.id as any, e)}>
+                          @click=${(e: Event) => this.handleSelectFormType(t.id as any, e)}
+                        >
                           ${t.shortName}
                         </button>
-                      `,
-                    )}
-                  </div>
-
-                  <div class="toolbar-actions">
-                    <!-- AI Auto-Draft from Conversation -->
-                    <button
-                      class="action-btn-ai-draft"
-                      id="studioAutoDraftBtn"
-                      @click=${this.handleGenerateDraftFromConversation}
-                      ?disabled=${this.isGeneratingDraft}
-                      title="تنظیم خودکار متن پیش‌نویس بر اساس آخرین صحبت‌های جلسه مشاوره">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="#ffd700">
-                        <path d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                      </svg>
-                      <span>${this.isGeneratingDraft ? 'در حال تنظیم...' : 'تنظیم از مکالمه ✨'}</span>
-                    </button>
-
-                    <!-- Direct PDF Download Button -->
-                    <button
-                      class="action-btn-pdf"
-                      id="downloadPdfBtn"
-                      @click=${this.handleDownloadPDF}
-                      ?disabled=${this.isGeneratingPDF}
-                      title="ذخیره و دانلود مستقیم سند در قالب فایل استاندارد PDF">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
-                      </svg>
-                      <span>${this.isGeneratingPDF ? 'در حال صدور PDF...' : 'دانلود فایل PDF (A4)'}</span>
-                    </button>
-
-                    <!-- Word Doc Download Button -->
-                    <button
-                      class="action-btn-word"
-                      id="downloadWordDocBtn"
-                      @click=${this.handleDownloadWord}
-                      title="دانلود فایل ویرایش‌پذیر Word با فرمت رسمی">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-280 280ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                      </svg>
-                      <span>دانلود فایل Word (.doc)</span>
-                    </button>
-
-                    <!-- Direct Print -->
-                    <button
-                      class="action-btn-print"
-                      id="printJudicialFormBtn"
-                      @click=${this.handlePrintForm}
-                      title="پیش‌نمایش چاپ پرینتر">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-580H200q-17 0-28.5 11.5T160-540v160h80v-80h480v80h80Z"/>
-                      </svg>
-                      <span>چاپ (Print)</span>
-                    </button>
-
-                    <!-- Copy Text -->
-                    <button
-                      class="action-btn-neutral"
-                      @click=${this.handleCopyForm}
-                      title="کپی متن کامل">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Z"/>
-                      </svg>
-                      <span>کپی متن</span>
-                    </button>
-
-                    <!-- Toggle Edit Mode -->
-                    <button
-                      class="action-btn-neutral"
-                      @click=${() => (this.isFormEditing = !this.isFormEditing)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                        <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                      </svg>
-                      <span>${this.isFormEditing ? 'مشاهده سربرگ رسمی' : 'ویرایش دستی'}</span>
-                    </button>
-
-                    <!-- Cloud Save -->
-                    <button
-                      class="action-btn-neutral"
-                      style="border-color: rgba(212, 175, 55, 0.4); color: #ffd700;"
-                      @click=${this.handleSaveFormRecord}
-                      ?disabled=${this.isSavingForm}>
-                      <span>${this.isSavingForm ? 'در حال ذخیره...' : 'ذخیره در پرونده'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Modal Body: Paper View vs Live Edit Form -->
-                <div class="judicial-modal-body">
-                  ${!this.isFormEditing
-                    ? html`
-                        <!-- Official Parchment Paper Simulation -->
-                        <div class="judicial-paper" id="officialJudicialPaperDocument">
-                          ${['nameh_edari', 'darkhast_edari', 'etelaieh_hoghooghi', 'qarardad_solh'].includes(this.activeJudicialForm.formType)
-                            ? html`
-                                <!-- Formal Administrative Letter Header Layout -->
-                                <div class="paper-header" style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
-                                  <div class="paper-meta-box" style="border: none; background: transparent; padding: 0;">
-                                    <div style="font-size: 11px;"><strong>شماره نامه:</strong> ${this.activeJudicialForm.trackingCode}</div>
-                                    <div style="font-size: 11px;"><strong>تاریخ:</strong> ${this.activeJudicialForm.filingDate}</div>
-                                    <div style="font-size: 11px;"><strong>پیوست:</strong> ${this.activeJudicialForm.evidences.length > 0 ? 'دارد' : 'ندارد'}</div>
-                                  </div>
-
-                                  <div class="paper-emblem">
-                                    <div style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 4px;">« بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ »</div>
-                                    <div class="paper-main-title" style="color: #0f172a; font-size: 16px;">${this.activeJudicialForm.title}</div>
-                                  </div>
-
-                                  <div class="paper-meta-box" style="text-align: center; border: none; background: transparent; min-width: 120px;">
-                                    <div style="font-size: 11px; font-weight: bold; color: #1e3a8a;">جمهوری اسلامی ایران</div>
-                                    <div style="font-size: 9px; color: #64748b; margin-top: 2px;">مکاتبات رسمی و اداری</div>
-                                  </div>
-                                </div>
-
-                                <!-- Letter Recipient -->
-                                <div style="margin-bottom: 12px; padding: 6px 0; font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.8;">
-                                  <div><strong>به:</strong> ${this.activeJudicialForm.authorityName}</div>
-                                  <div><strong>از طرف:</strong> ${this.activeJudicialForm.claimant.name} ${this.activeJudicialForm.claimant.nationalId ? `(کد ملی / شناسه: ${this.activeJudicialForm.claimant.nationalId})` : ''}</div>
-                                  <div style="margin-top: 4px; color: #1e3a8a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;">
-                                    <strong>موضوع:</strong> ${this.activeJudicialForm.subject}
-                                  </div>
-                                </div>
-
-                                <div style="font-size: 13px; font-weight: 700; margin: 8px 0; color: #334155;">
-                                  با سلام و احترام؛
-                                </div>
-
-                                <!-- Letter Body Content -->
-                                <div class="paper-body-box" style="border: none; padding: 6px 0; font-size: 13px; line-height: 2.1; min-height: 200px;">
-${this.activeJudicialForm.bodyText}
-                                </div>
-
-                                <!-- Legal Basis & Attachments if any -->
-                                ${this.activeJudicialForm.legalBasis || (this.activeJudicialForm.evidences && this.activeJudicialForm.evidences.length > 0)
-                                  ? html`
-                                      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; line-height: 1.8;">
-                                        ${this.activeJudicialForm.legalBasis ? html`<div><strong>مستندات قانونی:</strong> ${this.activeJudicialForm.legalBasis}</div>` : ''}
-                                        ${this.activeJudicialForm.evidences && this.activeJudicialForm.evidences.length > 0
-                                          ? html`<div><strong>پیوست‌ها و ضمائم:</strong> ${this.activeJudicialForm.evidences.join(' - ')}</div>`
-                                          : ''}
-                                      </div>
-                                    `
-                                  : ''}
-
-                                <!-- Letter Signatures & Seal Footer -->
-                                <div class="paper-footer-signatures" style="margin-top: 30px;">
-                                  <div class="signature-slot" style="text-align: right; width: 250px;">
-                                    <div style="font-size: 11px; color: #64748b;"><strong>نشانی و اطلاعات تماس فرستنده:</strong></div>
-                                    <div style="font-size: 10px; color: #475569;">${this.activeJudicialForm.claimant.address || 'نشانی اعلامی در مکاتبه'}</div>
-                                  </div>
-
-                                  <div class="signature-slot" style="text-align: center; width: 200px;">
-                                    <div><strong>با تجدید احترام و سپاس</strong></div>
-                                    <div style="margin-top: 6px; font-weight: 800; font-size: 13px; color: #0f172a;">${this.activeJudicialForm.claimant.name}</div>
-                                    <div class="fingerprint-box" style="margin: 8px auto 0; height: 50px; border: 1px dashed #94a3b8; font-size: 10px;">
-                                      محل امضا و مهر
-                                    </div>
-                                  </div>
-                                </div>
-                              `
-                            : html`
-                                <!-- Official Judicial Court Document Layout -->
-                                <div class="paper-header">
-                                  <div class="paper-meta-box">
-                                    <div><strong>شماره پرونده / پیگیری:</strong> ${this.activeJudicialForm.trackingCode}</div>
-                                    <div><strong>تاریخ ثبت:</strong> ${this.activeJudicialForm.filingDate}</div>
-                                    <div><strong>شعبه رسیدگی:</strong> ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}</div>
-                                    <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
-                                  </div>
-
-                                  <div class="paper-emblem">
-                                    <div class="paper-country-title">جمهوری اسلامی ایران</div>
-                                    <div class="paper-main-title">${this.activeJudicialForm.title}</div>
-                                    <div class="paper-authority">${this.activeJudicialForm.authorityName}</div>
-                                  </div>
-
-                                  <div class="paper-meta-box" style="text-align: center;">
-                                    <div style="font-size: 11px; font-weight: bold; color: #1e3a8a;">قوه قضاییه</div>
-                                    <div style="font-size: 9px; color: #64748b; margin-top: 2px;">سامانه خدمات الکترونیک قضایی (عدل ایران)</div>
-                                    <div style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">
-                                      ||||| | |||| ||| ||
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <!-- Parties Information Table -->
-                                <table class="paper-table">
-                                  <tbody>
-                                    <tr>
-                                      <th>خواهان / شاکی / اظهارکننده</th>
-                                      <td colspan="3">
-                                        <strong>${this.activeJudicialForm.claimant.name}</strong> - فرزند: ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'} - کدملی: ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'} - نشانی: ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <th>خوانده / مشتکی‌عنه / مخاطب</th>
-                                      <td colspan="3">
-                                        <strong>${this.activeJudicialForm.respondent.name}</strong> - نشانی: ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <th>وکیل یا نماینده قانونی</th>
-                                      <td colspan="3">
-                                        <strong>${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong> - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <th>تعیین موضوع و خواسته</th>
-                                      <td colspan="3" style="color: #1e3a8a; font-weight: 800;">
-                                        ${this.activeJudicialForm.subject}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <th>دلایل و منضمات قانونی</th>
-                                      <td colspan="3">
-                                        ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-
-                                <!-- Main Text Section -->
-                                <div class="paper-section-title">
-                                  شرح و دلایل دادخواست / شکواییه / لایحه قانونی
-                                </div>
-                                <div class="paper-body-box">
-${this.activeJudicialForm.bodyText}
-                                </div>
-
-                                <!-- Signatures & Official Footer -->
-                                <div class="paper-footer-signatures">
-                                  <div class="signature-slot">
-                                    <div><strong>امضا و اثر انگشت خواهان / شاکی:</strong></div>
-                                    <div class="fingerprint-box">محل اثر انگشت</div>
-                                    <div>${this.activeJudicialForm.claimant.name}</div>
-                                  </div>
-
-                                  <div class="signature-slot" style="font-size: 10px; color: #64748b;">
-                                    <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
-                                    <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                                      تایید اصالت الکترونیک
-                                    </div>
-                                  </div>
-
-                                  <div class="signature-slot">
-                                    <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
-                                    <div style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;">
-                                      امضای الکترونیک وکیل
-                                    </div>
-                                    <div>${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}</div>
-                                  </div>
-                                </div>
-                              `}
-                        </div>
                       `
-                    : html`
-                        <!-- Live Editable Form Grid -->
-                        <div class="edit-mode-container">
-                          <div class="edit-section">
-                            <div class="card-title">
-                              <span>مشخصات سند و مرجع قضایی</span>
-                            </div>
-                            <div class="edit-grid-2">
-                              <div>
-                                <label class="field-label">عنوان رسمی سند</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.title}
-                                  @input=${(e: any) => (this.activeJudicialForm!.title = e.target.value)} />
-                              </div>
-                              <div>
-                                <label class="field-label">مرجع قضایی صالح</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.authorityName}
-                                  @input=${(e: any) => (this.activeJudicialForm!.authorityName = e.target.value)} />
-                              </div>
-                            </div>
-                          </div>
+                    )}
+                    </div>
 
-                          <div class="edit-section">
-                            <div class="card-title">
-                              <span>مشخصات طرفین دعوا</span>
-                            </div>
-                            <div class="edit-grid-2">
-                              <div>
-                                <label class="field-label">نام خواهان / شاکی</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.claimant.name}
-                                  @input=${(e: any) => (this.activeJudicialForm!.claimant.name = e.target.value)} />
-                              </div>
-                              <div>
-                                <label class="field-label">کد ملی خواهان</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.claimant.nationalId || ''}
-                                  @input=${(e: any) => (this.activeJudicialForm!.claimant.nationalId = e.target.value)} />
-                              </div>
-                              <div style="grid-column: span 2;">
-                                <label class="field-label">نشانی و اقامتگاه خواهان</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.claimant.address || ''}
-                                  @input=${(e: any) => (this.activeJudicialForm!.claimant.address = e.target.value)} />
-                              </div>
-                              <div>
-                                <label class="field-label">نام خوانده / مشتکی‌عنه</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.respondent.name}
-                                  @input=${(e: any) => (this.activeJudicialForm!.respondent.name = e.target.value)} />
-                              </div>
-                              <div>
-                                <label class="field-label">نشانی خوانده</label>
-                                <input
-                                  type="text"
-                                  class="edit-input"
-                                  .value=${this.activeJudicialForm.respondent.address || ''}
-                                  @input=${(e: any) => (this.activeJudicialForm!.respondent.address = e.target.value)} />
-                              </div>
-                            </div>
-                          </div>
+                    <div class="toolbar-actions">
+                      <!-- AI Auto-Draft from Conversation -->
+                      <button
+                        class="action-btn-ai-draft"
+                        id="studioAutoDraftBtn"
+                        @click=${this.handleGenerateDraftFromConversation}
+                        ?disabled=${this.isGeneratingDraft}
+                        title="تنظیم خودکار متن پیش‌نویس بر اساس آخرین صحبت‌های جلسه مشاوره"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="15"
+                          viewBox="0 -960 960 960"
+                          width="15"
+                          fill="#ffd700"
+                        >
+                          <path
+                            d="m354-287 126-76 126 77-33-144 111-96-146-13-54-135-54 135-146 13 111 97-34 142ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+                          />
+                        </svg>
+                        <span
+                          >${this.isGeneratingDraft ? 'در حال تنظیم...' : 'تنظیم از مکالمه ✨'}</span
+                        >
+                      </button>
 
-                          <div class="edit-section">
-                            <div class="card-title">
-                              <span>موضوع و خواسته دعوا</span>
-                            </div>
-                            <input
-                              type="text"
-                              class="edit-input"
-                              .value=${this.activeJudicialForm.subject}
-                              @input=${(e: any) => (this.activeJudicialForm!.subject = e.target.value)} />
-                          </div>
+                      <!-- Direct PDF Download Button -->
+                      <button
+                        class="action-btn-pdf"
+                        id="downloadPdfBtn"
+                        @click=${this.handleDownloadPDF}
+                        ?disabled=${this.isGeneratingPDF}
+                        title="ذخیره و دانلود مستقیم سند در قالب فایل استاندارد PDF"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          viewBox="0 -960 960 960"
+                          width="16"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                          />
+                        </svg>
+                        <span
+                          >${this.isGeneratingPDF ? 'در حال صدور PDF...' : 'دانلود فایل PDF (A4)'}</span
+                        >
+                      </button>
 
-                          <div class="edit-section">
-                            <div class="card-title">
-                              <span>شرح مشروح و دفاعیات لایحه / دادخواست</span>
-                            </div>
-                            <textarea
-                              class="edit-input"
-                              rows="12"
-                              style="line-height: 1.8;"
-                              .value=${this.activeJudicialForm.bodyText}
-                              @input=${(e: any) => (this.activeJudicialForm!.bodyText = e.target.value)}></textarea>
-                          </div>
+                      <!-- Word Doc Download Button -->
+                      <button
+                        class="action-btn-word"
+                        id="downloadWordDocBtn"
+                        @click=${this.handleDownloadWord}
+                        title="دانلود فایل ویرایش‌پذیر Word با فرمت رسمی"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          viewBox="0 -960 960 960"
+                          width="16"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-280 280ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+                          />
+                        </svg>
+                        <span>دانلود فایل Word (.doc)</span>
+                      </button>
 
-                          <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                            <button
-                              class="action-btn-print"
-                              @click=${() => (this.isFormEditing = false)}>
-                              اعمال تغییرات و مشاهده در سربرگ رسمی
-                            </button>
+                      <!-- Direct Print -->
+                      <button
+                        class="action-btn-print"
+                        id="printJudicialFormBtn"
+                        @click=${this.handlePrintForm}
+                        title="پیش‌نمایش چاپ پرینتر"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          viewBox="0 -960 960 960"
+                          width="16"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-580H200q-17 0-28.5 11.5T160-540v160h80v-80h480v80h80Z"
+                          />
+                        </svg>
+                        <span>چاپ (Print)</span>
+                      </button>
+
+                      <!-- Copy Text -->
+                      <button
+                        class="action-btn-neutral"
+                        @click=${this.handleCopyForm}
+                        title="کپی متن کامل"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          viewBox="0 -960 960 960"
+                          width="16"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Z"
+                          />
+                        </svg>
+                        <span>کپی متن</span>
+                      </button>
+
+                      <!-- Toggle Edit Mode -->
+                      <button
+                        class="action-btn-neutral"
+                        @click=${() => (this.isFormEditing = !this.isFormEditing)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          viewBox="0 -960 960 960"
+                          width="16"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
+                          />
+                        </svg>
+                        <span>${this.isFormEditing ? 'مشاهده سربرگ رسمی' : 'ویرایش دستی'}</span>
+                      </button>
+
+                      <!-- Cloud Save -->
+                      <button
+                        class="action-btn-neutral"
+                        style="border-color: rgba(212, 175, 55, 0.4); color: #ffd700;"
+                        @click=${this.handleSaveFormRecord}
+                        ?disabled=${this.isSavingForm}
+                      >
+                        <span>${this.isSavingForm ? 'در حال ذخیره...' : 'ذخیره در پرونده'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Modal Body: Paper View vs Live Edit Form -->
+                  <div class="judicial-modal-body">
+                    ${
+                    !this.isFormEditing
+                      ? html`
+                          <!-- Official Parchment Paper Simulation -->
+                          <div class="judicial-paper" id="officialJudicialPaperDocument">
+                            ${
+                            [
+                              'nameh_edari',
+                              'darkhast_edari',
+                              'etelaieh_hoghooghi',
+                              'qarardad_solh',
+                            ].includes(this.activeJudicialForm.formType)
+                              ? html`
+                                  <!-- Formal Administrative Letter Header Layout -->
+                                  <div
+                                    class="paper-header"
+                                    style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;"
+                                  >
+                                    <div
+                                      class="paper-meta-box"
+                                      style="border: none; background: transparent; padding: 0;"
+                                    >
+                                      <div style="font-size: 11px;">
+                                        <strong>شماره نامه:</strong>
+                                        ${this.activeJudicialForm.trackingCode}
+                                      </div>
+                                      <div style="font-size: 11px;">
+                                        <strong>تاریخ:</strong>
+                                        ${this.activeJudicialForm.filingDate}
+                                      </div>
+                                      <div style="font-size: 11px;">
+                                        <strong>پیوست:</strong>
+                                        ${this.activeJudicialForm.evidences.length > 0 ? 'دارد' : 'ندارد'}
+                                      </div>
+                                    </div>
+
+                                    <div class="paper-emblem">
+                                      <div
+                                        style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 4px;"
+                                      >
+                                        « بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ »
+                                      </div>
+                                      <div
+                                        class="paper-main-title"
+                                        style="color: #0f172a; font-size: 16px;"
+                                      >
+                                        ${this.activeJudicialForm.title}
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="paper-meta-box"
+                                      style="text-align: center; border: none; background: transparent; min-width: 120px;"
+                                    >
+                                      <div
+                                        style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
+                                      >
+                                        جمهوری اسلامی ایران
+                                      </div>
+                                      <div style="font-size: 9px; color: #64748b; margin-top: 2px;">
+                                        مکاتبات رسمی و اداری
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Letter Recipient -->
+                                  <div
+                                    style="margin-bottom: 12px; padding: 6px 0; font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.8;"
+                                  >
+                                    <div>
+                                      <strong>به:</strong> ${this.activeJudicialForm.authorityName}
+                                    </div>
+                                    <div>
+                                      <strong>از طرف:</strong>
+                                      ${this.activeJudicialForm.claimant.name}
+                                      ${this.activeJudicialForm.claimant.nationalId ? `(کد ملی / شناسه: ${this.activeJudicialForm.claimant.nationalId})` : ''}
+                                    </div>
+                                    <div
+                                      style="margin-top: 4px; color: #1e3a8a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;"
+                                    >
+                                      <strong>موضوع:</strong> ${this.activeJudicialForm.subject}
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    style="font-size: 13px; font-weight: 700; margin: 8px 0; color: #334155;"
+                                  >
+                                    با سلام و احترام؛
+                                  </div>
+
+                                  <!-- Letter Body Content -->
+                                  <div
+                                    class="paper-body-box"
+                                    style="border: none; padding: 6px 0; font-size: 13px; line-height: 2.1; min-height: 200px;"
+                                  >
+                                    ${this.activeJudicialForm.bodyText}
+                                  </div>
+
+                                  <!-- Legal Basis & Attachments if any -->
+                                  ${
+                                  this.activeJudicialForm.legalBasis ||
+                                  (this.activeJudicialForm.evidences &&
+                                    this.activeJudicialForm.evidences.length > 0)
+                                    ? html`
+                                        <div
+                                          style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; line-height: 1.8;"
+                                        >
+                                          ${this.activeJudicialForm.legalBasis ? html`<div><strong>مستندات قانونی:</strong> ${this.activeJudicialForm.legalBasis}</div>` : ''}
+                                          ${
+                                          this.activeJudicialForm.evidences &&
+                                          this.activeJudicialForm.evidences.length > 0
+                                            ? html`<div>
+                                                <strong>پیوست‌ها و ضمائم:</strong>
+                                                ${this.activeJudicialForm.evidences.join(' - ')}
+                                              </div>`
+                                            : ''
+                                        }
+                                        </div>
+                                      `
+                                    : ''
+                                }
+
+                                  <!-- Letter Signatures & Seal Footer -->
+                                  <div class="paper-footer-signatures" style="margin-top: 30px;">
+                                    <div
+                                      class="signature-slot"
+                                      style="text-align: right; width: 250px;"
+                                    >
+                                      <div style="font-size: 11px; color: #64748b;">
+                                        <strong>نشانی و اطلاعات تماس فرستنده:</strong>
+                                      </div>
+                                      <div style="font-size: 10px; color: #475569;">
+                                        ${this.activeJudicialForm.claimant.address || 'نشانی اعلامی در مکاتبه'}
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="signature-slot"
+                                      style="text-align: center; width: 200px;"
+                                    >
+                                      <div><strong>با تجدید احترام و سپاس</strong></div>
+                                      <div
+                                        style="margin-top: 6px; font-weight: 800; font-size: 13px; color: #0f172a;"
+                                      >
+                                        ${this.activeJudicialForm.claimant.name}
+                                      </div>
+                                      <div
+                                        class="fingerprint-box"
+                                        style="margin: 8px auto 0; height: 50px; border: 1px dashed #94a3b8; font-size: 10px;"
+                                      >
+                                        محل امضا و مهر
+                                      </div>
+                                    </div>
+                                  </div>
+                                `
+                              : html`
+                                  <!-- Official Judicial Court Document Layout -->
+                                  <div class="paper-header">
+                                    <div class="paper-meta-box">
+                                      <div>
+                                        <strong>شماره پرونده / پیگیری:</strong>
+                                        ${this.activeJudicialForm.trackingCode}
+                                      </div>
+                                      <div>
+                                        <strong>تاریخ ثبت:</strong>
+                                        ${this.activeJudicialForm.filingDate}
+                                      </div>
+                                      <div>
+                                        <strong>شعبه رسیدگی:</strong>
+                                        ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}
+                                      </div>
+                                      <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
+                                    </div>
+
+                                    <div class="paper-emblem">
+                                      <div class="paper-country-title">جمهوری اسلامی ایران</div>
+                                      <div class="paper-main-title">
+                                        ${this.activeJudicialForm.title}
+                                      </div>
+                                      <div class="paper-authority">
+                                        ${this.activeJudicialForm.authorityName}
+                                      </div>
+                                    </div>
+
+                                    <div class="paper-meta-box" style="text-align: center;">
+                                      <div
+                                        style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
+                                      >
+                                        قوه قضاییه
+                                      </div>
+                                      <div style="font-size: 9px; color: #64748b; margin-top: 2px;">
+                                        سامانه خدمات الکترونیک قضایی (عدل ایران)
+                                      </div>
+                                      <div
+                                        style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;"
+                                      >
+                                        ||||| | |||| ||| ||
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Parties Information Table -->
+                                  <table class="paper-table">
+                                    <tbody>
+                                      <tr>
+                                        <th>خواهان / شاکی / اظهارکننده</th>
+                                        <td colspan="3">
+                                          <strong>${this.activeJudicialForm.claimant.name}</strong>
+                                          - فرزند:
+                                          ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'}
+                                          - کدملی:
+                                          ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'}
+                                          - نشانی:
+                                          ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th>خوانده / مشتکی‌عنه / مخاطب</th>
+                                        <td colspan="3">
+                                          <strong
+                                            >${this.activeJudicialForm.respondent.name}</strong
+                                          >
+                                          - نشانی:
+                                          ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th>وکیل یا نماینده قانونی</th>
+                                        <td colspan="3">
+                                          <strong
+                                            >${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong
+                                          >
+                                          - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th>تعیین موضوع و خواسته</th>
+                                        <td colspan="3" style="color: #1e3a8a; font-weight: 800;">
+                                          ${this.activeJudicialForm.subject}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th>دلایل و منضمات قانونی</th>
+                                        <td colspan="3">
+                                          ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+
+                                  <!-- Main Text Section -->
+                                  <div class="paper-section-title">
+                                    شرح و دلایل دادخواست / شکواییه / لایحه قانونی
+                                  </div>
+                                  <div class="paper-body-box">
+                                    ${this.activeJudicialForm.bodyText}
+                                  </div>
+
+                                  <!-- Signatures & Official Footer -->
+                                  <div class="paper-footer-signatures">
+                                    <div class="signature-slot">
+                                      <div><strong>امضا و اثر انگشت خواهان / شاکی:</strong></div>
+                                      <div class="fingerprint-box">محل اثر انگشت</div>
+                                      <div>${this.activeJudicialForm.claimant.name}</div>
+                                    </div>
+
+                                    <div
+                                      class="signature-slot"
+                                      style="font-size: 10px; color: #64748b;"
+                                    >
+                                      <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
+                                      <div
+                                        style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;"
+                                      >
+                                        تایید اصالت الکترونیک
+                                      </div>
+                                    </div>
+
+                                    <div class="signature-slot">
+                                      <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
+                                      <div
+                                        style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;"
+                                      >
+                                        امضای الکترونیک وکیل
+                                      </div>
+                                      <div>
+                                        ${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                `
+                          }
                           </div>
-                        </div>
-                      `}
+                        `
+                      : html`
+                          <!-- Live Editable Form Grid -->
+                          <div class="edit-mode-container">
+                            <div class="edit-section">
+                              <div class="card-title">
+                                <span>مشخصات سند و مرجع قضایی</span>
+                              </div>
+                              <div class="edit-grid-2">
+                                <div>
+                                  <label class="field-label">عنوان رسمی سند</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.title}
+                                    @input=${(e: any) => (this.activeJudicialForm!.title = e.target.value)}
+                                  />
+                                </div>
+                                <div>
+                                  <label class="field-label">مرجع قضایی صالح</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.authorityName}
+                                    @input=${(e: any) => (this.activeJudicialForm!.authorityName = e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="edit-section">
+                              <div class="card-title">
+                                <span>مشخصات طرفین دعوا</span>
+                              </div>
+                              <div class="edit-grid-2">
+                                <div>
+                                  <label class="field-label">نام خواهان / شاکی</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.claimant.name}
+                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.name = e.target.value)}
+                                  />
+                                </div>
+                                <div>
+                                  <label class="field-label">کد ملی خواهان</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.claimant.nationalId || ''}
+                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.nationalId = e.target.value)}
+                                  />
+                                </div>
+                                <div style="grid-column: span 2;">
+                                  <label class="field-label">نشانی و اقامتگاه خواهان</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.claimant.address || ''}
+                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.address = e.target.value)}
+                                  />
+                                </div>
+                                <div>
+                                  <label class="field-label">نام خوانده / مشتکی‌عنه</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.respondent.name}
+                                    @input=${(e: any) => (this.activeJudicialForm!.respondent.name = e.target.value)}
+                                  />
+                                </div>
+                                <div>
+                                  <label class="field-label">نشانی خوانده</label>
+                                  <input
+                                    type="text"
+                                    class="edit-input"
+                                    .value=${this.activeJudicialForm.respondent.address || ''}
+                                    @input=${(e: any) => (this.activeJudicialForm!.respondent.address = e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="edit-section">
+                              <div class="card-title">
+                                <span>موضوع و خواسته دعوا</span>
+                              </div>
+                              <input
+                                type="text"
+                                class="edit-input"
+                                .value=${this.activeJudicialForm.subject}
+                                @input=${(e: any) => (this.activeJudicialForm!.subject = e.target.value)}
+                              />
+                            </div>
+
+                            <div class="edit-section">
+                              <div class="card-title">
+                                <span>شرح مشروح و دفاعیات لایحه / دادخواست</span>
+                              </div>
+                              <textarea
+                                class="edit-input"
+                                rows="12"
+                                style="line-height: 1.8;"
+                                .value=${this.activeJudicialForm.bodyText}
+                                @input=${(e: any) => (this.activeJudicialForm!.bodyText = e.target.value)}
+                              ></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                              <button
+                                class="action-btn-print"
+                                @click=${() => (this.isFormEditing = false)}
+                              >
+                                اعمال تغییرات و مشاهده در سربرگ رسمی
+                              </button>
+                            </div>
+                          </div>
+                        `
+                  }
+                  </div>
                 </div>
               </div>
-            </div>
-          `
-        : ''}
+            `
+          : ''
+      }
 
       <!-- In-App Anti-Sanction Proxy & Network Center Modal -->
-      ${this.isProxyModalOpen
-        ? html`
-            <div
-              class="modal-backdrop-global"
-              id="proxyModalBackdrop"
-              @click=${this.closeProxyModal}>
+      ${
+        this.isProxyModalOpen
+          ? html`
               <div
-                class="proxy-modal-card"
-                id="proxyModalCard"
-                @click=${(e: Event) => e.stopPropagation()}>
-                <!-- Modal Header -->
-                <div class="modal-top-header">
-                  <div class="modal-header-title">
-                    <span class="modal-header-icon" style="color: #60a5fa;">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
-                        <path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/>
+                class="modal-backdrop-global"
+                id="proxyModalBackdrop"
+                @click=${this.closeProxyModal}
+              >
+                <div
+                  class="proxy-modal-card"
+                  id="proxyModalCard"
+                  @click=${(e: Event) => e.stopPropagation()}
+                >
+                  <!-- Modal Header -->
+                  <div class="modal-top-header">
+                    <div class="modal-header-title">
+                      <span class="modal-header-icon" style="color: #60a5fa;">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="20"
+                          viewBox="0 -960 960 960"
+                          width="20"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"
+                          />
+                        </svg>
+                      </span>
+                      <span>پراکسی و تونل ارتباطی ضدتحریم هوشمند</span>
+                    </div>
+                    <button class="modal-close-btn" @click=${this.closeProxyModal} title="بستن">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="18"
+                        viewBox="0 -960 960 960"
+                        width="18"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                        />
                       </svg>
-                    </span>
-                    <span>پراکسی و تونل ارتباطی ضدتحریم هوشمند</span>
-                  </div>
-                  <button
-                    class="modal-close-btn"
-                    @click=${this.closeProxyModal}
-                    title="بستن">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
-                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="modal-scroll-body">
-                  <!-- Live Status Banner -->
-                  <div class="proxy-status-banner ${this.isTestingProxy ? 'testing' : ''}">
-                    <div class="proxy-banner-info">
-                      <div class="proxy-banner-title ${this.isTestingProxy ? 'blue' : ''}">
-                        ${this.isTestingProxy
-                          ? html`<span>⏳ در حال سنجش پایداری و تاخیر گره‌های شبکه...</span>`
-                          : html`
-                              <span>🛡️ وضعیت ارتباط: پایدار و ضدتحریم فعال</span>
-                            `}
-                      </div>
-                      <div class="proxy-banner-sub">
-                        ${this.networkState.activeTunnelName} — اتصال امن صوتی و تصویری بدون قطعی
-                      </div>
-                    </div>
-                    <button
-                      class="upload-action-btn"
-                      style="padding: 6px 12px; font-size: 11px;"
-                      @click=${this.handleTestProxyConnection}
-                      ?disabled=${this.isTestingProxy}>
-                      ${this.isTestingProxy ? 'در حال تست...' : 'تست مجدد پینگ ⚡'}
                     </button>
                   </div>
 
-                  <!-- Metrics Row -->
-                  <div class="proxy-metric-pills">
-                    <div class="proxy-metric-pill">
-                      <span class="proxy-metric-label">تاخیر لحظه‌ای (Latency)</span>
-                      <span class="proxy-metric-value" style="color: #34d399;">
-                        ${this.networkState.latencyMs} میلی‌ثانیه
-                      </span>
+                  <!-- Modal Body -->
+                  <div class="modal-scroll-body">
+                    <!-- Live Status Banner -->
+                    <div class="proxy-status-banner ${this.isTestingProxy ? 'testing' : ''}">
+                      <div class="proxy-banner-info">
+                        <div class="proxy-banner-title ${this.isTestingProxy ? 'blue' : ''}">
+                          ${
+                          this.isTestingProxy
+                            ? html`<span>⏳ در حال سنجش پایداری و تاخیر گره‌های شبکه...</span>`
+                            : html` <span>🛡️ وضعیت ارتباط: پایدار و ضدتحریم فعال</span> `
+                        }
+                        </div>
+                        <div class="proxy-banner-sub">
+                          ${this.networkState.activeTunnelName} — اتصال امن صوتی و تصویری بدون قطعی
+                        </div>
+                      </div>
+                      <button
+                        class="upload-action-btn"
+                        style="padding: 6px 12px; font-size: 11px;"
+                        @click=${this.handleTestProxyConnection}
+                        ?disabled=${this.isTestingProxy}
+                      >
+                        ${this.isTestingProxy ? 'در حال تست...' : 'تست مجدد پینگ ⚡'}
+                      </button>
                     </div>
-                    <div class="proxy-metric-pill">
-                      <span class="proxy-metric-label">تشخیص جغرافیایی مبدا</span>
-                      <span class="proxy-metric-value" style="color: #60a5fa;">
-                        🇮🇷 ایران (Bypass خودکار)
-                      </span>
-                    </div>
-                    <div class="proxy-metric-pill">
-                      <span class="proxy-metric-label">وضعیت پروتکل زنده</span>
-                      <span class="proxy-metric-value" style="color: #ffd700;">
-                        WebSocket / TLS Encrypted
-                      </span>
-                    </div>
-                  </div>
 
-                  <!-- Auto-Bypass Master Toggle -->
-                  <div class="proxy-toggle-card">
-                    <div class="proxy-toggle-info">
-                      <div class="proxy-toggle-title">
-                        <span>دورزدن خودکار و دائمی محدودیت‌های منطقه‌ای و تحریم</span>
+                    <!-- Metrics Row -->
+                    <div class="proxy-metric-pills">
+                      <div class="proxy-metric-pill">
+                        <span class="proxy-metric-label">تاخیر لحظه‌ای (Latency)</span>
+                        <span class="proxy-metric-value" style="color: #34d399;">
+                          ${this.networkState.latencyMs} میلی‌ثانیه
+                        </span>
                       </div>
-                      <div class="proxy-toggle-desc">
-                        به محض تشخیص اختلال در اینترنت کشور یا محدودیت گوگل، ترافیک صوتی به صورت خودکار از طریق گره‌های ضدتحریم ابری هدایت می‌شود.
+                      <div class="proxy-metric-pill">
+                        <span class="proxy-metric-label">تشخیص جغرافیایی مبدا</span>
+                        <span class="proxy-metric-value" style="color: #60a5fa;">
+                          🇮🇷 ایران (Bypass خودکار)
+                        </span>
                       </div>
-                    </div>
-                    <button
-                      class="toggle-switch-btn ${this.networkState.autoBypassEnabled ? 'active' : ''}"
-                      @click=${this.handleToggleAutoBypass}
-                      title="تغییر وضعیت دورزدن تحریم">
-                      <div class="toggle-switch-knob"></div>
-                    </button>
-                  </div>
-
-                  <!-- DNS Over HTTPS Toggle -->
-                  <div class="proxy-toggle-card">
-                    <div class="proxy-toggle-info">
-                      <div class="proxy-toggle-title">
-                        <span>سامانه ضد فیلترینگ DNS امن (DNS-over-HTTPS)</span>
-                      </div>
-                      <div class="proxy-toggle-desc">
-                        جلوگیری خودکار از آلودگی DNS اپراتورهای داخلی جهت دسترسی بدون قطعی به مدل‌های هوش مصنوعی.
+                      <div class="proxy-metric-pill">
+                        <span class="proxy-metric-label">وضعیت پروتکل زنده</span>
+                        <span class="proxy-metric-value" style="color: #ffd700;">
+                          WebSocket / TLS Encrypted
+                        </span>
                       </div>
                     </div>
-                    <button
-                      class="toggle-switch-btn ${this.networkState.dnsBypassActive ? 'active' : ''}"
-                      @click=${this.handleToggleDnsBypass}
-                      title="تغییر وضعیت DNS امن">
-                      <div class="toggle-switch-knob"></div>
-                    </button>
-                  </div>
 
-                  <!-- Proxy Nodes Selection -->
-                  <div style="margin-top: 14px; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #ffd700;">
-                    گره‌های ابری بهینه‌شده ضدتحریم:
-                  </div>
+                    <!-- Auto-Bypass Master Toggle -->
+                    <div class="proxy-toggle-card">
+                      <div class="proxy-toggle-info">
+                        <div class="proxy-toggle-title">
+                          <span>دورزدن خودکار و دائمی محدودیت‌های منطقه‌ای و تحریم</span>
+                        </div>
+                        <div class="proxy-toggle-desc">
+                          به محض تشخیص اختلال در اینترنت کشور یا محدودیت گوگل، ترافیک صوتی به صورت
+                          خودکار از طریق گره‌های ضدتحریم ابری هدایت می‌شود.
+                        </div>
+                      </div>
+                      <button
+                        class="toggle-switch-btn ${this.networkState.autoBypassEnabled ? 'active' : ''}"
+                        @click=${this.handleToggleAutoBypass}
+                        title="تغییر وضعیت دورزدن تحریم"
+                      >
+                        <div class="toggle-switch-knob"></div>
+                      </button>
+                    </div>
 
-                  ${PROXY_NODES.map(
+                    <!-- DNS Over HTTPS Toggle -->
+                    <div class="proxy-toggle-card">
+                      <div class="proxy-toggle-info">
+                        <div class="proxy-toggle-title">
+                          <span>سامانه ضد فیلترینگ DNS امن (DNS-over-HTTPS)</span>
+                        </div>
+                        <div class="proxy-toggle-desc">
+                          جلوگیری خودکار از آلودگی DNS اپراتورهای داخلی جهت دسترسی بدون قطعی به
+                          مدل‌های هوش مصنوعی.
+                        </div>
+                      </div>
+                      <button
+                        class="toggle-switch-btn ${this.networkState.dnsBypassActive ? 'active' : ''}"
+                        @click=${this.handleToggleDnsBypass}
+                        title="تغییر وضعیت DNS امن"
+                      >
+                        <div class="toggle-switch-knob"></div>
+                      </button>
+                    </div>
+
+                    <!-- Proxy Nodes Selection -->
+                    <div
+                      style="margin-top: 14px; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #ffd700;"
+                    >
+                      گره‌های ابری بهینه‌شده ضدتحریم:
+                    </div>
+
+                    ${PROXY_NODES.map(
                     (node) => html`
                       <div
                         class="proxy-node-item ${this.networkState.selectedNode === node.id ? 'selected' : ''}"
-                        @click=${(e: Event) => this.handleSelectProxyNode(node.id, e)}>
+                        @click=${(e: Event) => this.handleSelectProxyNode(node.id, e)}
+                      >
                         <div class="proxy-node-left">
                           <span class="proxy-node-flag">${node.flag}</span>
                           <div class="proxy-node-info">
@@ -5803,20 +6643,16 @@ ${this.activeJudicialForm.bodyText}
                             <span class="proxy-node-sub">${node.location}</span>
                           </div>
                         </div>
-                        <div class="proxy-node-ping">
-                          ⚡ ${node.ping}ms
-                        </div>
+                        <div class="proxy-node-ping">⚡ ${node.ping}ms</div>
                       </div>
-                    `,
+                    `
                   )}
+                  </div>
                 </div>
               </div>
-            </div>
-          `
-        : ''}
-
+            `
+          : ''
+      }
     `;
   }
 }
-
-
