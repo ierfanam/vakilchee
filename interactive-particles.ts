@@ -47,8 +47,8 @@ export class RepulsionParticleSystem {
   private initEvents() {
     const onPointerMove = (clientX: number, clientY: number, forceRadius?: number) => {
       const rect = this.canvas.getBoundingClientRect();
-      this.targetPointerX = (clientX - rect.left);
-      this.targetPointerY = (clientY - rect.top);
+      this.targetPointerX = clientX - rect.left;
+      this.targetPointerY = clientY - rect.top;
       this.isPointerActive = true;
       this.lastMoveTime = performance.now();
       if (forceRadius) {
@@ -56,9 +56,13 @@ export class RepulsionParticleSystem {
       }
     };
 
-    window.addEventListener('mousemove', (e: MouseEvent) => {
-      onPointerMove(e.clientX, e.clientY, 175);
-    }, { passive: true });
+    window.addEventListener(
+      'mousemove',
+      (e: MouseEvent) => {
+        onPointerMove(e.clientX, e.clientY, 175);
+      },
+      { passive: true }
+    );
 
     window.addEventListener('mouseleave', () => {
       this.isPointerActive = false;
@@ -66,19 +70,27 @@ export class RepulsionParticleSystem {
       this.targetPointerY = -9999;
     });
 
-    window.addEventListener('touchstart', (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        onPointerMove(touch.clientX, touch.clientY, 210);
-      }
-    }, { passive: true });
+    window.addEventListener(
+      'touchstart',
+      (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          onPointerMove(touch.clientX, touch.clientY, 210);
+        }
+      },
+      { passive: true }
+    );
 
-    window.addEventListener('touchmove', (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        onPointerMove(touch.clientX, touch.clientY, 210);
-      }
-    }, { passive: true });
+    window.addEventListener(
+      'touchmove',
+      (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          onPointerMove(touch.clientX, touch.clientY, 210);
+        }
+      },
+      { passive: true }
+    );
 
     window.addEventListener('touchend', () => {
       this.isPointerActive = false;
@@ -114,13 +126,13 @@ export class RepulsionParticleSystem {
 
     // Palette of refined, high-resolution micro-particles on white background
     const colors = [
-      'rgba(15, 23, 42, 0.45)',   // Deep Slate
-      'rgba(30, 41, 59, 0.38)',   // Slate
-      'rgba(51, 65, 85, 0.32)',   // Cool Gray
-      'rgba(2, 132, 199, 0.50)',  // Electric Blue Accent
+      'rgba(15, 23, 42, 0.45)', // Deep Slate
+      'rgba(30, 41, 59, 0.38)', // Slate
+      'rgba(51, 65, 85, 0.32)', // Cool Gray
+      'rgba(2, 132, 199, 0.50)', // Electric Blue Accent
       'rgba(14, 165, 233, 0.42)', // Vivid Cyan
       'rgba(20, 184, 166, 0.35)', // Teal Accent
-      'rgba(71, 85, 105, 0.28)',  // Light Slate
+      'rgba(71, 85, 105, 0.28)', // Light Slate
     ];
 
     for (let i = 0; i < cols; i++) {
@@ -128,7 +140,7 @@ export class RepulsionParticleSystem {
         // Organic jitter inside cell
         const originX = (i + 0.15 + Math.random() * 0.7) * cellW;
         const originY = (j + 0.15 + Math.random() * 0.7) * cellH;
-        
+
         // Random micro size (0.65px to 1.5px) for 7000 high-density particles
         const sizeRand = Math.random();
         const size = sizeRand < 0.7 ? 0.7 + Math.random() * 0.35 : 1.05 + Math.random() * 0.45;
@@ -210,11 +222,11 @@ export class RepulsionParticleSystem {
           const dist = Math.sqrt(distSq);
           // Normalized distance from center (0 at cursor, 1 at edge)
           const normDist = dist / pr;
-          
+
           // Repulsion force: non-linear inverse power, significantly stronger at the center!
           // (1 - normDist)^2.4 gives extreme repulsion right under the cursor and smooth decay
           const forceFactor = Math.pow(1.0 - normDist, 2.4) * pStrength;
-          
+
           const angle = Math.atan2(dy, dx);
           p.vx += Math.cos(angle) * forceFactor * 1.8;
           p.vy += Math.sin(angle) * forceFactor * 1.8;

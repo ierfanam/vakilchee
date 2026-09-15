@@ -1,8 +1,8 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
-import {Blob} from '@google/genai';
+ */
+import { Blob } from '@google/genai';
 
 function encode(bytes) {
   let binary = '';
@@ -44,7 +44,7 @@ function createBlob(data: Float32Array, inputSampleRate = 16000): Blob {
   const resampled = inputSampleRate !== 16000 ? resampleTo16kHz(data, inputSampleRate) : data;
   const l = resampled.length;
   const int16 = new Int16Array(l);
-  
+
   // Calculate RMS energy for gentle noise floor attenuation
   let sumSquares = 0;
   for (let i = 0; i < l; i++) {
@@ -72,13 +72,13 @@ async function decodeAudioData(
   data: Uint8Array,
   ctx: AudioContext,
   sampleRate: number,
-  numChannels: number,
+  numChannels: number
 ): Promise<AudioBuffer> {
   const numSamples = Math.floor(data.byteLength / 2);
   const buffer = ctx.createBuffer(
     numChannels,
     Math.max(1, Math.floor(numSamples / numChannels)),
-    sampleRate,
+    sampleRate
   );
 
   const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -103,4 +103,4 @@ async function decodeAudioData(
   return buffer;
 }
 
-export {createBlob, decode, decodeAudioData, encode};
+export { createBlob, decode, decodeAudioData, encode };

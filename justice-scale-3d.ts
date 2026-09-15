@@ -216,12 +216,24 @@ export class JusticeScale3D extends LitElement {
     const baseGroup = new THREE.Group();
     baseGroup.position.set(0, -0.92, 0);
 
-    const baseTier1 = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.62, 0.08, 48), darkBronzeMat);
-    const baseTier2 = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.52, 0.06, 48), polishedGoldMat);
+    const baseTier1 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.55, 0.62, 0.08, 48),
+      darkBronzeMat
+    );
+    const baseTier2 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.46, 0.52, 0.06, 48),
+      polishedGoldMat
+    );
     baseTier2.position.y = 0.07;
-    const baseTier3 = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.42, 0.05, 48), warmBrassMat);
+    const baseTier3 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.35, 0.42, 0.05, 48),
+      warmBrassMat
+    );
     baseTier3.position.y = 0.125;
-    const baseCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 0.06, 32), polishedGoldMat);
+    const baseCollar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.14, 0.22, 0.06, 32),
+      polishedGoldMat
+    );
     baseCollar.position.y = 0.18;
 
     baseGroup.add(baseTier1, baseTier2, baseTier3, baseCollar);
@@ -243,21 +255,30 @@ export class JusticeScale3D extends LitElement {
     const pillarGroup = new THREE.Group();
     pillarGroup.position.set(0, -0.92 + 0.21, 0);
 
-    const lowerShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, 0.35, 32), polishedGoldMat);
+    const lowerShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.11, 0.35, 32),
+      polishedGoldMat
+    );
     lowerShaft.position.y = 0.175;
 
     const midRing = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.022, 16, 32), polishedGoldMat);
     midRing.rotation.x = Math.PI / 2;
     midRing.position.y = 0.36;
 
-    const mainPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.078, 1.05, 32), warmBrassMat);
+    const mainPillar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.065, 0.078, 1.05, 32),
+      warmBrassMat
+    );
     mainPillar.position.y = 0.9;
 
     const upperRing = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.02, 16, 32), polishedGoldMat);
     upperRing.rotation.x = Math.PI / 2;
     upperRing.position.y = 1.44;
 
-    const fulcrumBase = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.075, 0.16, 32), polishedGoldMat);
+    const fulcrumBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.09, 0.075, 0.16, 32),
+      polishedGoldMat
+    );
     fulcrumBase.position.y = 1.52;
 
     pillarGroup.add(lowerShaft, midRing, mainPillar, upperRing, fulcrumBase);
@@ -277,7 +298,10 @@ export class JusticeScale3D extends LitElement {
     this.balanceArmGroup.position.set(0, fulcrumY, 0);
 
     // Central pivot cylinder
-    const pivotPin = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.14, 24), polishedGoldMat);
+    const pivotPin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.045, 0.14, 24),
+      polishedGoldMat
+    );
     pivotPin.rotation.x = Math.PI / 2;
     this.balanceArmGroup.add(pivotPin);
 
@@ -315,7 +339,14 @@ export class JusticeScale3D extends LitElement {
     const rightHookRing = new THREE.Mesh(hookRingGeo, polishedGoldMat);
     rightHookRing.position.set(armHalfLength, -0.04, 0);
 
-    this.balanceArmGroup.add(leftArm, rightArm, leftHookBall, rightHookBall, leftHookRing, rightHookRing);
+    this.balanceArmGroup.add(
+      leftArm,
+      rightArm,
+      leftHookBall,
+      rightHookBall,
+      leftHookRing,
+      rightHookRing
+    );
 
     // 6. Suspended Weighing Pans (کفه‌های ترازو)
     const createSuspendedPan = (isLeft: boolean) => {
@@ -347,7 +378,10 @@ export class JusticeScale3D extends LitElement {
         // Compute orientation toward attachment point
         const dir = new THREE.Vector3(rimX, -chainLength, rimZ).normalize();
         const axis = new THREE.Vector3(0, 1, 0).cross(dir).normalize();
-        const quat = new THREE.Quaternion().setFromAxisAngle(axis, Math.acos(new THREE.Vector3(0, 1, 0).dot(dir)));
+        const quat = new THREE.Quaternion().setFromAxisAngle(
+          axis,
+          Math.acos(new THREE.Vector3(0, 1, 0).dot(dir))
+        );
         cordMesh.quaternion.copy(quat);
 
         panContainer.add(cordMesh);
