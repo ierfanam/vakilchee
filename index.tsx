@@ -5083,9 +5083,9 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                   <div
                     class="main-menu-backdrop"
                     @click=${(e: Event) => {
-                    e.stopPropagation();
-                    this.isMainMenuOpen = false;
-                  }}
+                      e.stopPropagation();
+                      this.isMainMenuOpen = false;
+                    }}
                   ></div>
                   <div
                     class="top-menu-dropdown"
@@ -5097,10 +5097,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item"
                       id="menuToneBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.openToneModal(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.openToneModal(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span class="menu-item-icon-svg">
@@ -5128,10 +5128,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item"
                       id="menuUploadBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.openUploadModal(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.openUploadModal(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span class="menu-item-icon-svg">
@@ -5157,10 +5157,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item"
                       id="menuAutoDraftBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.handleGenerateDraftFromConversation(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.handleGenerateDraftFromConversation(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span class="menu-item-icon-svg" style="color: #a855f7;">
@@ -5193,10 +5193,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item"
                       id="menuJudicialFormBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.openJudicialFormStudio(undefined, e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.openJudicialFormStudio(undefined, e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span class="menu-item-icon-svg" style="color: #ffd700;">
@@ -5222,10 +5222,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item ${this.isCameraActive ? 'active-camera' : ''}"
                       id="menuCameraBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.toggleCamera(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.toggleCamera(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span
@@ -5258,10 +5258,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item ${this.networkState.autoBypassEnabled ? 'active-camera' : ''}"
                       id="menuProxyBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.openProxyModal(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.openProxyModal(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span
@@ -5294,14 +5294,14 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item ${this.waitingMusicEnabled ? 'active-camera' : ''}"
                       id="menuWaitingMusicBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.waitingMusicEnabled = !this.waitingMusicEnabled;
-                      if (!this.waitingMusicEnabled) {
-                        this.stopWaitingSound();
-                      } else {
-                        this.lastConversationActivityTime = Date.now();
-                      }
-                    }}
+                        e.stopPropagation();
+                        this.waitingMusicEnabled = !this.waitingMusicEnabled;
+                        if (!this.waitingMusicEnabled) {
+                          this.stopWaitingSound();
+                        } else {
+                          this.lastConversationActivityTime = Date.now();
+                        }
+                      }}
                     >
                       <div class="menu-item-start">
                         <span
@@ -5336,10 +5336,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       class="menu-linear-item"
                       id="menuEndConsultationBtn"
                       @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                      this.handleEndConsultation(e);
-                    }}
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.handleEndConsultation(e);
+                      }}
                     >
                       <div class="menu-item-start">
                         <span class="menu-item-icon-svg" style="color: #ef4444;">
@@ -5382,9 +5382,9 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                     class="end-consultation-btn"
                     id="endConsultationBtn"
                     @click=${(e: Event) => {
-                    e.stopPropagation();
-                    this.handleEndConsultation(e);
-                  }}
+                      e.stopPropagation();
+                      this.handleEndConsultation(e);
+                    }}
                     title="پایان فوری و ایمن جلسه"
                   >
                     <span class="end-btn-icon">
@@ -5408,9 +5408,9 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                     class="end-consultation-btn restart-btn"
                     id="restartConsultationBtn"
                     @click=${(e: Event) => {
-                    e.stopPropagation();
-                    this.handleRestartConsultation(e);
-                  }}
+                      e.stopPropagation();
+                      this.handleRestartConsultation(e);
+                    }}
                     title="شروع مجدد گفتگو"
                   >
                     <span class="end-btn-icon">
@@ -5520,57 +5520,57 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                 </div>
 
                 ${
-                !this.isCameraMinimized
-                  ? html`
-                      <div class="pip-video-wrapper">
-                        <video
-                          id="cameraPreview"
-                          class="pip-video"
-                          autoplay
-                          playsinline
-                          muted
-                        ></video>
+                  !this.isCameraMinimized
+                    ? html`
+                        <div class="pip-video-wrapper">
+                          <video
+                            id="cameraPreview"
+                            class="pip-video"
+                            autoplay
+                            playsinline
+                            muted
+                          ></video>
 
-                        <!-- Document Alignment Guide Frame -->
-                        <div class="doc-target-frame">
-                          <span class="corner-bracket corner-tl"></span>
-                          <span class="corner-bracket corner-tr"></span>
-                          <span class="corner-bracket corner-bl"></span>
-                          <span class="corner-bracket corner-br"></span>
-                          <div class="scanline"></div>
+                          <!-- Document Alignment Guide Frame -->
+                          <div class="doc-target-frame">
+                            <span class="corner-bracket corner-tl"></span>
+                            <span class="corner-bracket corner-tr"></span>
+                            <span class="corner-bracket corner-bl"></span>
+                            <span class="corner-bracket corner-br"></span>
+                            <div class="scanline"></div>
+                          </div>
                         </div>
-                      </div>
 
-                      <div class="pip-footer">
-                        <button
-                          class="doc-snap-btn"
-                          id="snapScanButton"
-                          @click=${this.triggerDocumentSnapScan}
-                          ?disabled=${this.isSnapScanning}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="15"
-                            viewBox="0 -960 960 960"
-                            width="15"
-                            fill="currentColor"
+                        <div class="pip-footer">
+                          <button
+                            class="doc-snap-btn"
+                            id="snapScanButton"
+                            @click=${this.triggerDocumentSnapScan}
+                            ?disabled=${this.isSnapScanning}
                           >
-                            <path
-                              d="M480-320q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm0-80q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h160l80-80h160l80 80h160q33 0 56.5 23.5T960-720v480q0 33-23.5 56.5T880-160H160Z"
-                            />
-                          </svg>
-                          <span
-                            >${this.isSnapScanning ? 'در حال بررسی و تحلیل حقوقی سند...' : 'اسکن و ارسال مستقیم به وکیل'}</span
-                          >
-                        </button>
-                        <div class="live-stream-tag">
-                          <span class="stream-indicator"></span>
-                          <span>ارسال و تحلیل بلادرنگ فریم‌ها توسط وکیل هوشمند</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="15"
+                              viewBox="0 -960 960 960"
+                              width="15"
+                              fill="currentColor"
+                            >
+                              <path
+                                d="M480-320q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm0-80q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h160l80-80h160l80 80h160q33 0 56.5 23.5T960-720v480q0 33-23.5 56.5T880-160H160Z"
+                              />
+                            </svg>
+                            <span
+                              >${this.isSnapScanning ? 'در حال بررسی و تحلیل حقوقی سند...' : 'اسکن و ارسال مستقیم به وکیل'}</span
+                            >
+                          </button>
+                          <div class="live-stream-tag">
+                            <span class="stream-indicator"></span>
+                            <span>ارسال و تحلیل بلادرنگ فریم‌ها توسط وکیل هوشمند</span>
+                          </div>
                         </div>
-                      </div>
-                    `
-                  : ''
-              }
+                      `
+                    : ''
+                }
               </div>
             `
           : ''
@@ -5618,33 +5618,33 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
                   <div class="tone-options-list">
                     ${PERSONA_TONES.map(
-                    (t) => html`
-                      <div
-                        class="tone-option-card ${this.selectedTone === t.id ? 'active' : ''}"
-                        @click=${(e: Event) => this.handleSelectTone(t.id as any, e)}
-                      >
-                        <div class="tone-card-top">
-                          <div class="tone-card-title">
-                            <span class="tone-badge-icon">${t.icon || '⚖️'}</span>
-                            <span>${t.title}</span>
+                      (t) => html`
+                        <div
+                          class="tone-option-card ${this.selectedTone === t.id ? 'active' : ''}"
+                          @click=${(e: Event) => this.handleSelectTone(t.id as any, e)}
+                        >
+                          <div class="tone-card-top">
+                            <div class="tone-card-title">
+                              <span class="tone-badge-icon">${t.icon || '⚖️'}</span>
+                              <span>${t.title}</span>
+                            </div>
+                            ${
+                              this.selectedTone === t.id
+                                ? html`<span class="tone-check-badge">فعال ✓</span>`
+                                : html`<button
+                                    class="dossier-btn-secondary"
+                                    style="padding: 4px 10px; font-size: 11px;"
+                                  >
+                                    انتخاب
+                                  </button>`
+                            }
                           </div>
-                          ${
-                            this.selectedTone === t.id
-                              ? html`<span class="tone-check-badge">فعال ✓</span>`
-                              : html`<button
-                                  class="dossier-btn-secondary"
-                                  style="padding: 4px 10px; font-size: 11px;"
-                                >
-                                  انتخاب
-                                </button>`
-                          }
+                          <div class="tone-card-accent">بیان و فصاحت: ${t.accent}</div>
+                          <div class="tone-card-desc">${t.description}</div>
+                          <div class="tone-card-sample">«${t.samplePhrase}»</div>
                         </div>
-                        <div class="tone-card-accent">بیان و فصاحت: ${t.accent}</div>
-                        <div class="tone-card-desc">${t.description}</div>
-                        <div class="tone-card-sample">«${t.samplePhrase}»</div>
-                      </div>
-                    `
-                  )}
+                      `
+                    )}
                   </div>
                 </div>
               </div>
@@ -5739,10 +5739,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       <button
                         class="upload-action-btn camera-scan-btn"
                         @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isUploadModalOpen = false;
-                      this.startCamera();
-                    }}
+                          e.stopPropagation();
+                          this.isUploadModalOpen = false;
+                          this.startCamera();
+                        }}
                       >
                         📷 اسکن مستقیم با دوربین
                       </button>
@@ -5750,16 +5750,16 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                   </div>
 
                   ${
-                  this.isUploadingFiles
-                    ? html`
-                        <div
-                          style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; margin-bottom: 12px;"
-                        >
-                          ⏳ ${this.uploadStatusMessage || 'در حال بارگذاری و تحلیل اسناد...'}
-                        </div>
-                      `
-                    : ''
-                }
+                    this.isUploadingFiles
+                      ? html`
+                          <div
+                            style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; margin-bottom: 12px;"
+                          >
+                            ⏳ ${this.uploadStatusMessage || 'در حال بارگذاری و تحلیل اسناد...'}
+                          </div>
+                        `
+                      : ''
+                  }
 
                   <!-- Stored Documents List -->
                   <div class="upload-history-title">
@@ -5768,55 +5768,55 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
                   <div class="uploaded-docs-list">
                     ${
-                    this.scannedDocs.length === 0
-                      ? html`<div
-                          style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;"
-                        >
-                          هنوز فایلی بارگذاری نشده است. اسناد و مدارک خود را آپلود کنید تا وکیل آنها
-                          را بررسی کند.
-                        </div>`
-                      : this.scannedDocs.map(
-                          (doc) => html`
-                            <div class="doc-item-row">
-                              <div class="doc-item-info">
-                                <div class="doc-item-title">
-                                  <span
-                                    >${doc.fileType === 'pdf' ? '📕' : doc.fileType === 'doc' ? '📘' : doc.fileType === 'image' ? '🖼️' : '📄'}</span
+                      this.scannedDocs.length === 0
+                        ? html`<div
+                            style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;"
+                          >
+                            هنوز فایلی بارگذاری نشده است. اسناد و مدارک خود را آپلود کنید تا وکیل
+                            آنها را بررسی کند.
+                          </div>`
+                        : this.scannedDocs.map(
+                            (doc) => html`
+                              <div class="doc-item-row">
+                                <div class="doc-item-info">
+                                  <div class="doc-item-title">
+                                    <span
+                                      >${doc.fileType === 'pdf' ? '📕' : doc.fileType === 'doc' ? '📘' : doc.fileType === 'image' ? '🖼️' : '📄'}</span
+                                    >
+                                    <span>${doc.title}</span>
+                                  </div>
+                                  <div class="doc-item-meta">
+                                    <span>${doc.fileName || 'سند ارائه‌شده'}</span>
+                                    ${doc.fileSize ? html`<span>• ${formatFileSize(doc.fileSize)}</span>` : ''}
+                                  </div>
+                                  ${
+                                    doc.extractedText
+                                      ? html`<div class="doc-item-preview">
+                                          ${doc.extractedText.substring(0, 180)}...
+                                        </div>`
+                                      : ''
+                                  }
+                                </div>
+                                <div class="doc-item-actions">
+                                  <button
+                                    class="doc-action-btn primary"
+                                    @click=${(e: Event) => this.handleSendDocToLiveSession(doc, e)}
+                                    title="ارسال مجدد به وکیل جهت تحلیل و بازبینی"
                                   >
-                                  <span>${doc.title}</span>
+                                    تحویل به وکیل
+                                  </button>
+                                  <button
+                                    class="doc-action-btn danger"
+                                    @click=${(e: Event) => this.handleDeleteDocItem(doc.id || '', e)}
+                                    title="حذف فایل"
+                                  >
+                                    حذف
+                                  </button>
                                 </div>
-                                <div class="doc-item-meta">
-                                  <span>${doc.fileName || 'سند ارائه‌شده'}</span>
-                                  ${doc.fileSize ? html`<span>• ${formatFileSize(doc.fileSize)}</span>` : ''}
-                                </div>
-                                ${
-                                doc.extractedText
-                                  ? html`<div class="doc-item-preview">
-                                      ${doc.extractedText.substring(0, 180)}...
-                                    </div>`
-                                  : ''
-                              }
                               </div>
-                              <div class="doc-item-actions">
-                                <button
-                                  class="doc-action-btn primary"
-                                  @click=${(e: Event) => this.handleSendDocToLiveSession(doc, e)}
-                                  title="ارسال مجدد به وکیل جهت تحلیل و بازبینی"
-                                >
-                                  تحویل به وکیل
-                                </button>
-                                <button
-                                  class="doc-action-btn danger"
-                                  @click=${(e: Event) => this.handleDeleteDocItem(doc.id || '', e)}
-                                  title="حذف فایل"
-                                >
-                                  حذف
-                                </button>
-                              </div>
-                            </div>
-                          `
-                        )
-                  }
+                            `
+                          )
+                    }
                   </div>
                 </div>
               </div>
@@ -5914,15 +5914,15 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                   <div class="judicial-toolbar">
                     <div class="form-types-scroll">
                       ${JUDICIAL_FORM_TYPES.map(
-                      (t) => html`
-                        <button
-                          class="form-type-chip ${this.selectedTemplateType === t.id ? 'active' : ''}"
-                          @click=${(e: Event) => this.handleSelectFormType(t.id as any, e)}
-                        >
-                          ${t.shortName}
-                        </button>
-                      `
-                    )}
+                        (t) => html`
+                          <button
+                            class="form-type-chip ${this.selectedTemplateType === t.id ? 'active' : ''}"
+                            @click=${(e: Event) => this.handleSelectFormType(t.id as any, e)}
+                          >
+                            ${t.shortName}
+                          </button>
+                        `
+                      )}
                     </div>
 
                     <div class="toolbar-actions">
@@ -6070,417 +6070,432 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                   <!-- Modal Body: Paper View vs Live Edit Form -->
                   <div class="judicial-modal-body">
                     ${
-                    !this.isFormEditing
-                      ? html`
-                          <!-- Official Parchment Paper Simulation -->
-                          <div class="judicial-paper" id="officialJudicialPaperDocument">
-                            ${
-                            [
-                              'nameh_edari',
-                              'darkhast_edari',
-                              'etelaieh_hoghooghi',
-                              'qarardad_solh',
-                            ].includes(this.activeJudicialForm.formType)
-                              ? html`
-                                  <!-- Formal Administrative Letter Header Layout -->
-                                  <div
-                                    class="paper-header"
-                                    style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;"
-                                  >
-                                    <div
-                                      class="paper-meta-box"
-                                      style="border: none; background: transparent; padding: 0;"
-                                    >
-                                      <div style="font-size: 11px;">
-                                        <strong>شماره نامه:</strong>
-                                        ${this.activeJudicialForm.trackingCode}
-                                      </div>
-                                      <div style="font-size: 11px;">
-                                        <strong>تاریخ:</strong>
-                                        ${this.activeJudicialForm.filingDate}
-                                      </div>
-                                      <div style="font-size: 11px;">
-                                        <strong>پیوست:</strong>
-                                        ${this.activeJudicialForm.evidences.length > 0 ? 'دارد' : 'ندارد'}
-                                      </div>
-                                    </div>
-
-                                    <div class="paper-emblem">
+                      !this.isFormEditing
+                        ? html`
+                            <!-- Official Parchment Paper Simulation -->
+                            <div class="judicial-paper" id="officialJudicialPaperDocument">
+                              ${
+                                [
+                                  'nameh_edari',
+                                  'darkhast_edari',
+                                  'etelaieh_hoghooghi',
+                                  'qarardad_solh',
+                                ].includes(this.activeJudicialForm.formType)
+                                  ? html`
+                                      <!-- Formal Administrative Letter Header Layout -->
                                       <div
-                                        style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 4px;"
+                                        class="paper-header"
+                                        style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;"
                                       >
-                                        « بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ »
-                                      </div>
-                                      <div
-                                        class="paper-main-title"
-                                        style="color: #0f172a; font-size: 16px;"
-                                      >
-                                        ${this.activeJudicialForm.title}
-                                      </div>
-                                    </div>
-
-                                    <div
-                                      class="paper-meta-box"
-                                      style="text-align: center; border: none; background: transparent; min-width: 120px;"
-                                    >
-                                      <div
-                                        style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
-                                      >
-                                        جمهوری اسلامی ایران
-                                      </div>
-                                      <div style="font-size: 9px; color: #64748b; margin-top: 2px;">
-                                        مکاتبات رسمی و اداری
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <!-- Letter Recipient -->
-                                  <div
-                                    style="margin-bottom: 12px; padding: 6px 0; font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.8;"
-                                  >
-                                    <div>
-                                      <strong>به:</strong> ${this.activeJudicialForm.authorityName}
-                                    </div>
-                                    <div>
-                                      <strong>از طرف:</strong>
-                                      ${this.activeJudicialForm.claimant.name}
-                                      ${this.activeJudicialForm.claimant.nationalId ? `(کد ملی / شناسه: ${this.activeJudicialForm.claimant.nationalId})` : ''}
-                                    </div>
-                                    <div
-                                      style="margin-top: 4px; color: #1e3a8a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;"
-                                    >
-                                      <strong>موضوع:</strong> ${this.activeJudicialForm.subject}
-                                    </div>
-                                  </div>
-
-                                  <div
-                                    style="font-size: 13px; font-weight: 700; margin: 8px 0; color: #334155;"
-                                  >
-                                    با سلام و احترام؛
-                                  </div>
-
-                                  <!-- Letter Body Content -->
-                                  <div
-                                    class="paper-body-box"
-                                    style="border: none; padding: 6px 0; font-size: 13px; line-height: 2.1; min-height: 200px;"
-                                  >
-                                    ${this.activeJudicialForm.bodyText}
-                                  </div>
-
-                                  <!-- Legal Basis & Attachments if any -->
-                                  ${
-                                  this.activeJudicialForm.legalBasis ||
-                                  (this.activeJudicialForm.evidences &&
-                                    this.activeJudicialForm.evidences.length > 0)
-                                    ? html`
                                         <div
-                                          style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; line-height: 1.8;"
+                                          class="paper-meta-box"
+                                          style="border: none; background: transparent; padding: 0;"
                                         >
-                                          ${this.activeJudicialForm.legalBasis ? html`<div><strong>مستندات قانونی:</strong> ${this.activeJudicialForm.legalBasis}</div>` : ''}
-                                          ${
-                                          this.activeJudicialForm.evidences &&
-                                          this.activeJudicialForm.evidences.length > 0
-                                            ? html`<div>
-                                                <strong>پیوست‌ها و ضمائم:</strong>
-                                                ${this.activeJudicialForm.evidences.join(' - ')}
-                                              </div>`
-                                            : ''
-                                        }
+                                          <div style="font-size: 11px;">
+                                            <strong>شماره نامه:</strong>
+                                            ${this.activeJudicialForm.trackingCode}
+                                          </div>
+                                          <div style="font-size: 11px;">
+                                            <strong>تاریخ:</strong>
+                                            ${this.activeJudicialForm.filingDate}
+                                          </div>
+                                          <div style="font-size: 11px;">
+                                            <strong>پیوست:</strong>
+                                            ${this.activeJudicialForm.evidences.length > 0 ? 'دارد' : 'ندارد'}
+                                          </div>
                                         </div>
-                                      `
-                                    : ''
-                                }
 
-                                  <!-- Letter Signatures & Seal Footer -->
-                                  <div class="paper-footer-signatures" style="margin-top: 30px;">
-                                    <div
-                                      class="signature-slot"
-                                      style="text-align: right; width: 250px;"
-                                    >
-                                      <div style="font-size: 11px; color: #64748b;">
-                                        <strong>نشانی و اطلاعات تماس فرستنده:</strong>
-                                      </div>
-                                      <div style="font-size: 10px; color: #475569;">
-                                        ${this.activeJudicialForm.claimant.address || 'نشانی اعلامی در مکاتبه'}
-                                      </div>
-                                    </div>
-
-                                    <div
-                                      class="signature-slot"
-                                      style="text-align: center; width: 200px;"
-                                    >
-                                      <div><strong>با تجدید احترام و سپاس</strong></div>
-                                      <div
-                                        style="margin-top: 6px; font-weight: 800; font-size: 13px; color: #0f172a;"
-                                      >
-                                        ${this.activeJudicialForm.claimant.name}
-                                      </div>
-                                      <div
-                                        class="fingerprint-box"
-                                        style="margin: 8px auto 0; height: 50px; border: 1px dashed #94a3b8; font-size: 10px;"
-                                      >
-                                        محل امضا و مهر
-                                      </div>
-                                    </div>
-                                  </div>
-                                `
-                              : html`
-                                  <!-- Official Judicial Court Document Layout -->
-                                  <div class="paper-header">
-                                    <div class="paper-meta-box">
-                                      <div>
-                                        <strong>شماره پرونده / پیگیری:</strong>
-                                        ${this.activeJudicialForm.trackingCode}
-                                      </div>
-                                      <div>
-                                        <strong>تاریخ ثبت:</strong>
-                                        ${this.activeJudicialForm.filingDate}
-                                      </div>
-                                      <div>
-                                        <strong>شعبه رسیدگی:</strong>
-                                        ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}
-                                      </div>
-                                      <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
-                                    </div>
-
-                                    <div class="paper-emblem">
-                                      <div class="paper-country-title">جمهوری اسلامی ایران</div>
-                                      <div class="paper-main-title">
-                                        ${this.activeJudicialForm.title}
-                                      </div>
-                                      <div class="paper-authority">
-                                        ${this.activeJudicialForm.authorityName}
-                                      </div>
-                                    </div>
-
-                                    <div class="paper-meta-box" style="text-align: center;">
-                                      <div
-                                        style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
-                                      >
-                                        قوه قضاییه
-                                      </div>
-                                      <div style="font-size: 9px; color: #64748b; margin-top: 2px;">
-                                        سامانه خدمات الکترونیک قضایی (عدل ایران)
-                                      </div>
-                                      <div
-                                        style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;"
-                                      >
-                                        ||||| | |||| ||| ||
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <!-- Parties Information Table -->
-                                  <table class="paper-table">
-                                    <tbody>
-                                      <tr>
-                                        <th>خواهان / شاکی / اظهارکننده</th>
-                                        <td colspan="3">
-                                          <strong>${this.activeJudicialForm.claimant.name}</strong>
-                                          - فرزند:
-                                          ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'}
-                                          - کدملی:
-                                          ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'}
-                                          - نشانی:
-                                          ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <th>خوانده / مشتکی‌عنه / مخاطب</th>
-                                        <td colspan="3">
-                                          <strong
-                                            >${this.activeJudicialForm.respondent.name}</strong
+                                        <div class="paper-emblem">
+                                          <div
+                                            style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 4px;"
                                           >
-                                          - نشانی:
-                                          ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <th>وکیل یا نماینده قانونی</th>
-                                        <td colspan="3">
-                                          <strong
-                                            >${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong
+                                            « بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ »
+                                          </div>
+                                          <div
+                                            class="paper-main-title"
+                                            style="color: #0f172a; font-size: 16px;"
                                           >
-                                          - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <th>تعیین موضوع و خواسته</th>
-                                        <td colspan="3" style="color: #1e3a8a; font-weight: 800;">
-                                          ${this.activeJudicialForm.subject}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <th>دلایل و منضمات قانونی</th>
-                                        <td colspan="3">
-                                          ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                            ${this.activeJudicialForm.title}
+                                          </div>
+                                        </div>
 
-                                  <!-- Main Text Section -->
-                                  <div class="paper-section-title">
-                                    شرح و دلایل دادخواست / شکواییه / لایحه قانونی
-                                  </div>
-                                  <div class="paper-body-box">
-                                    ${this.activeJudicialForm.bodyText}
-                                  </div>
+                                        <div
+                                          class="paper-meta-box"
+                                          style="text-align: center; border: none; background: transparent; min-width: 120px;"
+                                        >
+                                          <div
+                                            style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
+                                          >
+                                            جمهوری اسلامی ایران
+                                          </div>
+                                          <div
+                                            style="font-size: 9px; color: #64748b; margin-top: 2px;"
+                                          >
+                                            مکاتبات رسمی و اداری
+                                          </div>
+                                        </div>
+                                      </div>
 
-                                  <!-- Signatures & Official Footer -->
-                                  <div class="paper-footer-signatures">
-                                    <div class="signature-slot">
-                                      <div><strong>امضا و اثر انگشت خواهان / شاکی:</strong></div>
-                                      <div class="fingerprint-box">محل اثر انگشت</div>
-                                      <div>${this.activeJudicialForm.claimant.name}</div>
-                                    </div>
-
-                                    <div
-                                      class="signature-slot"
-                                      style="font-size: 10px; color: #64748b;"
-                                    >
-                                      <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
+                                      <!-- Letter Recipient -->
                                       <div
-                                        style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;"
+                                        style="margin-bottom: 12px; padding: 6px 0; font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.8;"
                                       >
-                                        تایید اصالت الکترونیک
+                                        <div>
+                                          <strong>به:</strong>
+                                          ${this.activeJudicialForm.authorityName}
+                                        </div>
+                                        <div>
+                                          <strong>از طرف:</strong>
+                                          ${this.activeJudicialForm.claimant.name}
+                                          ${this.activeJudicialForm.claimant.nationalId ? `(کد ملی / شناسه: ${this.activeJudicialForm.claimant.nationalId})` : ''}
+                                        </div>
+                                        <div
+                                          style="margin-top: 4px; color: #1e3a8a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;"
+                                        >
+                                          <strong>موضوع:</strong> ${this.activeJudicialForm.subject}
+                                        </div>
                                       </div>
-                                    </div>
 
-                                    <div class="signature-slot">
-                                      <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
                                       <div
-                                        style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;"
+                                        style="font-size: 13px; font-weight: 700; margin: 8px 0; color: #334155;"
                                       >
-                                        امضای الکترونیک وکیل
+                                        با سلام و احترام؛
                                       </div>
-                                      <div>
-                                        ${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}
+
+                                      <!-- Letter Body Content -->
+                                      <div
+                                        class="paper-body-box"
+                                        style="border: none; padding: 6px 0; font-size: 13px; line-height: 2.1; min-height: 200px;"
+                                      >
+                                        ${this.activeJudicialForm.bodyText}
                                       </div>
-                                    </div>
+
+                                      <!-- Legal Basis & Attachments if any -->
+                                      ${
+                                      this.activeJudicialForm.legalBasis ||
+                                      (this.activeJudicialForm.evidences &&
+                                        this.activeJudicialForm.evidences.length > 0)
+                                        ? html`
+                                            <div
+                                              style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; line-height: 1.8;"
+                                            >
+                                              ${this.activeJudicialForm.legalBasis ? html`<div><strong>مستندات قانونی:</strong> ${this.activeJudicialForm.legalBasis}</div>` : ''}
+                                              ${
+                                              this.activeJudicialForm.evidences &&
+                                              this.activeJudicialForm.evidences.length > 0
+                                                ? html`<div>
+                                                    <strong>پیوست‌ها و ضمائم:</strong>
+                                                    ${this.activeJudicialForm.evidences.join(' - ')}
+                                                  </div>`
+                                                : ''
+                                            }
+                                            </div>
+                                          `
+                                        : ''
+                                    }
+
+                                      <!-- Letter Signatures & Seal Footer -->
+                                      <div
+                                        class="paper-footer-signatures"
+                                        style="margin-top: 30px;"
+                                      >
+                                        <div
+                                          class="signature-slot"
+                                          style="text-align: right; width: 250px;"
+                                        >
+                                          <div style="font-size: 11px; color: #64748b;">
+                                            <strong>نشانی و اطلاعات تماس فرستنده:</strong>
+                                          </div>
+                                          <div style="font-size: 10px; color: #475569;">
+                                            ${this.activeJudicialForm.claimant.address || 'نشانی اعلامی در مکاتبه'}
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          class="signature-slot"
+                                          style="text-align: center; width: 200px;"
+                                        >
+                                          <div><strong>با تجدید احترام و سپاس</strong></div>
+                                          <div
+                                            style="margin-top: 6px; font-weight: 800; font-size: 13px; color: #0f172a;"
+                                          >
+                                            ${this.activeJudicialForm.claimant.name}
+                                          </div>
+                                          <div
+                                            class="fingerprint-box"
+                                            style="margin: 8px auto 0; height: 50px; border: 1px dashed #94a3b8; font-size: 10px;"
+                                          >
+                                            محل امضا و مهر
+                                          </div>
+                                        </div>
+                                      </div>
+                                    `
+                                  : html`
+                                      <!-- Official Judicial Court Document Layout -->
+                                      <div class="paper-header">
+                                        <div class="paper-meta-box">
+                                          <div>
+                                            <strong>شماره پرونده / پیگیری:</strong>
+                                            ${this.activeJudicialForm.trackingCode}
+                                          </div>
+                                          <div>
+                                            <strong>تاریخ ثبت:</strong>
+                                            ${this.activeJudicialForm.filingDate}
+                                          </div>
+                                          <div>
+                                            <strong>شعبه رسیدگی:</strong>
+                                            ${this.activeJudicialForm.branchNumber || 'شعبه صالحه'}
+                                          </div>
+                                          <div><strong>پیوست:</strong> دارد (الکترونیک)</div>
+                                        </div>
+
+                                        <div class="paper-emblem">
+                                          <div class="paper-country-title">جمهوری اسلامی ایران</div>
+                                          <div class="paper-main-title">
+                                            ${this.activeJudicialForm.title}
+                                          </div>
+                                          <div class="paper-authority">
+                                            ${this.activeJudicialForm.authorityName}
+                                          </div>
+                                        </div>
+
+                                        <div class="paper-meta-box" style="text-align: center;">
+                                          <div
+                                            style="font-size: 11px; font-weight: bold; color: #1e3a8a;"
+                                          >
+                                            قوه قضاییه
+                                          </div>
+                                          <div
+                                            style="font-size: 9px; color: #64748b; margin-top: 2px;"
+                                          >
+                                            سامانه خدمات الکترونیک قضایی (عدل ایران)
+                                          </div>
+                                          <div
+                                            style="margin-top: 4px; font-family: monospace; letter-spacing: 2px; font-size: 9px; background: #e2e8f0; padding: 2px 4px; border-radius: 2px;"
+                                          >
+                                            ||||| | |||| ||| ||
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <!-- Parties Information Table -->
+                                      <table class="paper-table">
+                                        <tbody>
+                                          <tr>
+                                            <th>خواهان / شاکی / اظهارکننده</th>
+                                            <td colspan="3">
+                                              <strong
+                                                >${this.activeJudicialForm.claimant.name}</strong
+                                              >
+                                              - فرزند:
+                                              ${this.activeJudicialForm.claimant.fatherName || 'ثبت در سامانه'}
+                                              - کدملی:
+                                              ${this.activeJudicialForm.claimant.nationalId || 'ثبت در ثنا'}
+                                              - نشانی:
+                                              ${this.activeJudicialForm.claimant.address || 'نشانی مطابق سامانه ابلاغ ثنا'}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>خوانده / مشتکی‌عنه / مخاطب</th>
+                                            <td colspan="3">
+                                              <strong
+                                                >${this.activeJudicialForm.respondent.name}</strong
+                                              >
+                                              - نشانی:
+                                              ${this.activeJudicialForm.respondent.address || 'نشانی اعلامی در دادخواست'}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>وکیل یا نماینده قانونی</th>
+                                            <td colspan="3">
+                                              <strong
+                                                >${this.activeJudicialForm.attorney?.name || 'وکیل پایه یک دادگستری'}</strong
+                                              >
+                                              - به نشانی دفتر وکالت و شناسه الکترونیک وکالت
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>تعیین موضوع و خواسته</th>
+                                            <td
+                                              colspan="3"
+                                              style="color: #1e3a8a; font-weight: 800;"
+                                            >
+                                              ${this.activeJudicialForm.subject}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>دلایل و منضمات قانونی</th>
+                                            <td colspan="3">
+                                              ${this.activeJudicialForm.evidences.map((item, idx) => html`<div>${idx + 1}- ${item}</div>`)}
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+
+                                      <!-- Main Text Section -->
+                                      <div class="paper-section-title">
+                                        شرح و دلایل دادخواست / شکواییه / لایحه قانونی
+                                      </div>
+                                      <div class="paper-body-box">
+                                        ${this.activeJudicialForm.bodyText}
+                                      </div>
+
+                                      <!-- Signatures & Official Footer -->
+                                      <div class="paper-footer-signatures">
+                                        <div class="signature-slot">
+                                          <div>
+                                            <strong>امضا و اثر انگشت خواهان / شاکی:</strong>
+                                          </div>
+                                          <div class="fingerprint-box">محل اثر انگشت</div>
+                                          <div>${this.activeJudicialForm.claimant.name}</div>
+                                        </div>
+
+                                        <div
+                                          class="signature-slot"
+                                          style="font-size: 10px; color: #64748b;"
+                                        >
+                                          <div>مهر و امضای دفتر خدمات الکترونیک قضایی</div>
+                                          <div
+                                            style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;"
+                                          >
+                                            تایید اصالت الکترونیک
+                                          </div>
+                                        </div>
+
+                                        <div class="signature-slot">
+                                          <div><strong>امضای وکیل پایه یک دادگستری:</strong></div>
+                                          <div
+                                            style="border: 1px dashed #94a3b8; height: 50px; margin: 4px auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1e3a8a;"
+                                          >
+                                            امضای الکترونیک وکیل
+                                          </div>
+                                          <div>
+                                            ${this.activeJudicialForm.attorney?.name || 'وکیل رسمی دادگستری'}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    `
+                              }
+                            </div>
+                          `
+                        : html`
+                            <!-- Live Editable Form Grid -->
+                            <div class="edit-mode-container">
+                              <div class="edit-section">
+                                <div class="card-title">
+                                  <span>مشخصات سند و مرجع قضایی</span>
+                                </div>
+                                <div class="edit-grid-2">
+                                  <div>
+                                    <label class="field-label">عنوان رسمی سند</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.title}
+                                      @input=${(e: any) => (this.activeJudicialForm!.title = e.target.value)}
+                                    />
                                   </div>
-                                `
-                          }
-                          </div>
-                        `
-                      : html`
-                          <!-- Live Editable Form Grid -->
-                          <div class="edit-mode-container">
-                            <div class="edit-section">
-                              <div class="card-title">
-                                <span>مشخصات سند و مرجع قضایی</span>
-                              </div>
-                              <div class="edit-grid-2">
-                                <div>
-                                  <label class="field-label">عنوان رسمی سند</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.title}
-                                    @input=${(e: any) => (this.activeJudicialForm!.title = e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <label class="field-label">مرجع قضایی صالح</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.authorityName}
-                                    @input=${(e: any) => (this.activeJudicialForm!.authorityName = e.target.value)}
-                                  />
+                                  <div>
+                                    <label class="field-label">مرجع قضایی صالح</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.authorityName}
+                                      @input=${(e: any) => (this.activeJudicialForm!.authorityName = e.target.value)}
+                                    />
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div class="edit-section">
-                              <div class="card-title">
-                                <span>مشخصات طرفین دعوا</span>
+                              <div class="edit-section">
+                                <div class="card-title">
+                                  <span>مشخصات طرفین دعوا</span>
+                                </div>
+                                <div class="edit-grid-2">
+                                  <div>
+                                    <label class="field-label">نام خواهان / شاکی</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.claimant.name}
+                                      @input=${(e: any) => (this.activeJudicialForm!.claimant.name = e.target.value)}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label class="field-label">کد ملی خواهان</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.claimant.nationalId || ''}
+                                      @input=${(e: any) => (this.activeJudicialForm!.claimant.nationalId = e.target.value)}
+                                    />
+                                  </div>
+                                  <div style="grid-column: span 2;">
+                                    <label class="field-label">نشانی و اقامتگاه خواهان</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.claimant.address || ''}
+                                      @input=${(e: any) => (this.activeJudicialForm!.claimant.address = e.target.value)}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label class="field-label">نام خوانده / مشتکی‌عنه</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.respondent.name}
+                                      @input=${(e: any) => (this.activeJudicialForm!.respondent.name = e.target.value)}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label class="field-label">نشانی خوانده</label>
+                                    <input
+                                      type="text"
+                                      class="edit-input"
+                                      .value=${this.activeJudicialForm.respondent.address || ''}
+                                      @input=${(e: any) => (this.activeJudicialForm!.respondent.address = e.target.value)}
+                                    />
+                                  </div>
+                                </div>
                               </div>
-                              <div class="edit-grid-2">
-                                <div>
-                                  <label class="field-label">نام خواهان / شاکی</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.claimant.name}
-                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.name = e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <label class="field-label">کد ملی خواهان</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.claimant.nationalId || ''}
-                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.nationalId = e.target.value)}
-                                  />
-                                </div>
-                                <div style="grid-column: span 2;">
-                                  <label class="field-label">نشانی و اقامتگاه خواهان</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.claimant.address || ''}
-                                    @input=${(e: any) => (this.activeJudicialForm!.claimant.address = e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <label class="field-label">نام خوانده / مشتکی‌عنه</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.respondent.name}
-                                    @input=${(e: any) => (this.activeJudicialForm!.respondent.name = e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <label class="field-label">نشانی خوانده</label>
-                                  <input
-                                    type="text"
-                                    class="edit-input"
-                                    .value=${this.activeJudicialForm.respondent.address || ''}
-                                    @input=${(e: any) => (this.activeJudicialForm!.respondent.address = e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                            </div>
 
-                            <div class="edit-section">
-                              <div class="card-title">
-                                <span>موضوع و خواسته دعوا</span>
+                              <div class="edit-section">
+                                <div class="card-title">
+                                  <span>موضوع و خواسته دعوا</span>
+                                </div>
+                                <input
+                                  type="text"
+                                  class="edit-input"
+                                  .value=${this.activeJudicialForm.subject}
+                                  @input=${(e: any) => (this.activeJudicialForm!.subject = e.target.value)}
+                                />
                               </div>
-                              <input
-                                type="text"
-                                class="edit-input"
-                                .value=${this.activeJudicialForm.subject}
-                                @input=${(e: any) => (this.activeJudicialForm!.subject = e.target.value)}
-                              />
-                            </div>
 
-                            <div class="edit-section">
-                              <div class="card-title">
-                                <span>شرح مشروح و دفاعیات لایحه / دادخواست</span>
+                              <div class="edit-section">
+                                <div class="card-title">
+                                  <span>شرح مشروح و دفاعیات لایحه / دادخواست</span>
+                                </div>
+                                <textarea
+                                  class="edit-input"
+                                  rows="12"
+                                  style="line-height: 1.8;"
+                                  .value=${this.activeJudicialForm.bodyText}
+                                  @input=${(e: any) => (this.activeJudicialForm!.bodyText = e.target.value)}
+                                ></textarea>
                               </div>
-                              <textarea
-                                class="edit-input"
-                                rows="12"
-                                style="line-height: 1.8;"
-                                .value=${this.activeJudicialForm.bodyText}
-                                @input=${(e: any) => (this.activeJudicialForm!.bodyText = e.target.value)}
-                              ></textarea>
-                            </div>
 
-                            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                              <button
-                                class="action-btn-print"
-                                @click=${() => (this.isFormEditing = false)}
-                              >
-                                اعمال تغییرات و مشاهده در سربرگ رسمی
-                              </button>
+                              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                                <button
+                                  class="action-btn-print"
+                                  @click=${() => (this.isFormEditing = false)}
+                                >
+                                  اعمال تغییرات و مشاهده در سربرگ رسمی
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        `
-                  }
+                          `
+                    }
                   </div>
                 </div>
               </div>
@@ -6542,10 +6557,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       <div class="proxy-banner-info">
                         <div class="proxy-banner-title ${this.isTestingProxy ? 'blue' : ''}">
                           ${
-                          this.isTestingProxy
-                            ? html`<span>⏳ در حال سنجش پایداری و تاخیر گره‌های شبکه...</span>`
-                            : html` <span>🛡️ وضعیت ارتباط: پایدار و ضدتحریم فعال</span> `
-                        }
+                            this.isTestingProxy
+                              ? html`<span>⏳ در حال سنجش پایداری و تاخیر گره‌های شبکه...</span>`
+                              : html` <span>🛡️ وضعیت ارتباط: پایدار و ضدتحریم فعال</span> `
+                          }
                         </div>
                         <div class="proxy-banner-sub">
                           ${this.networkState.activeTunnelName} — اتصال امن صوتی و تصویری بدون قطعی
@@ -6631,22 +6646,22 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                     </div>
 
                     ${PROXY_NODES.map(
-                    (node) => html`
-                      <div
-                        class="proxy-node-item ${this.networkState.selectedNode === node.id ? 'selected' : ''}"
-                        @click=${(e: Event) => this.handleSelectProxyNode(node.id, e)}
-                      >
-                        <div class="proxy-node-left">
-                          <span class="proxy-node-flag">${node.flag}</span>
-                          <div class="proxy-node-info">
-                            <span class="proxy-node-title">${node.name}</span>
-                            <span class="proxy-node-sub">${node.location}</span>
+                      (node) => html`
+                        <div
+                          class="proxy-node-item ${this.networkState.selectedNode === node.id ? 'selected' : ''}"
+                          @click=${(e: Event) => this.handleSelectProxyNode(node.id, e)}
+                        >
+                          <div class="proxy-node-left">
+                            <span class="proxy-node-flag">${node.flag}</span>
+                            <div class="proxy-node-info">
+                              <span class="proxy-node-title">${node.name}</span>
+                              <span class="proxy-node-sub">${node.location}</span>
+                            </div>
                           </div>
+                          <div class="proxy-node-ping">⚡ ${node.ping}ms</div>
                         </div>
-                        <div class="proxy-node-ping">⚡ ${node.ping}ms</div>
-                      </div>
-                    `
-                  )}
+                      `
+                    )}
                   </div>
                 </div>
               </div>
