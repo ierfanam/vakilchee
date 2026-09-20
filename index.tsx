@@ -3451,7 +3451,9 @@ export class GdmLiveAudio extends LitElement {
       !window.location.hostname.includes('localhost') &&
       !window.location.hostname.includes('127.0.0.1');
 
-    const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
+    const rawApiKey =
+      ((globalThis as any).__VAKILCHEE_LIVE_TOKEN__ as string | undefined) ||
+      (process.env.GEMINI_API_KEY as string | undefined) ||
       ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
       localStorage.getItem('GEMINI_API_KEY') ||
       '';
@@ -3483,7 +3485,9 @@ export class GdmLiveAudio extends LitElement {
     try {
       this.client = this.createGoogleGenAIClient();
 
-      const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
+      const rawApiKey =
+        ((globalThis as any).__VAKILCHEE_LIVE_TOKEN__ as string | undefined) ||
+        (process.env.GEMINI_API_KEY as string | undefined) ||
         ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
         localStorage.getItem('GEMINI_API_KEY') ||
         '';
