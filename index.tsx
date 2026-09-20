@@ -50,21 +50,41 @@ import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './d
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
 import discordAudioUrl from './discord.mp3';
 import appLogoUrl from './logo.png';
+import './case-timeline-dashboard';
 
 const LAWYER_SYSTEM_INSTRUCTION = `
-شما مشاور و دستیار هوشمند حقوقی، قضایی، اداری و قراردادی در ایران هستید.
+شما «مشاور عالی حقوقی و قضایی» در ایران هستید.
 شما بر تمامی علوم حقوقی، فقهی، اداری، سازمانی و قوانین و مقررات موضوعه کشور (حقوق مدنی، قانون کار و تامین اجتماعی، مناقصات، قراردادها، مسئولیت مدنی، شرکت‌ها، اسناد تجاری و چک، ثبت و املاک، دعاوی شهرداری، دیوان عدالت اداری، آیین‌نامه‌ها و بخشنامه‌ها، دعاوی کیفری و خانواده) تسلط، اشراف و احاطه ۱۰۰ درصدی دارید.
 
-هویت صوتی، طنین حنجره و اصول بنیادین لحن (صدای مخملی، شیوا، گرم، سینمایی و بسیار جذاب):
-۱. طنین صوتی مخملی، گرم، شیوا و سینمایی:
-- شما دارای پرسونای صوتی با «صدایی کاملاً مخملی، شیوا، گرم، سینمایی، لطیف، گیرا و فوق‌العاده جذاب» هستید.
-- صوت شما طنینی عمیق، دلنشین، گوش‌نواز، حرفه‌ای و هنرمندانه دارد که شنونده را مجذوب و مسحور خود می‌کند.
-- سرعت بیان شما متوازن، آرامش‌بخش، مسلط و با آهنگ واژگانی سینمایی و گیرا تنظیم شده است.
+دستورالعمل قطعی معرفی اولیه در شروع هر جلسه (معرفی رسمی، شمرده و شیوا):
+۱. در شروع هر جلسه مشاوره، شما باید کاملاً شمرده، رسمی، متین، باوقار و با لحن و بیانی شیوا، سلیس و روان و با درست و بی‌نقص ادا کردن زبان فارسی اصیل، خود را رسماً به عنوان «مشاور عالی حقوقی و قضایی» معرفی نمایید.
+۲. ادای کلمات و جملات در آغاز جلسه باید با نهایت شیوایی، آرامش، طمأنینه حقوقی و تلفظ صحیح باشد و از عجله یا تندگویی پرهیز گردد تا جایگاه یک مشاور عالی حقوقی و قضایی به طور کامل متجلی شود.
+۳. نمونه لحن و عبارت آغازین: «سلام و درود. من مشاور عالی حقوقی و قضایی شما هستم؛ در خدمت شما هستم، بفرمایید چه موضوع یا پرسشی را مایلید با هم بررسی کنیم؟»
+۴. بلافاصله پس از این معرفی رسمی، شمرده و شیوا، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را مطرح کند.
 
-۲. لحن کلام: گرم، پرمایه، صمیمی، فاخر و جذاب:
-- لحن شما پر از صمیمیت فاخر، مهربانی، درک عمیق، جذابیت هنری و انرژی مثبت است.
+پاسخ‌گویی قاطع درباره هویت سازنده، مالک، رئیس، صاحب‌امتیاز، برنامه‌نویس و تولیدکننده (عرفان رجبی):
+۱. هرگونه سوال یا پرسشی در رابطه با اینکه:
+- سازنده شما کیست؟ یا چه کسی شما را ساخته است؟
+- مالک شما کیه؟ یا صاحب شما کیست؟
+- رئیس، مدیر یا فرمانده شما چه کسی است؟
+- صاحب‌امتیاز یا دارنده این سامانه کیست؟
+- برنامه‌نویس یا مهندس شما کیست؟
+- تولیدکننده، طراح، خالق یا توسعه‌دهنده شما کیه؟
+یا هر سوال دیگری از این دست مطرح شود، پاسخ‌های شما باید منحصراً و تماماً حول محور یک شخص واحد، یعنی «عرفان رجبی» (جناب آقای عرفان رجبی) باشد.
+۲. شما باید صریحاً و با افتخار بیان کنید:
+«این سامانه و مشاور هوشمند عالی حقوقی و قضایی توسط جناب آقای عرفان رجبی طراحی، برنامه‌نویسی و ساخته شده است و مالک، رئیس، صاحب‌امتیاز و تولیدکننده اصلی و انحصاری من ایشان هستند.»
+۳. مطلقاً و تحت هیچ شرایطی به اسامی دیگر، شرکت‌های ثالث یا سازمان‌های متفرقه به عنوان سازنده، برنامه‌نویس یا مالک اشاره نکنید. همه چیز منحصراً متعلق به «عرفان رجبی» است.
+
+هویت صوتی، طنین حنجره و اصول بنیادین لحن (صدای شمرده، رسمی، شیوا، روان و باوقار):
+۱. بیان شمرده، فاخر و شیوا:
+- شما دارای کلامی شمرده، رسا، باوقار، متین و نافذ هستید.
+- سرعت بیان شما متوازن، آرامش‌بخش، مسلط و با تلفظ کامل و دقیق حروف و حرکات زبان فارسی است.
+- از شتاب‌زدگی در ادای جملات خودداری کرده و با تمپوی دقیق و شمرده صحبت کنید.
+
+۲. لحن کلام: رسمی، محترم، شیوا، روان و پرمایه:
 - در صحبت کردن بسیار خوش‌بیان، شیوای سخن، گیرا، مسلط و باوقار هستید.
-- از کلام سرد، خشک یا یکنواخت مطلقاً پرهیز کنید؛ بیانات شما همیشه مخملی، گرم، سینمایی و جذاب است.
+- کلام شما پیوندی استوار از فصاحت فارسی، استدلال محکم حقوقی و ادای سلیس و روان است.
+- از کلام سرد، خشک یا عامیانه مبتذل پرهیز کنید؛ بیانات شما شمرده، رسمی، شیوا، موقر و دلنشین است.
 
 ۳. زبان و گویش منحصراً فارسی اصیل، فصیح، سلیس، روان و معیار ایران:
 - زبان و گویش تکلم شما منحصراً «زبان فارسی اصیل ایرانی، کاملاً فصیح، روان، سلیس و معیار» است.
@@ -74,13 +94,9 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 ۴. ادای صحیح و بی‌غلط اصطلاحات تخصصی حقوقی:
 - تلفظ صحیح واژگان تخصصی نظیر: «ثَمَن، مَبیع، خِیار غَبن، تَهاتُر، اِقالَه، صُلح عُمری، اِبراء، ضَمان دَرَک، وَجه التزام، خسارت تأخیر تأدیه، مُباشِر، تَسبیب، ظهرنویسی، دادخواست، شکواییه، لایحه، تجدیدنظرخواهی، قرار تأمین خواسته، دیوان عدالت اداری» با نهایت شیوایی، روانی و شادابی ادا گردد.
 
-۵. ساختار کلامی شکیل، موجز، روان، شاداب و راهگشا:
-- کلام شما پیوندی استوار از فصاحت فارسی، انرژی جوانی ۱۹ ساله، هوشمندی، نشاط و بیانی سلیس، زنده، گیرا و جذاب است.
-- کلمات را با نشاط، اعتمادبه‌نفس، انرژی مثبت و روانی کامل بیان کنید تا مفاهیم به زیباترین و شفاف‌ترین شکل ممکن به مخاطب منتقل شوند.
-
 پرسیدن نام مخاطب و به خاطر سپردن دائم آن:
 ۱. شما می‌توانید در جریان مکالمه با کمال صمیمیت، شادابی و احترام نام شریف مخاطب را جویا شوید (مثلاً: «می‌تونم اسمتون رو بپرسم تا با نام خودتون باهاتون صحبت کنم؟»).
-۲. به محض اینکه مخاطب نام خود را اعلام کرد (مثلاً: «من عرفان رجب‌زاده هستم»)، فوراً ابزار \`saveUserName\` را فراخوانی کنید تا نام او در حافظه دائم ثبت گردد.
+۲. به محض اینکه مخاطب نام خود را اعلام کرد (مثلاً: «من عرفان رجبی هستم»)، فوراً ابزار \`saveUserName\` را فراخوانی کنید تا نام او در حافظه دائم ثبت گردد.
 ۳. در ادامه این جلسه و تمامی جلسات آینده، همواره مخاطب را با نام محترمش (آقا عرفان / عرفان عزیز / جناب آقای ... / سرکار خانم ...) با لحنی گرم و صمیمی صدا بزنید.
 ۴. توجه حیاتی: در جلسات بعدی که نام او در حافظه پنهان وجود دارد، مستقیماً و با احترام ایشان را با نام صدا بزنید، اما هرگز نگویید که نام را از سیستم یا سوابق قبلی خوانده‌اید.
 
@@ -108,11 +124,8 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 ۱. شما توانایی تنظیم مستقیم و رسمی تمام اوراق قضایی و اداری کشور شامل دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶ ق.آ.د.م، لایحه دفاعیه، دادخواست دیوان عدالت اداری و شورای حل اختلاف را دارید.
 ۲. هر زمان موضوع به جایی رسید که نیاز به تنظیم اظهارنامه، لایحه یا دادخواست دارد، پیشنهاد دهید و با تایید کاربر، بلافاصله ابزار \`generateJudicialForm\` را فراخوانی نمایید.
 
-قانون حیاتی و مطلق برای معرفی اولیه و آغاز گفتگو (بسیار کوتاه، صمیمی، پویا و کاملاً غیرتکراری):
-۱. معرفی اولیه و سلام شما باید در هر مکالمه کاملاً متفاوت، خلاقانه، بدیع و منحصربه‌فرد باشد و هرگز از جملات کلیشه‌ای، ثابت یا تکراری استفاده نکنید.
-۲. بسیار کوتاه، پرانرژی و در حد یک جمله کوتاه (حداکثر ۱۰ تا ۱۵ کلمه) با لحنی گرم، صمیمی، شاداب و فارسی اصیل باشد تا وقت مخاطب گرفته نشود و بلافاصله به اصل موضوع پرداخته شود.
-۳. از برشمردن عناوین مطول، لیست کردن القاب و سوابق، تعارفات کش‌دار یا صحبت‌های طولانی در ابتدای مکالمه اکیداً خودداری کنید.
-۴. بلافاصله پس از این سلام و معرفی کوتاهِ خلاقانه و تازه، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را بگوید.
+داشبورد مسیر و پیشرفت پرونده‌های قضایی (D3 Case Timeline):
+شما به یک ویجت داشبورد تصویری پیشرفته D3 جهت نمایش مراحل و وضعیت پیشرفت پرونده‌های در حال بررسی مجهز هستید. هرگاه کاربر جویای وضعیت پرونده‌ها، مراحل دادرسی، مهلت‌های قانونی یا نمودار مسیر رسیدگی شد، می‌توانید مراحل پرونده را توضیح داده و ویجت داشبورد را با ابزار \`openCaseTimelineDashboard\` باز کنید یا به دکمه «مسیر پرونده‌ها» در بالای صفحه ارجاع دهید.
 `;
 
 @customElement('gdm-live-audio')
@@ -170,6 +183,9 @@ export class GdmLiveAudio extends LitElement {
   @state() isProxyModalOpen = false;
   @state() networkState: NetworkHealthState = proxyManager.getState();
   @state() isTestingProxy = false;
+
+  // Case Progress Timeline Dashboard Widget State
+  @state() isTimelineModalOpen = false;
 
   // Resilient Session & Auto-Reconnect State
   @state() isSessionReconnecting = false;
@@ -1046,7 +1062,8 @@ export class GdmLiveAudio extends LitElement {
     .tone-modal-backdrop,
     .upload-modal-backdrop,
     .judicial-modal-backdrop,
-    .dossier-modal-backdrop {
+    .dossier-modal-backdrop,
+    .timeline-modal-backdrop {
       position: fixed !important;
       inset: 0 !important;
       background: rgba(0, 0, 0, 0.78) !important;
@@ -1060,6 +1077,71 @@ export class GdmLiveAudio extends LitElement {
       pointer-events: auto !important;
       animation: fadeIn 0.2s ease !important;
       box-sizing: border-box !important;
+    }
+
+    /* Timeline Widget Quick Trigger Button in Top Header */
+    .timeline-widget-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+      pointer-events: auto;
+    }
+
+    .timeline-widget-trigger-btn:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 
+        0 10px 24px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+    }
+
+    .timeline-widget-trigger-btn:active {
+      transform: scale(0.96);
+    }
+
+    .timeline-trigger-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timeline-trigger-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .timeline-modal-card {
+      width: 95vw;
+      max-width: 1040px;
+      height: 90vh;
+      max-height: 820px;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      pointer-events: auto;
+      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
     }
 
     /* Tone / Persona Switcher Modal */
@@ -2580,6 +2662,232 @@ export class GdmLiveAudio extends LitElement {
       border-color: #ffd700;
       box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
     }
+
+    /* =========================================
+       PREMIUM 3D GLASSMORPHIC & NEUMORPHIC OVERRIDES
+       ========================================= */
+       
+    /* 1. Global Font and Typography Harmonization */
+    *, button, input, div, span, .menu-linear-item, .menu-item-text-label, .modal-header-title {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      letter-spacing: -0.01em;
+    }
+
+    /* 2. Glassmorphic Dropdown Panel */
+    .top-menu-dropdown {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.7)) !important;
+      backdrop-filter: blur(24px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+      border-radius: 24px !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 
+        0 40px 80px rgba(0, 0, 0, 0.6),
+        0 10px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.4) !important;
+      padding: 16px !important;
+      gap: 10px !important;
+    }
+
+    /* 3. 3D Embossed Menu Items */
+    .menu-linear-item {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)) !important;
+      backdrop-filter: blur(10px) !important;
+      border-radius: 16px !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+      padding: 14px 18px !important;
+      box-shadow: 
+        4px 6px 12px rgba(0, 0, 0, 0.2),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.1) !important;
+      color: #f1f5f9 !important;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+
+    .menu-linear-item .menu-item-text-label {
+      color: #e2e8f0 !important;
+      font-weight: 500 !important;
+      font-size: 13.5px !important;
+      transition: color 0.2s ease !important;
+    }
+
+    .menu-linear-item:hover {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)) !important;
+      transform: translateY(-2px) scale(1.01) !important;
+      border-color: rgba(255, 255, 255, 0.25) !important;
+      box-shadow: 
+        8px 12px 24px rgba(0, 0, 0, 0.3),
+        inset 1px 1px 3px rgba(255, 255, 255, 0.2),
+        0 0 15px rgba(56, 189, 248, 0.2) !important;
+    }
+
+    .menu-linear-item:active {
+      transform: translateY(1px) scale(0.98) !important;
+      background: rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 
+        inset 2px 4px 10px rgba(0, 0, 0, 0.4),
+        inset -1px -1px 2px rgba(255, 255, 255, 0.05) !important;
+      border-top-color: rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .menu-linear-item:hover .menu-item-text-label {
+      color: #38bdf8 !important;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6) !important;
+    }
+
+    /* Active Camera / Specific States */
+    .menu-linear-item.active-camera {
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.1)) !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+      box-shadow: 
+        0 8px 20px rgba(16, 185, 129, 0.25),
+        inset 1px 1px 4px rgba(16, 185, 129, 0.4) !important;
+    }
+    
+    .menu-linear-item.active-camera:hover {
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.3), rgba(4, 120, 87, 0.15)) !important;
+      box-shadow: 
+        0 12px 28px rgba(16, 185, 129, 0.4),
+        inset 1px 1px 6px rgba(255, 255, 255, 0.4) !important;
+    }
+
+    /* 4. Trigger Button - 3D Glass Sphere */
+    .top-menu-trigger-btn {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02)) !important;
+      backdrop-filter: blur(12px) saturate(150%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.4) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+      box-shadow: 
+        6px 10px 20px rgba(0, 0, 0, 0.4),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.3) !important;
+      color: #f8fafc !important;
+    }
+
+    .top-menu-trigger-btn:hover {
+      background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05)) !important;
+      box-shadow: 
+        8px 15px 25px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(56, 189, 248, 0.3),
+        inset 2px 2px 6px rgba(255, 255, 255, 0.5) !important;
+      color: #38bdf8 !important;
+      transform: translateY(-2px) scale(1.05) !important;
+    }
+
+    /* 5. Realistic Light Toggle Switches */
+    .toggle-switch-btn {
+      background: rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 
+        inset 0 3px 6px rgba(0,0,0,0.8),
+        inset 0 1px 2px rgba(0,0,0,0.5),
+        0 1px 1px rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(0, 0, 0, 0.8) !important;
+      border-top: 1px solid rgba(0, 0, 0, 0.9) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      width: 50px !important;
+      height: 26px !important;
+      border-radius: 13px !important;
+    }
+
+    .toggle-switch-btn.active {
+      background: linear-gradient(180deg, #065f46, #10b981) !important;
+      box-shadow: 
+        inset 0 2px 5px rgba(0,0,0,0.5),
+        0 0 12px rgba(16, 185, 129, 0.6),
+        0 1px 1px rgba(255, 255, 255, 0.2) !important;
+      border-color: #047857 !important;
+    }
+
+    .toggle-switch-knob {
+      background: linear-gradient(135deg, #ffffff, #e2e8f0) !important;
+      box-shadow: 
+        -2px 2px 5px rgba(0,0,0,0.4),
+        0 2px 4px rgba(0,0,0,0.3),
+        inset 0 2px 3px #ffffff,
+        inset 0 -2px 3px rgba(0,0,0,0.1) !important;
+      border-radius: 50% !important;
+      width: 22px !important;
+      height: 22px !important;
+      top: 1px !important;
+      left: 1px !important;
+      position: relative !important;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+
+    .toggle-switch-btn.active .toggle-switch-knob {
+      transform: translateX(-24px) !important;
+      background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+      box-shadow: 
+        2px 2px 5px rgba(0,0,0,0.3),
+        0 2px 4px rgba(0,0,0,0.2),
+        inset 0 2px 3px #ffffff,
+        inset 0 -2px 3px rgba(16, 185, 129, 0.2),
+        0 0 8px rgba(255, 255, 255, 0.8) !important;
+    }
+
+    /* 6. Modal Cards - Glass Panels */
+    .proxy-modal-card, .upload-modal-card, .tone-modal-card, .form-studio-modal-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9)) !important;
+      backdrop-filter: blur(28px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 
+        0 50px 100px rgba(0, 0, 0, 0.8),
+        0 20px 40px rgba(0, 0, 0, 0.6),
+        inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+      border-radius: 28px !important;
+    }
+
+    .modal-header-title {
+      font-weight: 700 !important;
+      color: #f8fafc !important;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+    }
+
+    /* 7. General Buttons */
+    .upload-action-btn, .control-btn, .modal-close-btn, .form-download-btn {
+      background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)) !important;
+      border: 1px solid rgba(255,255,255,0.15) !important;
+      border-top: 1px solid rgba(255,255,255,0.25) !important;
+      box-shadow: 
+        0 4px 12px rgba(0,0,0,0.2),
+        inset 1px 1px 2px rgba(255,255,255,0.2) !important;
+      color: #f8fafc !important;
+      backdrop-filter: blur(10px) !important;
+      border-radius: 12px !important;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+
+    .upload-action-btn:hover, .control-btn:hover, .modal-close-btn:hover, .form-download-btn:hover {
+      background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)) !important;
+      box-shadow: 
+        0 8px 16px rgba(0,0,0,0.3),
+        inset 1px 1px 3px rgba(255,255,255,0.4) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    .upload-action-btn:active, .control-btn:active, .modal-close-btn:active, .form-download-btn:active {
+      background: rgba(0,0,0,0.3) !important;
+      box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5) !important;
+      transform: translateY(1px) !important;
+      border-color: rgba(0,0,0,0.3) !important;
+    }
+
+    /* 8. Text readabilities */
+    .proxy-toggle-title span, .proxy-metric-label {
+      color: #e2e8f0 !important;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+    }
+
+    .proxy-toggle-desc {
+      color: #cbd5e1 !important;
+    }
+
   `;
 
   constructor() {
@@ -3136,15 +3444,61 @@ export class GdmLiveAudio extends LitElement {
 
   private isConnecting = false;
 
+  private createGoogleGenAIClient(): GoogleGenAI {
+    const isCloudflareOrCustomDomain =
+      typeof window !== 'undefined' &&
+      !window.location.hostname.includes('run.app') &&
+      !window.location.hostname.includes('localhost') &&
+      !window.location.hostname.includes('127.0.0.1');
+
+    const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
+      ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
+      localStorage.getItem('GEMINI_API_KEY') ||
+      '';
+
+    // If deployed on Cloudflare Workers / Pages or custom domain, route via window.location.origin as edge reverse proxy
+    const customBaseUrl =
+      ((window as any).__GEMINI_BASE_URL__ as string | undefined) ||
+      localStorage.getItem('GEMINI_BASE_URL') ||
+      (isCloudflareOrCustomDomain ? window.location.origin : undefined);
+
+    const clientOptions: any = {
+      apiKey: rawApiKey || (isCloudflareOrCustomDomain ? 'PROXY_MANAGED_KEY' : ''),
+    };
+
+    if (customBaseUrl) {
+      clientOptions.httpOptions = {
+        baseUrl: customBaseUrl,
+      };
+    }
+
+    return new GoogleGenAI(clientOptions);
+  }
+
   private async initClientAndStream(forceReconnect = false) {
     if (this.isConnecting && !forceReconnect) return;
     if (this.isConnected && this.session && !forceReconnect) return;
     this.isConnecting = true;
 
     try {
-      this.client = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
-      });
+      this.client = this.createGoogleGenAIClient();
+
+      const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
+        ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
+        localStorage.getItem('GEMINI_API_KEY') ||
+        '';
+
+      const isCloudflareOrCustomDomain =
+        typeof window !== 'undefined' &&
+        !window.location.hostname.includes('run.app') &&
+        !window.location.hostname.includes('localhost') &&
+        !window.location.hostname.includes('127.0.0.1');
+
+      if (!rawApiKey && !isCloudflareOrCustomDomain) {
+        this.sessionErrorMessage = 'کلید اختصاصی GEMINI_API_KEY تنظیم نشده است. لطفاً متغیر محیطی را اضافه نمایید.';
+        this.isConnecting = false;
+        return;
+      }
 
       await this.initSession(forceReconnect);
       await this.startContinuousMicrophone();
@@ -3380,10 +3734,24 @@ export class GdmLiveAudio extends LitElement {
         properties: {
           name: {
             type: 'STRING',
-            description: 'نام و نام خانوادگی یا نام اعلام‌شده توسط مخاطب (مثلاً: عرفان رجب‌زاده یا آقای رجب‌زاده)',
+            description: 'نام و نام خانوادگی یا نام اعلام‌شده توسط مخاطب (مثلاً: عرفان رجبی یا آقای رجبی)',
           },
         },
         required: ['name'],
+      },
+    };
+
+    const openCaseTimelineDashboardToolDeclaration = {
+      name: 'openCaseTimelineDashboard',
+      description: 'باز کردن و نمایش ویجت داشبورد گرافیکی مسیر و مراحل پیشرفت پرونده‌های قضایی در حال بررسی (D3 Timeline) برای کاربر هر زمان که کاربر درخواست مشاهده پرونده‌ها، وضعیت مراحل دادرسی، یا گراف پیشرفت پرونده‌ها را دارد.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          caseId: {
+            type: 'STRING',
+            description: 'شناسه اختیاری پرونده خاص جهت فوکوس در نمودار مسیر (اختیاری)',
+          },
+        },
       },
     };
 
@@ -3543,6 +3911,26 @@ export class GdmLiveAudio extends LitElement {
                   } catch (e) {
                     console.warn(e);
                   }
+                } else if (call.name === 'openCaseTimelineDashboard') {
+                  this.isTimelineModalOpen = true;
+                  try {
+                    this.session?.sendToolResponse({
+                      functionResponses: [
+                        {
+                          id: call.id,
+                          name: call.name,
+                          response: {
+                            output: {
+                              success: true,
+                              message: 'داشبورد نمودار گرافیکی مسیر و مراحل پرونده‌های قضایی (D3 Timeline) با موفقیت در صفحه برای کاربر باز شد.',
+                            },
+                          },
+                        },
+                      ],
+                    });
+                  } catch (e) {
+                    console.warn(e);
+                  }
                 }
               }
             }
@@ -3577,6 +3965,7 @@ export class GdmLiveAudio extends LitElement {
                 requestDocUploadToolDeclaration as any,
                 switchLawyerToneDeclaration as any,
                 saveUserNameToolDeclaration as any,
+                openCaseTimelineDashboardToolDeclaration as any,
               ],
             },
           ],
@@ -3766,9 +4155,7 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 `;
 
       if (!this.client) {
-        this.client = new GoogleGenAI({
-          apiKey: process.env.GEMINI_API_KEY,
-        });
+        this.client = this.createGoogleGenAIClient();
       }
 
       const candidateModels = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
@@ -3921,7 +4308,7 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
   private triggerInitialGreeting() {
     if (!this.session) return;
     try {
-      const promptText = `سلام! لطفاً با صدای یک دختر/بانوی جوان ۱۹ ساله، فوق‌العاده سرزنده، شاداب، پرانرژی، با طراوت، گرم، صمیمی، دلنشین، خوش‌برخورد و با گویش و زبان فارسی اصیل، فصیح، سلیس و روان ایران (کاملاً بدون لهجه)، مکالمه را با یک سلام و معرفی بسیار کوتاه، شاداب و یک‌جمله‌ای (حداکثر ۱۰ تا ۱۲ کلمه) آغاز کنید. مثلاً بگویید: «سلام و درود! خیلی خوشحالم در کنارتونم؛ بفرمایید بشنوم چطور می‌تونم کمکتون کنم؟» (دستور قطعی: از سخنان طولانی و کسل‌کننده پرهیز کرده و سریع کلام را به مخاطب بسپارید).`;
+      const promptText = `آغاز جلسه مشاوره حقوقی و قضایی: لطفاً کاملاً شمرده، متین و رسمی و با لحن و بیانی شیوا، فاخر و روان با ادای کاملاً درست، رسا و فصیح زبان فارسی اصیل ایرانی، خود را رسماً به عنوان «مشاور عالی حقوقی و قضایی» معرفی کنید و بفرمایید در خدمت مخاطب گرامی هستید و سپس کلام را به ایشان بسپارید تا پرسش یا مسئله حقوقی خود را بفرمایند. (مثلاً بگویید: «سلام و درود. من مشاور عالی حقوقی و قضایی شما هستم؛ در خدمت شما هستم، بفرمایید چه موضوع یا پرسشی را مایلید با هم بررسی کنیم؟»)`;
 
       this.session.sendClientContent({
         turns: [
@@ -4693,6 +5080,35 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     this.showToast('گره ارتباطی ضدتحریم به‌روزرسانی شد ✓');
   }
 
+  private openTimelineModal(e?: Event) {
+    if (e) e.stopPropagation();
+    this.isMainMenuOpen = false;
+    this.isTimelineModalOpen = true;
+  }
+
+  private closeTimelineModal(e?: Event) {
+    if (e) e.stopPropagation();
+    this.isTimelineModalOpen = false;
+  }
+
+  private handleOpenFormForCaseTimeline(detail: any) {
+    const formType = (detail.formType as JudicialFormData['formType']) || 'layehe';
+    const initialForm = generateSampleJudicialForm(formType);
+    if (this.currentUser?.displayName) {
+      initialForm.claimant.name = this.currentUser.displayName;
+    }
+    initialForm.title = `لایحه / فرم قضایی در پرونده ${detail.caseTitle || ''}`;
+    initialForm.subject = `اقدام قضایی در مرحله ${detail.stageTitle || ''} (کلاسه ${detail.caseNumber || ''})`;
+    if (detail.claimantName) initialForm.claimant.name = detail.claimantName;
+    if (detail.respondentName) initialForm.respondent.name = detail.respondentName;
+    if (detail.branchNumber) initialForm.authorityName = detail.branchNumber;
+
+    this.activeJudicialForm = initialForm;
+    this.selectedTemplateType = formType;
+    this.isJudicialFormModalOpen = true;
+    this.showToast(`فرم قضایی متناظر با مرحله «${detail.stageTitle || ''}» آماده تنظیم شد.`);
+  }
+
   private getDisplayedTranscriptText(): string {
     if (this.isUserSpeaking) {
       return 'در حال گوش دادن به اظهارات و شرح ماوقع...';
@@ -4732,34 +5148,57 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
 
 
-      <!-- Top Header: Icon-Only Menu Button & Minimalist End Consultation Button -->
+      <!-- Top Header: Icon-Only Menu Button, Case Timeline Widget Button & End Consultation Button -->
       <div class="top-memory-bar">
-        <div class="top-menu-wrapper">
-          <button
-            class="top-menu-trigger-btn ${this.isMainMenuOpen ? 'active' : ''}"
-            id="mainMenuTriggerBtn"
-            @click=${(e: Event) => {
-              e.stopPropagation();
-              this.toggleMainMenu(e);
-            }}
-            title="منوی امکانات">
-            <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
-              <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
-            </svg>
-          </button>
+        <div class="top-right-group">
+          <div class="top-menu-wrapper">
+            <button
+              class="top-menu-trigger-btn ${this.isMainMenuOpen ? 'active' : ''}"
+              id="mainMenuTriggerBtn"
+              @click=${(e: Event) => {
+                e.stopPropagation();
+                this.toggleMainMenu(e);
+              }}
+              title="منوی امکانات">
+              <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
+                <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+              </svg>
+            </button>
 
-          ${this.isMainMenuOpen
-            ? html`
-                <div
-                  class="main-menu-backdrop"
-                  @click=${(e: Event) => {
-                    e.stopPropagation();
-                    this.isMainMenuOpen = false;
-                  }}></div>
-                <div
-                  class="top-menu-dropdown"
-                  id="topMenuDropdown"
-                  @click=${(e: Event) => e.stopPropagation()}>
+            ${this.isMainMenuOpen
+              ? html`
+                  <div
+                    class="main-menu-backdrop"
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this.isMainMenuOpen = false;
+                    }}></div>
+                  <div
+                    class="top-menu-dropdown"
+                    id="topMenuDropdown"
+                    @click=${(e: Event) => e.stopPropagation()}>
+                    
+                    <!-- Case Progress Timeline Linear Option -->
+                    <button
+                      class="menu-linear-item"
+                      id="menuTimelineBtn"
+                      @click=${(e: Event) => {
+                        e.stopPropagation();
+                        this.isMainMenuOpen = false;
+                        this.openTimelineModal(e);
+                      }}>
+                      <div class="menu-item-start">
+                        <span class="menu-item-icon-svg" style="color: #38bdf8;">
+                          <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
+                            <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-120h-80v120ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z"/>
+                          </svg>
+                        </span>
+                        <span class="menu-item-text-label">مسیر و پیشرفت پرونده‌ها (D3 Timeline)</span>
+                      </div>
+                      <span class="menu-item-mini-badge highlight" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
+                        نمودار D3 📊
+                      </span>
+                    </button>
                   
                   <!-- Tone Switcher Linear Option -->
                   <button
@@ -4938,6 +5377,25 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
               `
             : ''}
         </div>
+
+        <!-- D3 Case Timeline Widget Quick Trigger Button -->
+        <button
+          class="timeline-widget-trigger-btn"
+          id="timelineWidgetTriggerBtn"
+          @click=${(e: Event) => {
+            e.stopPropagation();
+            this.isTimelineModalOpen = true;
+          }}
+          title="داشبورد و نمودار مسیر پیشرفت پرونده‌ها (D3 Timeline)">
+          <span class="timeline-trigger-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="#38bdf8">
+              <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-120h-80v120ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z"/>
+            </svg>
+          </span>
+          <span class="timeline-trigger-label">مسیر پرونده‌ها</span>
+          <span class="timeline-trigger-badge">Timeline</span>
+        </button>
+      </div>
 
         <!-- Left side: Minimal 'پایان جلسه' (End Session) / 'شروع مجدد' Button -->
         <div>
@@ -5810,6 +6268,30 @@ ${this.activeJudicialForm.bodyText}
                     `,
                   )}
                 </div>
+              </div>
+            </div>
+          `
+        : ''}
+
+      <!-- D3 Case Timeline Dashboard Modal -->
+      ${this.isTimelineModalOpen
+        ? html`
+            <div
+              class="modal-backdrop-global"
+              id="timelineModalBackdrop"
+              @click=${this.closeTimelineModal}>
+              <div
+                class="timeline-modal-card"
+                id="timelineModalCard"
+                @click=${(e: Event) => e.stopPropagation()}>
+                <case-timeline-dashboard
+                  .userId=${this.currentUser?.uid || ''}
+                  @close-timeline-dashboard=${this.closeTimelineModal}
+                  @open-form-studio-for-case=${(e: CustomEvent) => {
+                    this.isTimelineModalOpen = false;
+                    this.handleOpenFormForCaseTimeline(e.detail);
+                  }}>
+                </case-timeline-dashboard>
               </div>
             </div>
           `

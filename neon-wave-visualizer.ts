@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {LitElement, css, html} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 
 interface Particle {
   x: number;
@@ -20,22 +20,22 @@ interface Particle {
 
 @customElement('neon-wave-visualizer')
 export class NeonWaveVisualizer extends LitElement {
-  @property({type: Object})
+  @property({ type: Object })
   outputNode: AudioNode | null = null;
 
-  @property({type: Object})
+  @property({ type: Object })
   inputNode: AudioNode | null = null;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isSpeaking = false;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isUserSpeaking = false;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isConnected = true;
 
-  @property({type: String})
+  @property({ type: String })
   toneBadge = '';
 
   private canvas: HTMLCanvasElement | null = null;
@@ -371,8 +371,8 @@ export class NeonWaveVisualizer extends LitElement {
     const glowColor = this.isSpeaking
       ? 'rgba(0, 242, 254, '
       : this.isUserSpeaking
-      ? 'rgba(245, 158, 11, '
-      : 'rgba(56, 189, 248, ';
+        ? 'rgba(245, 158, 11, '
+        : 'rgba(56, 189, 248, ';
     radialGlow.addColorStop(0, `${glowColor}${0.28 + this.smoothedVolume * 0.4})`);
     radialGlow.addColorStop(0.4, `${glowColor}${0.12 + this.smoothedVolume * 0.2})`);
     radialGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
@@ -485,7 +485,7 @@ export class NeonWaveVisualizer extends LitElement {
       harmonicAmp: number;
     }
   ) {
-    const {width, centerY, amplitude, frequency, phase, color, glowColor, glowBlur, lineWidth, harmonics, harmonicAmp} = config;
+    const { width, centerY, amplitude, frequency, phase, color, glowColor, glowBlur, lineWidth, harmonics, harmonicAmp } = config;
 
     ctx.save();
     ctx.strokeStyle = color;
@@ -577,12 +577,12 @@ export class NeonWaveVisualizer extends LitElement {
             class="pulse-neon-dot ${isSpeakingNow ? '' : isUserSpeakingNow ? 'amber' : 'green'}"></div>
           <span>
             ${isSpeakingNow
-              ? '🎙️ در حال گفتگوی هوشمند...'
-              : isUserSpeakingNow
-              ? '🎧 در حال شنیدن صدای شما...'
-              : this.isConnected
-              ? '✨ آماده مکالمه صوتی'
-              : 'اتصال صوتی برقرار نیست'}
+        ? '🎙️ در حال گفتگوی هوشمند...'
+        : isUserSpeakingNow
+          ? '🎧 در حال شنیدن صدای شما...'
+          : this.isConnected
+            ? '✨ آماده مکالمه صوتی'
+            : 'اتصال صوتی برقرار نیست'}
           </span>
         </div>
       </div>
