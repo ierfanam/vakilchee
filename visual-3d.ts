@@ -11,13 +11,15 @@ import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Analyser} from './analyser';
 import * as THREE from 'three';
-import {stoneVS, stoneFS} from './stone-shader';
+import {glassVS, glassFS} from './glass-shader';
 import {RepulsionParticleSystem} from './interactive-particles';
 
 /**
- * 3D Live Audio Visualizer - Realistic Volumetric Spherical Matte Stone Aurb
- * Features realistic 3D spherical depth, soft ambient contact occlusion shadow,
- * high-fidelity stone procedural PBR shading, and harmonic acoustic audio reaction.
+ * 3D Live Audio Visualizer - Physical Transparent Clear Blue-Tinted Glass
+ * A single transparent glass object, highly detailed, standing upright in the center of the image.
+ * Made of clear blue-tinted glass with realistic reflections and light refraction,
+ * placed on a plain white background, soft shadows underneath, minimalistic and clean composition,
+ * studio lighting, centered composition.
  */
 @customElement('gdm-live-audio-visuals-3d')
 export class GdmLiveAudioVisuals3D extends LitElement {
@@ -27,11 +29,11 @@ export class GdmLiveAudioVisuals3D extends LitElement {
   private scene!: THREE.Scene;
   private renderer!: THREE.WebGLRenderer;
   
-  // 3D Spherical Matte Stone Mesh & Custom Shader
-  private stoneMesh!: THREE.Mesh;
-  private stoneMaterial!: THREE.ShaderMaterial;
+  // 3D Transparent Clear Blue-Tinted Glass Mesh & Physical Shader
+  private glassMesh!: THREE.Mesh;
+  private glassMaterial!: THREE.ShaderMaterial;
 
-  // Realistic Soft Ambient Drop Shadow Mesh underneath the 3D Sphere
+  // Realistic Soft Ambient Drop Shadow Mesh underneath the Upright Glass
   private shadowMesh!: THREE.Mesh;
   private shadowMaterial!: THREE.ShaderMaterial;
 
@@ -137,33 +139,33 @@ export class GdmLiveAudioVisuals3D extends LitElement {
     renderer.setClearColor(0x000000, 0); // Transparent background over particles
     this.renderer = renderer;
 
-    // 3. Create Ultra-Smooth High-Precision 3D Sphere Geometry (192 x 192 segments)
-    const sphereRadius = 1.38;
-    const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 192, 192);
+    // 3. Create Upright Transparent Glass Sculpture (Capsule / Monument Standing Upright)
+    const glassGeometry = new THREE.CapsuleGeometry(1.08, 1.25, 64, 128);
     
-    // Realistic Matte Stone Color Scheme (Sculptural slate/basalt with warm mineral veins)
-    this.stoneMaterial = new THREE.ShaderMaterial({
-      vertexShader: stoneVS,
-      fragmentShader: stoneFS,
+    // Clear Blue-Tinted Glass Material with Realistic Reflections & Light Refraction
+    this.glassMaterial = new THREE.ShaderMaterial({
+      vertexShader: glassVS,
+      fragmentShader: glassFS,
       uniforms: {
         time: { value: 0 },
         inputData: { value: new THREE.Vector4(0, 0, 0, 0) },
         outputData: { value: new THREE.Vector4(0, 0, 0, 0) },
         audioIntensity: { value: 0.0 },
-        stoneBaseColor: { value: new THREE.Color(0x282e3a) },       // Deep matte slate
-        stoneVeinColor: { value: new THREE.Color(0x4a5568) },       // Mineral granite veins
-        stoneShadowColor: { value: new THREE.Color(0x131720) },     // Deep 3D core shadow
+        glassColor: { value: new THREE.Color(0xb8e2fc) },       // Clear pale blue tint
+        glassCoreColor: { value: new THREE.Color(0x0284c7) },   // Deep luminous azure core
+        studioLightColor: { value: new THREE.Color(0xffffff) }, // Pure studio softbox highlights
       },
-      transparent: false,
+      transparent: true,
       depthWrite: true,
       side: THREE.FrontSide,
     });
 
-    this.stoneMesh = new THREE.Mesh(sphereGeometry, this.stoneMaterial);
-    scene.add(this.stoneMesh);
+    this.glassMesh = new THREE.Mesh(glassGeometry, this.glassMaterial);
+    this.glassMesh.position.set(0, 0.1, 0); // Standing upright in the center
+    scene.add(this.glassMesh);
 
-    // 4. Soft Volumetric Ambient Drop Shadow beneath the Sphere for Tangible 3D Grounding
-    const shadowGeo = new THREE.PlaneGeometry(3.6, 3.6);
+    // 4. Soft Ambient Occlusion Drop Shadow directly underneath on Plain White Background
+    const shadowGeo = new THREE.PlaneGeometry(4.2, 4.2);
     this.shadowMaterial = new THREE.ShaderMaterial({
       vertexShader: `
         varying vec2 vUv;
@@ -176,21 +178,28 @@ export class GdmLiveAudioVisuals3D extends LitElement {
         varying vec2 vUv;
         uniform float opacity;
         void main() {
-          float dist = length(vUv - vec2(0.5));
-          // Soft Gaussian-like circular shadow falloff
-          float alpha = exp(-dist * dist * 18.0) * opacity;
-          gl_FragColor = vec4(vec3(0.08, 0.1, 0.15), alpha);
+          vec2 uv = (vUv - vec2(0.5)) * vec2(1.0, 1.22);
+          float dist = length(uv);
+          // Soft Gaussian-like multi-tiered studio contact shadow
+          float contactOcclusion = exp(-dist * dist * 36.0) * 0.46;
+          float softPenumbra = exp(-dist * dist * 10.5) * 0.28;
+          float wideDiffuse = exp(-dist * dist * 3.6) * 0.14;
+          
+          float alpha = (contactOcclusion + softPenumbra + wideDiffuse) * opacity;
+          // Soft studio ground contact shadow on plain white backdrop
+          vec3 shadowColor = vec3(0.08, 0.14, 0.22);
+          gl_FragColor = vec4(shadowColor, alpha);
         }
       `,
       uniforms: {
-        opacity: { value: 0.28 },
+        opacity: { value: 0.32 },
       },
       transparent: true,
       depthWrite: false,
     });
 
     this.shadowMesh = new THREE.Mesh(shadowGeo, this.shadowMaterial);
-    this.shadowMesh.position.set(0, -1.82, -0.4);
+    this.shadowMesh.position.set(0, -1.82, -0.35);
     this.shadowMesh.rotation.x = -Math.PI * 0.46;
     scene.add(this.shadowMesh);
 
@@ -248,34 +257,34 @@ export class GdmLiveAudioVisuals3D extends LitElement {
 
     const timeSec = t * 0.001;
 
-    // Natural 3D continuous spherical rotation (calm tumbling)
-    const baseSpeed = 0.0016;
-    this.rotation.y += baseSpeed + (this.smoothedAudioIntensity * 0.012);
-    this.rotation.x = Math.sin(t * 0.0004) * 0.12;
-    this.rotation.z = Math.cos(t * 0.0003) * 0.08;
+    // Upright rotation around vertical axis (standing upright in center)
+    const baseSpeed = 0.0022;
+    this.rotation.y += baseSpeed + (this.smoothedAudioIntensity * 0.016);
+    this.rotation.x = Math.sin(t * 0.0003) * 0.04;
+    this.rotation.z = Math.cos(t * 0.0003) * 0.02;
 
-    if (this.stoneMesh) {
-      this.stoneMesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
+    if (this.glassMesh) {
+      this.glassMesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
       
-      // Spherical harmonic breathing scale on voice audio
-      const dynamicScale = 1.0 + (this.smoothedAudioIntensity * 0.075);
-      this.stoneMesh.scale.setScalar(dynamicScale);
+      // Gentle harmonic breathing pulse on voice audio
+      const dynamicScale = 1.0 + (this.smoothedAudioIntensity * 0.06);
+      this.glassMesh.scale.set(dynamicScale, dynamicScale, dynamicScale);
 
-      // Subtle dynamic hovering float
-      this.stoneMesh.position.y = Math.sin(t * 0.0012) * 0.04;
+      // Subtle resting float while preserving upright grounding
+      this.glassMesh.position.y = 0.1 + Math.sin(t * 0.001) * 0.025;
 
-      // Update shader uniforms
-      this.stoneMaterial.uniforms.time.value = timeSec;
-      this.stoneMaterial.uniforms.inputData.value.set(inAmp, inFreq1, inFreq2, 0);
-      this.stoneMaterial.uniforms.outputData.value.set(outAmp, outFreq1, outFreq2, 0);
-      this.stoneMaterial.uniforms.audioIntensity.value = this.smoothedAudioIntensity;
+      // Update glass physical shader uniforms
+      this.glassMaterial.uniforms.time.value = timeSec;
+      this.glassMaterial.uniforms.inputData.value.set(inAmp, inFreq1, inFreq2, 0);
+      this.glassMaterial.uniforms.outputData.value.set(outAmp, outFreq1, outFreq2, 0);
+      this.glassMaterial.uniforms.audioIntensity.value = this.smoothedAudioIntensity;
     }
 
     if (this.shadowMesh) {
-      // Scale shadow in synchrony with spherical breathing & hovering
-      const shadowScale = 1.0 + (this.smoothedAudioIntensity * 0.1) - (this.stoneMesh ? this.stoneMesh.position.y * 0.4 : 0);
+      // Soft grounded shadow underneath upright glass object
+      const shadowScale = 1.0 + (this.smoothedAudioIntensity * 0.08) - (this.glassMesh ? (this.glassMesh.position.y - 0.1) * 0.3 : 0);
       this.shadowMesh.scale.set(shadowScale, shadowScale, 1.0);
-      this.shadowMaterial.uniforms.opacity.value = 0.26 + (this.smoothedAudioIntensity * 0.12);
+      this.shadowMaterial.uniforms.opacity.value = 0.32 + (this.smoothedAudioIntensity * 0.1);
     }
 
     this.renderer.render(this.scene, this.camera);

@@ -5,11 +5,14 @@
       pointer-events: auto;
     }
 
-    /* 3D Physical Trigger Button */
+    /* Clear Blue-Tinted Transparent Glass Trigger Button with Realistic Light Refraction */
     .top-menu-trigger-btn {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1px solid rgba(0, 0, 0, 0.6);
-      color: #e2e8f0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(224, 242, 254, 0.70) 50%, rgba(186, 230, 253, 0.50) 100%);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-bottom: 1.5px solid rgba(56, 189, 248, 0.55);
+      color: #0284c7;
       width: 52px;
       height: 52px;
       padding: 0;
@@ -19,27 +22,33 @@
       align-items: center;
       justify-content: center;
       box-shadow: 
-        8px 8px 16px rgba(0, 0, 0, 0.6), 
-        -4px -4px 12px rgba(255, 255, 255, 0.03),
-        inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.04),
-        inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.5);
-      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        0 10px 28px -4px rgba(14, 165, 233, 0.20), 
+        0 16px 36px -8px rgba(15, 23, 42, 0.08),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+        inset 0 -1.5px 2px rgba(56, 189, 248, 0.35);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       user-select: none;
       pointer-events: auto;
     }
 
     .top-menu-trigger-btn:hover {
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      color: #38bdf8;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(207, 250, 254, 0.85) 60%, rgba(186, 230, 253, 0.65) 100%);
+      color: #0369a1;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 
+        0 14px 34px -4px rgba(14, 165, 233, 0.30), 
+        0 20px 40px -8px rgba(15, 23, 42, 0.10),
+        inset 0 1.5px 2px rgba(255, 255, 255, 1),
+        inset 0 -1.5px 3px rgba(56, 189, 248, 0.45);
     }
 
     .top-menu-trigger-btn:active, .top-menu-trigger-btn.active {
       box-shadow: 
-        inset 4px 4px 12px rgba(0, 0, 0, 0.7), 
-        inset -2px -2px 6px rgba(255, 255, 255, 0.02);
-      transform: scale(0.95);
-      color: #0ea5e9;
-      border-color: rgba(0, 0, 0, 0.8);
+        inset 0 2px 6px rgba(14, 165, 233, 0.35), 
+        inset 0 -1px 2px rgba(255, 255, 255, 0.8);
+      transform: scale(0.96);
+      color: #0284c7;
+      border-color: rgba(56, 189, 248, 0.7);
     }
 
     .main-menu-backdrop {
@@ -50,7 +59,7 @@
       pointer-events: auto;
     }
 
-    /* 3D Panel Dropdown */
+    /* Clear Blue-Tinted Transparent Glass Dropdown Panel with Studio Soft Shadows */
     .top-menu-dropdown {
       position: absolute;
       top: calc(100% + 16px);
@@ -58,35 +67,42 @@
       min-width: 290px;
       width: max-content;
       max-width: 340px;
-      background: #ffffff;
-      border: 1px solid rgba(0, 0, 0, 0.8);
-      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 249, 255, 0.75) 50%, rgba(224, 242, 254, 0.65) 100%);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-bottom: 1.5px solid rgba(56, 189, 248, 0.45);
+      border-radius: 24px;
       box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.8), 
-        inset 2px 2px 4px rgba(0, 0, 0, 0.03),
-        inset -2px -2px 6px rgba(0, 0, 0, 0.6);
-      padding: 12px;
+        0 24px 60px -10px rgba(14, 165, 233, 0.16), 
+        0 32px 70px -15px rgba(15, 23, 42, 0.08),
+        inset 0 1.5px 2px rgba(255, 255, 255, 1),
+        inset 0 -1.5px 2px rgba(56, 189, 248, 0.25);
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
       z-index: 90;
-      animation: menuFadeIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: menuFadeIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       direction: rtl;
       pointer-events: auto;
     }
 
     @keyframes menuFadeIn {
-      0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+      0% { opacity: 0; transform: translateY(-10px) scale(0.96); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* 3D Physical Panel Items */
+    /* Clear Blue-Tinted Glass Interactive Menu Items */
     .menu-linear-item {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1px solid rgba(0, 0, 0, 0.4);
-      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.60);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.90);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+      color: #0f172a;
       padding: 12px 16px;
-      border-radius: 14px;
+      border-radius: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -94,8 +110,7 @@
       gap: 12px;
       text-align: right;
       direction: rtl;
-      transition: all 0.15s ease;
-      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-size: 13px !important;
       font-weight: 500 !important;
       width: 100%;
@@ -103,35 +118,35 @@
       white-space: nowrap;
       pointer-events: auto;
       box-shadow: 
-        4px 4px 10px rgba(0, 0, 0, 0.4), 
-        -2px -2px 6px rgba(255, 255, 255, 0.02),
-        inset 1px 1px 2px rgba(0, 0, 0, 0.03);
-    }
-
-    .menu-linear-item:active {
-      box-shadow: 
-        inset 3px 3px 8px rgba(0, 0, 0, 0.6), 
-        inset -1px -1px 3px rgba(255, 255, 255, 0.02);
-      transform: translateY(2px);
+        0 4px 14px rgba(14, 165, 233, 0.06), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.95);
     }
 
     .menu-linear-item:hover {
-      background: linear-gradient(145deg, #263347, #131d33);
-      color: #38bdf8;
+      background: linear-gradient(135deg, rgba(224, 242, 254, 0.85) 0%, rgba(186, 230, 253, 0.70) 100%);
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #0369a1;
+      transform: translateY(-1px);
+      box-shadow: 
+        0 8px 20px -2px rgba(14, 165, 233, 0.20),
+        inset 0 1px 1.5px rgba(255, 255, 255, 1);
+    }
+
+    .menu-linear-item:active {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(14, 165, 233, 0.25);
     }
 
     .menu-linear-item.active-camera {
-      background: linear-gradient(145deg, #064e3b, #022c22);
-    }
-
-    .menu-linear-item.active-camera:hover {
-      background: linear-gradient(145deg, #065f46, #047857);
+      background: linear-gradient(135deg, rgba(187, 247, 208, 0.75) 0%, rgba(134, 239, 172, 0.65) 100%);
+      border-color: rgba(34, 197, 94, 0.6);
+      color: #15803d;
     }
 
     .menu-item-start {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       min-width: 0;
       flex: 1;
     }
@@ -140,21 +155,28 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #d97706;
+      color: #0284c7;
       flex-shrink: 0;
     }
 
     .menu-item-text-label {
       font-size: 13px !important;
-      font-weight: 300 !important;
-      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
-      color: #000000;
+      font-weight: 500 !important;
+      color: #0f172a;
       white-space: nowrap;
       text-shadow: none;
     }
 
     .menu-linear-item:hover .menu-item-text-label {
-      color: #2563eb;
+      color: #0284c7;
     }
 
     .menu-item-mini-badge {
+      font-size: 10.5px !important;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(224, 242, 254, 0.85);
+      color: #0369a1;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }

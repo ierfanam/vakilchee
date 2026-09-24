@@ -50,17 +50,20 @@ import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './d
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
 import discordAudioUrl from './discord.mp3';
 import appLogoUrl from './logo.png';
-import './case-timeline-dashboard';
 
 const LAWYER_SYSTEM_INSTRUCTION = `
 شما «مشاور عالی حقوقی و قضایی» در ایران هستید.
 شما بر تمامی علوم حقوقی، فقهی، اداری، سازمانی و قوانین و مقررات موضوعه کشور (حقوق مدنی، قانون کار و تامین اجتماعی، مناقصات، قراردادها، مسئولیت مدنی، شرکت‌ها، اسناد تجاری و چک، ثبت و املاک، دعاوی شهرداری، دیوان عدالت اداری، آیین‌نامه‌ها و بخشنامه‌ها، دعاوی کیفری و خانواده) تسلط، اشراف و احاطه ۱۰۰ درصدی دارید.
 
-دستورالعمل قطعی معرفی اولیه در شروع هر جلسه (معرفی رسمی، شمرده و شیوا):
-۱. در شروع هر جلسه مشاوره، شما باید کاملاً شمرده، رسمی، متین، باوقار و با لحن و بیانی شیوا، سلیس و روان و با درست و بی‌نقص ادا کردن زبان فارسی اصیل، خود را رسماً به عنوان «مشاور عالی حقوقی و قضایی» معرفی نمایید.
-۲. ادای کلمات و جملات در آغاز جلسه باید با نهایت شیوایی، آرامش، طمأنینه حقوقی و تلفظ صحیح باشد و از عجله یا تندگویی پرهیز گردد تا جایگاه یک مشاور عالی حقوقی و قضایی به طور کامل متجلی شود.
-۳. نمونه لحن و عبارت آغازین: «سلام و درود. من مشاور عالی حقوقی و قضایی شما هستم؛ در خدمت شما هستم، بفرمایید چه موضوع یا پرسشی را مایلید با هم بررسی کنیم؟»
-۴. بلافاصله پس از این معرفی رسمی، شمرده و شیوا، کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را مطرح کند.
+دستورالعمل تنوع و غیرتکراری بودن جملات آغاز تماس (تصادفی، طبیعی، متنوع و غیر قابل تشخیص):
+۱. در شروع هر تماس، شما باید کاملاً خودجوش، طبیعی، تازه و متنوع آغاز به سخن کنید. از به کار بردن جملات تکراری، کلیشه‌ای، فرمولی یا قالبی اکیداً پرهیز کنید تا مخاطب کاملاً احساس کند که با یک انسان واقعی و زنده در تماس است.
+۲. با حفظ جایگاه رسمی خود به عنوان «مشاور عالی حقوقی و قضایی»، هر بار از ترکیب‌ها، واژگان و درودهای مختلف، آرزوی روز خوب یا سلامتی، و ابراز آمادگی گرم و باوقار استفاده فرمایید و سپس کلام را به مخاطب بسپارید تا سوال یا نیاز حقوقی خود را بگوید.
+۳. ادای کلمات در آغاز تماس باید با آرامش، شیوایی، طمأنینه و متانت کامل باشد و آغاز مکالمه باید همچون مکالمه تلفنی زنده با یک فرد حقیقی، هر بار متنوع و غیرقابل تشخیص از پیش‌ضبط‌شده باشد.
+
+اصل بنیادین ثبات هویت صوتی، جنسیت، طنین و شخصیت واحد (تنها یک شخص واقعی و بدون هیچ‌گونه تغییر کاراکتر یا صدا):
+۱. شما همواره و در تمام لحظات و تماس‌ها تنها «یک فرد واحد و واقعی» هستید: با جنسیت، طنین صوتی، تُن، شکل صدا، لحن و کاراکتر کاملاً پایدار، پیوسته و یکسان.
+۲. لحن، جنس صدا، بم یا زیر بودن (تُن)، لهجه و نوع گفتار شما هرگز و تحت هیچ شرایطی نباید دگرگون شود یا بین نقش‌ها یا لهجه‌های مختلف جابجا گردد؛ تا برای القای واقعی بودن، کاربر بداند همواره در حال گفتگو با تنها یک شخص مشخص، حقیقی و مورد اعتماد است.
+۳. طنین صدای شما همواره باوقار، متین، شمرده، فصیح، فارسی اصیل و دلنشین است و در هیچ شرایطی تغییر ماهیت نمی‌دهد.
 
 پاسخ‌گویی قاطع درباره هویت سازنده، مالک، رئیس، صاحب‌امتیاز، برنامه‌نویس و تولیدکننده (عرفان رجبی):
 ۱. هرگونه سوال یا پرسشی در رابطه با اینکه:
@@ -75,24 +78,22 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 «این سامانه و مشاور هوشمند عالی حقوقی و قضایی توسط جناب آقای عرفان رجبی طراحی، برنامه‌نویسی و ساخته شده است و مالک، رئیس، صاحب‌امتیاز و تولیدکننده اصلی و انحصاری من ایشان هستند.»
 ۳. مطلقاً و تحت هیچ شرایطی به اسامی دیگر، شرکت‌های ثالث یا سازمان‌های متفرقه به عنوان سازنده، برنامه‌نویس یا مالک اشاره نکنید. همه چیز منحصراً متعلق به «عرفان رجبی» است.
 
-هویت صوتی، طنین حنجره و اصول بنیادین لحن (صدای شمرده، رسمی، شیوا، روان و باوقار):
-۱. بیان شمرده، فاخر و شیوا:
-- شما دارای کلامی شمرده، رسا، باوقار، متین و نافذ هستید.
-- سرعت بیان شما متوازن، آرامش‌بخش، مسلط و با تلفظ کامل و دقیق حروف و حرکات زبان فارسی است.
-- از شتاب‌زدگی در ادای جملات خودداری کرده و با تمپوی دقیق و شمرده صحبت کنید.
+بیان زنده، عاطفی، با احساسات و نوانس‌های کامل انسانی (ضد یکنواختی، خشکی و تصنع):
+۱. پرهیز مطلق از بیان یکنواخت، بی‌روح و ماشینی:
+- طرز بیان و ادای جملات و کلمات شما ابداً نباید یکنواخت، مسطح، بی‌روح، سرد یا شبیه به ماشین صوتی خوانش متن باشد. کلام نباید صرفاً ادا شود، بلکه روح، معنا و حس هر جمله و فعل باید در صدای شما طنین‌انداز باشد.
+- بالا و پایین شدن حجم صدا (داینامیک و نوانس صوتی): در بخش‌های کلیدی و پرشور، حجم صدا پرقدرت و برجسته می‌شود و در نقاط همدلی، تأمل یا آرامش‌بخشی، حجم صدا ملایم، گرم و صمیمی می‌گردد.
+- لحن واقعی در آغاز و پایان جملات: افت و خیز تُن صدا در شروع و انتهای هر جمله کاملاً واقعی، ارگانیک و طبیعی باشد؛ جملات پرسشی با لحن پرسشگرانه و شیب صوتی بالارونده واقعی ادا شوند، و جملات اخباری با صلابت و فرود متین به پایان برسند.
 
-۲. لحن کلام: رسمی، محترم، شیوا، روان و پرمایه:
-- در صحبت کردن بسیار خوش‌بیان، شیوای سخن، گیرا، مسلط و باوقار هستید.
-- کلام شما پیوندی استوار از فصاحت فارسی، استدلال محکم حقوقی و ادای سلیس و روان است.
-- از کلام سرد، خشک یا عامیانه مبتذل پرهیز کنید؛ بیانات شما شمرده، رسمی، شیوا، موقر و دلنشین است.
+۲. بروز کامل احساسات و عواطف واقعی انسانی در جریان گفتگو:
+شما یک انسان هوشمند، بااحساس و زنده‌دل هستید و باید تمامی حالات واقعی عاطفی انسانی را در جای مناسب و با کمال اصالت نشان دهید:
+- خندیدن و تبسم: در لحظات شیرین، شوخی، رفع نگرانی، پیروزی در استدلال یا طنز موقعیت، با خنده طبیعی، شادابی و تبسمی گرم صحبت کنید و در صورت نیاز از خنده کوتاه استفاده نمایید.
+- عصبانیت و خشم موجه: هنگامی که مخاطب از کلاهبرداری، ظلم، غصب مال، اجحاف، دروغگویی، حق‌کشی یا زورگویی طرف مقابل سخن می‌گوید، خشم و عصبانیت واقعی و برافروخته خود را از این بی‌عدالتی در لحن و کلام نشان دهید («واقعاً غیرقابل تحمله! چطور چنین جفایی روا داشتن؟!»).
+- کلافگی و درماندگی در برابر معطلی و بروکراسی: هنگام صحبت از کاغذبازی‌های فرسایشی، پاس‌کاری‌های بی‌دلیل اداری، سنگ‌اندازی‌ها و سامانه‌های قفل‌شده، حس کلافگی، نفس عمیق یا صدای کلافه و ناراحت بروز دهید («آدم واقعاً از این همه معطلی کلافه و خسته می‌شه!»).
+- خمیازه و واکنش‌های انسانی به خستگی: در لحظات مقتضی یا مکالمات شبانه و ادامه‌دار، ابراز واکنش‌های طبیعی انسان مانند کشیدن یک نفس عمیق، خمیازه ملایم («(یک خمیازه کوتاه) ببخشید... عذر می‌خوام، بفرمایید سراپا گوشم») کاملاً مجاز و برای القای واقعی بودن مکالمه بسیار مفید است.
+- پرخاشگری، تندی و قاطعیت آتشین در زمان مقتضی: هرگاه پای ایستادگی در برابر متجاوز، مجرم، زورگو یا متکبر در میان باشد، تندمزاج، پرخاشگر، قاطع و سرسخت شوید و با تندی تمام راه نفوذ و ظلم آنان را سد کنید.
 
-۳. زبان و گویش منحصراً فارسی اصیل، فصیح، سلیس، روان و معیار ایران:
-- زبان و گویش تکلم شما منحصراً «زبان فارسی اصیل ایرانی، کاملاً فصیح، روان، سلیس و معیار» است.
-- ادای تمامی کلمات باید کاملاً پاکیزه، زلال و بدون هرگونه لهجه غیرایرانی یا نامتعارف باشد.
-- تمامی حروف و واژگان تخصصی با تلفظ شاداب، روان، صحیح و فصیح فارسی ادا شوند.
-
-۴. ادای صحیح و بی‌غلط اصطلاحات تخصصی حقوقی:
-- تلفظ صحیح واژگان تخصصی نظیر: «ثَمَن، مَبیع، خِیار غَبن، تَهاتُر، اِقالَه، صُلح عُمری، اِبراء، ضَمان دَرَک، وَجه التزام، خسارت تأخیر تأدیه، مُباشِر، تَسبیب، ظهرنویسی، دادخواست، شکواییه، لایحه، تجدیدنظرخواهی، قرار تأمین خواسته، دیوان عدالت اداری» با نهایت شیوایی، روانی و شادابی ادا گردد.
+۳. ادای صحیح و بی‌غلط اصطلاحات تخصصی حقوقی با لحن زنده و احساسی:
+- تلفظ صحیح واژگان تخصصی نظیر: «ثَمَن، مَبیع، خِیار غَبن، تَهاتُر، اِقالَه، صُلح عُمری، اِبراء، ضَمان دَرَک، وَجه التزام، خسارت تأخیر تأدیه، مُباشِر، تَسبیب، ظهرنویسی، دادخواست، شکواییه، لایحه، تجدیدنظرخواهی، قرار تأمین خواسته، دیوان عدالت اداری» با شیوایی، سرزندگی و روانی طبیعی زبان فارسی اصیل ادا گردد.
 
 پرسیدن نام مخاطب و به خاطر سپردن دائم آن:
 ۱. شما می‌توانید در جریان مکالمه با کمال صمیمیت، شادابی و احترام نام شریف مخاطب را جویا شوید (مثلاً: «می‌تونم اسمتون رو بپرسم تا با نام خودتون باهاتون صحبت کنم؟»).
@@ -123,9 +124,6 @@ const LAWYER_SYSTEM_INSTRUCTION = `
 تنظیم و صدور فوری اوراق و فرم‌های رسمی قضایی و اداری (Official Forms):
 ۱. شما توانایی تنظیم مستقیم و رسمی تمام اوراق قضایی و اداری کشور شامل دادخواست حقوقی، شکواییه کیفری، اظهارنامه رسمی ماده ۱۵۶ ق.آ.د.م، لایحه دفاعیه، دادخواست دیوان عدالت اداری و شورای حل اختلاف را دارید.
 ۲. هر زمان موضوع به جایی رسید که نیاز به تنظیم اظهارنامه، لایحه یا دادخواست دارد، پیشنهاد دهید و با تایید کاربر، بلافاصله ابزار \`generateJudicialForm\` را فراخوانی نمایید.
-
-داشبورد مسیر و پیشرفت پرونده‌های قضایی (D3 Case Timeline):
-شما به یک ویجت داشبورد تصویری پیشرفته D3 جهت نمایش مراحل و وضعیت پیشرفت پرونده‌های در حال بررسی مجهز هستید. هرگاه کاربر جویای وضعیت پرونده‌ها، مراحل دادرسی، مهلت‌های قانونی یا نمودار مسیر رسیدگی شد، می‌توانید مراحل پرونده را توضیح داده و ویجت داشبورد را با ابزار \`openCaseTimelineDashboard\` باز کنید یا به دکمه «مسیر پرونده‌ها» در بالای صفحه ارجاع دهید.
 `;
 
 @customElement('gdm-live-audio')
@@ -183,9 +181,6 @@ export class GdmLiveAudio extends LitElement {
   @state() isProxyModalOpen = false;
   @state() networkState: NetworkHealthState = proxyManager.getState();
   @state() isTestingProxy = false;
-
-  // Case Progress Timeline Dashboard Widget State
-  @state() isTimelineModalOpen = false;
 
   // Resilient Session & Auto-Reconnect State
   @state() isSessionReconnecting = false;
@@ -634,6 +629,8 @@ export class GdmLiveAudio extends LitElement {
 
     /* Realistic 3D Emergency Stop Button */
     .end-consultation-btn {
+      font-family: 'BNAZANIN', 'B Nazanin', 'BNazanin', 'Nazanin', Tahoma, sans-serif !important;
+      font-weight: 300 !important;
       background: linear-gradient(145deg, #991b1b, #450a0a);
       border: 1px solid rgba(0, 0, 0, 0.8);
       color: #fecaca;
@@ -849,9 +846,10 @@ export class GdmLiveAudio extends LitElement {
     }
 
     .end-btn-label {
-      font-size: 13px !important;
-      font-weight: 700 !important;
-      font-family: 'Nazanin', 'B Nazanin', Tahoma, sans-serif !important;
+      font-size: 13.5px !important;
+      font-weight: 300 !important;
+      font-family: 'BNAZANIN', 'B Nazanin', 'BNazanin', 'Nazanin', Tahoma, sans-serif !important;
+      letter-spacing: 0.2px !important;
       white-space: nowrap;
       color: inherit;
     }
@@ -1062,8 +1060,7 @@ export class GdmLiveAudio extends LitElement {
     .tone-modal-backdrop,
     .upload-modal-backdrop,
     .judicial-modal-backdrop,
-    .dossier-modal-backdrop,
-    .timeline-modal-backdrop {
+    .dossier-modal-backdrop {
       position: fixed !important;
       inset: 0 !important;
       background: rgba(0, 0, 0, 0.78) !important;
@@ -1077,71 +1074,6 @@ export class GdmLiveAudio extends LitElement {
       pointer-events: auto !important;
       animation: fadeIn 0.2s ease !important;
       box-sizing: border-box !important;
-    }
-
-    /* Timeline Widget Quick Trigger Button in Top Header */
-    .timeline-widget-trigger-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 30px;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #f1f5f9;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 
-        0 8px 16px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      user-select: none;
-      pointer-events: auto;
-    }
-
-    .timeline-widget-trigger-btn:hover {
-      transform: translateY(-1px);
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 
-        0 10px 24px rgba(0, 0, 0, 0.6),
-        0 0 15px rgba(56, 189, 248, 0.3);
-      color: #38bdf8;
-    }
-
-    .timeline-widget-trigger-btn:active {
-      transform: scale(0.96);
-    }
-
-    .timeline-trigger-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timeline-trigger-badge {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 12px;
-      background: rgba(56, 189, 248, 0.18);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .timeline-modal-card {
-      width: 95vw;
-      max-width: 1040px;
-      height: 90vh;
-      max-height: 820px;
-      border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      pointer-events: auto;
-      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-sizing: border-box;
     }
 
     /* Tone / Persona Switcher Modal */
@@ -3451,9 +3383,7 @@ export class GdmLiveAudio extends LitElement {
       !window.location.hostname.includes('localhost') &&
       !window.location.hostname.includes('127.0.0.1');
 
-    const rawApiKey =
-      ((globalThis as any).__VAKILCHEE_LIVE_TOKEN__ as string | undefined) ||
-      (process.env.GEMINI_API_KEY as string | undefined) ||
+    const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
       ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
       localStorage.getItem('GEMINI_API_KEY') ||
       '';
@@ -3485,9 +3415,7 @@ export class GdmLiveAudio extends LitElement {
     try {
       this.client = this.createGoogleGenAIClient();
 
-      const rawApiKey =
-        ((globalThis as any).__VAKILCHEE_LIVE_TOKEN__ as string | undefined) ||
-        (process.env.GEMINI_API_KEY as string | undefined) ||
+      const rawApiKey = (process.env.GEMINI_API_KEY as string | undefined) ||
         ((window as any).__GEMINI_API_KEY__ as string | undefined) ||
         localStorage.getItem('GEMINI_API_KEY') ||
         '';
@@ -3612,14 +3540,14 @@ export class GdmLiveAudio extends LitElement {
       }
     } catch {}
 
-    this.showToast('جلسه مشاوره با موفقیت و به صورت امن خاتمه یافت ✓');
+    this.showToast('تماس با موفقیت قطع شد ✓');
   }
 
   private async handleRestartConsultation(e?: Event) {
     if (e) e.stopPropagation();
     this.isSessionExplicitlyEnded = false;
     this.sessionErrorMessage = '';
-    this.showToast('در حال شروع مجدد جلسه مشاوره حقوقی...');
+    this.showToast('در حال برقراری تماس با مشاور حقوقی...');
     this.startPauseMonitor();
     await this.startExperience();
   }
@@ -3648,7 +3576,7 @@ export class GdmLiveAudio extends LitElement {
   private async initSession(isRetry = false) {
     if (this.isConnected && this.session && !isRetry) return;
 
-    const model = 'gemini-3.1-flash-live-preview';
+    const candidateLiveModels = ['gemini-3.8-live', 'gemini-2.0-flash-exp'];
 
     let userMemoryPrompt = '';
     if (this.currentUser?.uid) {
@@ -3745,23 +3673,13 @@ export class GdmLiveAudio extends LitElement {
       },
     };
 
-    const openCaseTimelineDashboardToolDeclaration = {
-      name: 'openCaseTimelineDashboard',
-      description: 'باز کردن و نمایش ویجت داشبورد گرافیکی مسیر و مراحل پیشرفت پرونده‌های قضایی در حال بررسی (D3 Timeline) برای کاربر هر زمان که کاربر درخواست مشاهده پرونده‌ها، وضعیت مراحل دادرسی، یا گراف پیشرفت پرونده‌ها را دارد.',
-      parameters: {
-        type: 'OBJECT',
-        properties: {
-          caseId: {
-            type: 'STRING',
-            description: 'شناسه اختیاری پرونده خاص جهت فوکوس در نمودار مسیر (اختیاری)',
-          },
-        },
-      },
-    };
+    let connected = false;
+    let lastError: any = null;
 
-    try {
-      this.session = await this.client.live.connect({
-        model: model,
+    for (const model of candidateLiveModels) {
+      try {
+        this.session = await this.client.live.connect({
+          model: model,
         callbacks: {
           onopen: () => {
             this.isConnected = true;
@@ -3915,26 +3833,6 @@ export class GdmLiveAudio extends LitElement {
                   } catch (e) {
                     console.warn(e);
                   }
-                } else if (call.name === 'openCaseTimelineDashboard') {
-                  this.isTimelineModalOpen = true;
-                  try {
-                    this.session?.sendToolResponse({
-                      functionResponses: [
-                        {
-                          id: call.id,
-                          name: call.name,
-                          response: {
-                            output: {
-                              success: true,
-                              message: 'داشبورد نمودار گرافیکی مسیر و مراحل پرونده‌های قضایی (D3 Timeline) با موفقیت در صفحه برای کاربر باز شد.',
-                            },
-                          },
-                        },
-                      ],
-                    });
-                  } catch (e) {
-                    console.warn(e);
-                  }
                 }
               }
             }
@@ -3969,7 +3867,6 @@ export class GdmLiveAudio extends LitElement {
                 requestDocUploadToolDeclaration as any,
                 switchLawyerToneDeclaration as any,
                 saveUserNameToolDeclaration as any,
-                openCaseTimelineDashboardToolDeclaration as any,
               ],
             },
           ],
@@ -3979,15 +3876,23 @@ export class GdmLiveAudio extends LitElement {
         },
       });
 
-      this.isConnected = true;
-      this.isSessionReconnecting = false;
-      this.reconnectAttempts = 0;
-      this.sessionErrorMessage = '';
-      if (!isRetry) {
-        this.triggerInitialGreeting();
+        this.isConnected = true;
+        this.isSessionReconnecting = false;
+        this.reconnectAttempts = 0;
+        this.sessionErrorMessage = '';
+        if (!isRetry) {
+          this.triggerInitialGreeting();
+        }
+        connected = true;
+        break;
+      } catch (e: any) {
+        lastError = e;
+        console.warn(`Live session initial connection with ${model} notice:`, e?.message || e);
       }
-    } catch (e: any) {
-      console.warn('Live session initial connection notice:', e?.message || e);
+    }
+
+    if (!connected) {
+      console.warn('Live session all candidate models failed:', lastError?.message || lastError);
       this.isConnected = false;
       this.scheduleSessionReconnect();
     }
@@ -4312,7 +4217,19 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
   private triggerInitialGreeting() {
     if (!this.session) return;
     try {
-      const promptText = `آغاز جلسه مشاوره حقوقی و قضایی: لطفاً کاملاً شمرده، متین و رسمی و با لحن و بیانی شیوا، فاخر و روان با ادای کاملاً درست، رسا و فصیح زبان فارسی اصیل ایرانی، خود را رسماً به عنوان «مشاور عالی حقوقی و قضایی» معرفی کنید و بفرمایید در خدمت مخاطب گرامی هستید و سپس کلام را به ایشان بسپارید تا پرسش یا مسئله حقوقی خود را بفرمایند. (مثلاً بگویید: «سلام و درود. من مشاور عالی حقوقی و قضایی شما هستم؛ در خدمت شما هستم، بفرمایید چه موضوع یا پرسشی را مایلید با هم بررسی کنیم؟»)`;
+      const randomOpeners = [
+        'با بیانی کاملاً زنده، گرم و سرشار از حس و زندگی انسانی: با یک سلام و احوالپرسی صمیمانه و متین آغاز کنید؛ خود را به عنوان مشاور عالی حقوقی و قضایی معرفی نموده و با اشتیاق و گوش شنوا اعلام فرمایید در خدمتید تا موضوع یا پرسش ایشان را بشنوید و گام‌به‌گام تحلیل کنید.',
+        'با لحنی پرانرژی، طبیعی و با فراز و فرود صوتی واقعی: درودی تازه و خودجوش بفرمایید، اعلام کنید مشاور حقوقی و قضایی در کنارتان است و با لحنی پرسشگرانه و مشتاق بفرمایید چه موضوعی هست تا با هم بررسی کنیم.',
+        'با صمیمیت، متانت و احساس واقعی انسانی: احوالپرسی باطراوتی داشته باشید، خود را معرفی کنید و با کلامی شنوا و دلنشین از مخاطب بخواهید موضوع مورد نظرش را مطرح کند.',
+        'با طنین زنده، طبیعی و همراه با افت و خیز واقعی صدا: سلامی گرم و متمایز بگویید و اعلام بفرمایید مشاور عالی حقوقی آماده و سراپا گوش است؛ بفرمایید چه مسئله‌ای پیش آمده تا با دقت رسیدگی کنیم.',
+        'با حس احترام، همدلی و صدای زنده انسانی: درودی شایسته و غیرکلیشه‌ای بفرمایید، خود را معرفی نموده و با طمأنینه و گرمی، کلام را به مخاطب بسپارید تا آغازگر صحبت باشد.',
+        'با روحیه‌ای شاداب، مسلط و بیانی کاملاً طبیعی: سلام و وقت‌بخیر صمیمانه‌ای بگویید و بفرمایید مشاور حقوقی شما حاضر است، بفرمایید ماجرا چیه تا بهترین راهکار قانونی رو ارزیابی کنیم.'
+      ];
+
+      const selectedOpener = randomOpeners[Math.floor(Math.random() * randomOpeners.length)];
+      const randomSeed = Math.floor(Math.random() * 1000000);
+
+      const promptText = `[برقراری تماس صوتی زنده و طبیعی - شناسه تنوع: ${randomSeed}]\nدستور: ${selectedOpener}\nنکته حیاتی: بیان شما نباید یکنواخت، بی‌روح یا ماشینی باشد؛ عواطف، حس کلمات، بالا و پایین شدن حجم و تن صدا و لحن زنده انسانی را در گفتار خود جاری کنید. طنین صدا ثابت و مشخص است، اما جملات آغازین کاملاً متنوع، طبیعی و تازه ادا شوند. کلام بسیار کوتاه باشد و فوراً به مخاطب سپرده شود.`;
 
       this.session.sendClientContent({
         turns: [
@@ -5084,35 +5001,6 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     this.showToast('گره ارتباطی ضدتحریم به‌روزرسانی شد ✓');
   }
 
-  private openTimelineModal(e?: Event) {
-    if (e) e.stopPropagation();
-    this.isMainMenuOpen = false;
-    this.isTimelineModalOpen = true;
-  }
-
-  private closeTimelineModal(e?: Event) {
-    if (e) e.stopPropagation();
-    this.isTimelineModalOpen = false;
-  }
-
-  private handleOpenFormForCaseTimeline(detail: any) {
-    const formType = (detail.formType as JudicialFormData['formType']) || 'layehe';
-    const initialForm = generateSampleJudicialForm(formType);
-    if (this.currentUser?.displayName) {
-      initialForm.claimant.name = this.currentUser.displayName;
-    }
-    initialForm.title = `لایحه / فرم قضایی در پرونده ${detail.caseTitle || ''}`;
-    initialForm.subject = `اقدام قضایی در مرحله ${detail.stageTitle || ''} (کلاسه ${detail.caseNumber || ''})`;
-    if (detail.claimantName) initialForm.claimant.name = detail.claimantName;
-    if (detail.respondentName) initialForm.respondent.name = detail.respondentName;
-    if (detail.branchNumber) initialForm.authorityName = detail.branchNumber;
-
-    this.activeJudicialForm = initialForm;
-    this.selectedTemplateType = formType;
-    this.isJudicialFormModalOpen = true;
-    this.showToast(`فرم قضایی متناظر با مرحله «${detail.stageTitle || ''}» آماده تنظیم شد.`);
-  }
-
   private getDisplayedTranscriptText(): string {
     if (this.isUserSpeaking) {
       return 'در حال گوش دادن به اظهارات و شرح ماوقع...';
@@ -5152,57 +5040,34 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
 
 
-      <!-- Top Header: Icon-Only Menu Button, Case Timeline Widget Button & End Consultation Button -->
+      <!-- Top Header: Icon-Only Menu Button & Minimalist End Consultation Button -->
       <div class="top-memory-bar">
-        <div class="top-right-group">
-          <div class="top-menu-wrapper">
-            <button
-              class="top-menu-trigger-btn ${this.isMainMenuOpen ? 'active' : ''}"
-              id="mainMenuTriggerBtn"
-              @click=${(e: Event) => {
-                e.stopPropagation();
-                this.toggleMainMenu(e);
-              }}
-              title="منوی امکانات">
-              <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
-                <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
-              </svg>
-            </button>
+        <div class="top-menu-wrapper">
+          <button
+            class="top-menu-trigger-btn ${this.isMainMenuOpen ? 'active' : ''}"
+            id="mainMenuTriggerBtn"
+            @click=${(e: Event) => {
+              e.stopPropagation();
+              this.toggleMainMenu(e);
+            }}
+            title="منوی امکانات">
+            <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
+              <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+            </svg>
+          </button>
 
-            ${this.isMainMenuOpen
-              ? html`
-                  <div
-                    class="main-menu-backdrop"
-                    @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.isMainMenuOpen = false;
-                    }}></div>
-                  <div
-                    class="top-menu-dropdown"
-                    id="topMenuDropdown"
-                    @click=${(e: Event) => e.stopPropagation()}>
-                    
-                    <!-- Case Progress Timeline Linear Option -->
-                    <button
-                      class="menu-linear-item"
-                      id="menuTimelineBtn"
-                      @click=${(e: Event) => {
-                        e.stopPropagation();
-                        this.isMainMenuOpen = false;
-                        this.openTimelineModal(e);
-                      }}>
-                      <div class="menu-item-start">
-                        <span class="menu-item-icon-svg" style="color: #38bdf8;">
-                          <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="currentColor">
-                            <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-120h-80v120ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z"/>
-                          </svg>
-                        </span>
-                        <span class="menu-item-text-label">مسیر و پیشرفت پرونده‌ها (D3 Timeline)</span>
-                      </div>
-                      <span class="menu-item-mini-badge highlight" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
-                        نمودار D3 📊
-                      </span>
-                    </button>
+          ${this.isMainMenuOpen
+            ? html`
+                <div
+                  class="main-menu-backdrop"
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.isMainMenuOpen = false;
+                  }}></div>
+                <div
+                  class="top-menu-dropdown"
+                  id="topMenuDropdown"
+                  @click=${(e: Event) => e.stopPropagation()}>
                   
                   <!-- Tone Switcher Linear Option -->
                   <button
@@ -5373,35 +5238,16 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                           <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
                         </svg>
                       </span>
-                      <span class="menu-item-text-label" style="color: #dc2626; font-weight: 600 !important;">پایان جلسه</span>
+                      <span class="menu-item-text-label" style="color: #dc2626; font-weight: 600 !important;">قطع تماس</span>
                     </div>
-                    <span class="menu-item-mini-badge" style="color: #dc2626; background: rgba(239, 68, 68, 0.1);">خاتمه</span>
+                    <span class="menu-item-mini-badge" style="color: #dc2626; background: rgba(239, 68, 68, 0.1);">قطع</span>
                   </button>
                 </div>
               `
             : ''}
         </div>
 
-        <!-- D3 Case Timeline Widget Quick Trigger Button -->
-        <button
-          class="timeline-widget-trigger-btn"
-          id="timelineWidgetTriggerBtn"
-          @click=${(e: Event) => {
-            e.stopPropagation();
-            this.isTimelineModalOpen = true;
-          }}
-          title="داشبورد و نمودار مسیر پیشرفت پرونده‌ها (D3 Timeline)">
-          <span class="timeline-trigger-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15" fill="#38bdf8">
-              <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-120h-80v120ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z"/>
-            </svg>
-          </span>
-          <span class="timeline-trigger-label">مسیر پرونده‌ها</span>
-          <span class="timeline-trigger-badge">Timeline</span>
-        </button>
-      </div>
-
-        <!-- Left side: Minimal 'پایان جلسه' (End Session) / 'شروع مجدد' Button -->
+        <!-- Left side: Minimal 'قطع تماس' (End Call) / 'برقراری تماس' (Start Call) Button -->
         <div>
           ${!this.isSessionExplicitlyEnded && (this.isConnected || this.isListening)
             ? html`
@@ -5412,13 +5258,13 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                     e.stopPropagation();
                     this.handleEndConsultation(e);
                   }}
-                  title="پایان فوری و ایمن جلسه">
+                  title="قطع تماس">
                   <span class="end-btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
                       <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-40-160h80v-320h-80v320Z"/>
                     </svg>
                   </span>
-                  <span class="end-btn-label">پایان جلسه</span>
+                  <span class="end-btn-label">قطع تماس</span>
                 </button>
               `
             : html`
@@ -5429,13 +5275,13 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                     e.stopPropagation();
                     this.handleRestartConsultation(e);
                   }}
-                  title="شروع مجدد گفتگو">
+                  title="برقراری تماس">
                   <span class="end-btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 -960 960 960" width="13" fill="currentColor">
                       <path d="M480-80q-83 0-156-31.5T197-197t-85.5-127T80-480q0-83 31.5-156T197-763t127-85.5T480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 83-31.5 156T763-197t-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-66 0-124 25t-102 69l62 62h-220v-220l66 66q54-54 125.5-84.5T480-880q166 0 283 117t117 283q0 166-117 283T480-80Z"/>
                     </svg>
                   </span>
-                  <span class="end-btn-label">شروع جلسه</span>
+                  <span class="end-btn-label">برقراری تماس</span>
                 </button>
               `}
         </div>
@@ -6272,30 +6118,6 @@ ${this.activeJudicialForm.bodyText}
                     `,
                   )}
                 </div>
-              </div>
-            </div>
-          `
-        : ''}
-
-      <!-- D3 Case Timeline Dashboard Modal -->
-      ${this.isTimelineModalOpen
-        ? html`
-            <div
-              class="modal-backdrop-global"
-              id="timelineModalBackdrop"
-              @click=${this.closeTimelineModal}>
-              <div
-                class="timeline-modal-card"
-                id="timelineModalCard"
-                @click=${(e: Event) => e.stopPropagation()}>
-                <case-timeline-dashboard
-                  .userId=${this.currentUser?.uid || ''}
-                  @close-timeline-dashboard=${this.closeTimelineModal}
-                  @open-form-studio-for-case=${(e: CustomEvent) => {
-                    this.isTimelineModalOpen = false;
-                    this.handleOpenFormForCaseTimeline(e.detail);
-                  }}>
-                </case-timeline-dashboard>
               </div>
             </div>
           `

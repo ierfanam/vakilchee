@@ -3,40 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f172a">
-  <meta name="description" content="وکیل‌چی؛ دستیار هوشمند حقوقی و اداری فارسی برای تحلیل، تنظیم و مدیریت اسناد و مکالمات.">
-  <title>وکیل‌چی | دستیار هوشمند حقوقی</title>
-  <link rel="icon" href="/logo.png" type="image/png">
+  <title>وکیل پایه یک رسمی دادگستری</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="/index.css">
-  <script>
-    globalThis.__VAKILCHEE_LIVE_TOKEN__ = '';
-    globalThis.__VAKILCHEE_TOKEN_READY__ = false;
-    globalThis.__VAKILCHEE_REFRESH_TOKEN__ = async function () {
-      try {
-        const response = await fetch('/api/live-token', {method:'GET', credentials:'same-origin', cache:'no-store', headers:{Accept:'application/json'}});
-        if (!response.ok) throw new Error('Live token endpoint returned ' + response.status);
-        const data = await response.json();
-        if (!data || typeof data.token !== 'string' || !data.token) throw new Error('Invalid live token response');
-        globalThis.__VAKILCHEE_LIVE_TOKEN__ = data.token;
-        globalThis.__VAKILCHEE_TOKEN_READY__ = true;
-        window.dispatchEvent(new CustomEvent('vakilchee:live-token-ready'));
-        return data.token;
-      } catch (error) {
-        console.warn('[Vakilchee] Live token provisioning deferred:', error);
-        return '';
-      }
-    };
-    globalThis.__VAKILCHEE_REFRESH_TOKEN__();
-    globalThis.setInterval(globalThis.__VAKILCHEE_REFRESH_TOKEN__, 20 * 60 * 1000);
-  </script>
 </head>
+<script type="importmap">
+  {
+    "imports": {
+      "lit": "https://esm.sh/lit@^3.3.0",
+      "lit/": "https://esm.sh/lit@^3.3.0/",
+      "@lit/context": "https://esm.sh/@lit/context@^1.1.5",
+      "@google/genai": "https://esm.sh/@google/genai@^1.15.0",
+      "three": "https://esm.sh/three@^0.176.0",
+      "three/": "https://esm.sh/three@^0.176.0/"
+    }
+  }
+</script>
 <body>
   <gdm-live-audio></gdm-live-audio>
-  <script type="module" src="/index.tsx"></script>
-  <script type="module" src="/productivity-engine.ts"></script>
+<script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
