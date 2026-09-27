@@ -46,10 +46,48 @@ import {
   FormTypeOption,
 } from './judicial-form-templates';
 import { PERSONA_TONES, PersonaToneConfig, getToneById } from './tone-manager';
-import { processLocalDocumentFile, ProcessedDocument, formatFileSize } from './document-upload-manager';
+import {
+  processLocalDocumentFile,
+  ProcessedDocument,
+  formatFileSize,
+  documentAudioNarrator,
+} from './document-upload-manager';
 import { proxyManager, NetworkHealthState, PROXY_NODES, ProxyNodeOption } from './proxy-manager';
 import discordAudioUrl from './discord.mp3';
-import appLogoUrl from './logo.png';
+import appLogoUrl from './logo-1.png';
+
+// Global error handler for IndexedDB / AbortError / Database connection closing / No space issues
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    const reason = event.reason;
+    if (reason && (
+      (reason.message && (
+        reason.message.includes('IDBDatabase') ||
+        reason.message.includes('connection is closing') ||
+        reason.message.includes('FILE_ERROR_NO_SPACE') ||
+        reason.message.includes('AbortError')
+      )) ||
+      reason.name === 'AbortError' ||
+      reason.name === 'VersionError'
+    )) {
+      event.preventDefault();
+      console.warn('Caught handled database/storage exception:', reason);
+    }
+  });
+
+  window.addEventListener('error', (event) => {
+    const message = event.message || '';
+    if (
+      message.includes('IDBDatabase') ||
+      message.includes('connection is closing') ||
+      message.includes('FILE_ERROR_NO_SPACE') ||
+      message.includes('AbortError')
+    ) {
+      event.preventDefault();
+      console.warn('Caught handled runtime storage/IDB error:', message);
+    }
+  });
+}
 
 const LAWYER_SYSTEM_INSTRUCTION = `
 شما «مشاور عالی حقوقی و قضایی» در ایران هستید.
@@ -175,6 +213,8 @@ export class GdmLiveAudio extends LitElement {
   @state() isUploadingFiles = false;
   @state() uploadStatusMessage = '';
   @state() selectedDocDetails: StoredDocItem | null = null;
+  @state() isNarratingDoc = false;
+  @state() activeDocTab: 'analysis' | 'extractedText' | 'preview' = 'analysis';
   @state() isSessionExplicitlyEnded = false;
 
   // Automated In-App Proxy & Anti-Sanction State
@@ -1059,6 +1099,7 @@ export class GdmLiveAudio extends LitElement {
     .modal-backdrop-global,
     .tone-modal-backdrop,
     .upload-modal-backdrop,
+    .doc-studio-backdrop,
     .judicial-modal-backdrop,
     .dossier-modal-backdrop {
       position: fixed !important;
@@ -1652,6 +1693,387 @@ export class GdmLiveAudio extends LitElement {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.45));
       border-color: #10b981;
       color: #334155;
+    }
+
+    /* Document Studio Modal (Inspection, OCR & Audio Narration) */
+    .doc-studio-card {
+      background: #11151f;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.2);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: #e2e8f0;
+      direction: rtl;
+    }
+
+    .doc-studio-header {
+      padding: 16px 20px;
+      background: rgba(18, 24, 38, 0.95);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .doc-studio-title-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .doc-studio-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffd700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-studio-meta {
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .doc-studio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(212, 175, 55, 0.15);
+      color: #ffd700;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .doc-narration-bar {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(20, 26, 42, 0.95), rgba(12, 16, 26, 0.95));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .narration-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .narrate-play-btn {
+      background: linear-gradient(135deg, #d4af37, #b8860b);
+      color: #0c0e14;
+      border: 1px solid #ffd700;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .narrate-play-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
+    }
+
+    .narrate-play-btn.speaking {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+      border-color: #f87171;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+      animation: pulse-camera 1.5s infinite;
+    }
+
+    .narration-status {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .narration-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .doc-studio-nav {
+      display: flex;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      background: rgba(15, 20, 32, 0.8);
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+
+    .doc-studio-tab-btn {
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .doc-studio-tab-btn:hover {
+      color: #ffd700;
+    }
+
+    .doc-studio-tab-btn.active {
+      color: #ffd700;
+      border-bottom-color: #ffd700;
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .doc-studio-content {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Inset Cavity Box for Extracted Text / Content */
+    .doc-content-box {
+      background: #0b0e16;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 3px 3px 8px #05070b, inset -3px -3px 8px #151a26;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 2;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      max-height: 380px;
+      overflow-y: auto;
+      user-select: text;
+    }
+
+    /* Legal Summary Card */
+    .doc-summary-card {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(184, 134, 11, 0.05));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 13px;
+      color: #ffd700;
+      line-height: 1.8;
+    }
+
+    /* Key Chips / Pills Row */
+    .doc-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .doc-chip {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .doc-chip.party {
+      border-color: rgba(96, 165, 250, 0.4);
+      color: #93c5fd;
+    }
+
+    .doc-chip.date {
+      border-color: rgba(52, 211, 153, 0.4);
+      color: #6ee7b7;
+    }
+
+    .doc-chip.risk {
+      border-color: rgba(248, 113, 113, 0.4);
+      color: #fca5a5;
+    }
+
+    /* Risk / Recommendations Container */
+    .doc-points-box {
+      background: rgba(18, 24, 38, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doc-points-title {
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-point-item {
+      font-size: 12px;
+      line-height: 1.8;
+      color: #cbd5e1;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    /* Uploaded Docs List in Upload Modal */
+    .uploaded-docs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-left: 4px;
+    }
+
+    .doc-item-row {
+      background: #141824;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      box-shadow: 4px 4px 10px #0a0d14, -4px -4px 10px #1e2436;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .doc-item-row:hover {
+      border-color: #ffd700;
+      background: #191e2d;
+      transform: translateY(-1px);
+    }
+
+    .doc-item-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .doc-item-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-item-meta {
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .doc-item-preview {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      max-height: 36px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .doc-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .doc-action-btn {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .doc-action-btn.primary {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: rgba(212, 175, 55, 0.4);
+      color: #ffd700;
+    }
+
+    .doc-action-btn.primary:hover {
+      background: rgba(212, 175, 55, 0.35);
+      color: #ffffff;
+    }
+
+    .doc-action-btn.audio {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .doc-action-btn.audio:hover {
+      background: rgba(16, 185, 129, 0.35);
+      color: #ffffff;
+    }
+
+    .doc-action-btn.danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .doc-action-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ffffff;
     }
 
     .pulse-dot {
@@ -3576,7 +3998,11 @@ export class GdmLiveAudio extends LitElement {
   private async initSession(isRetry = false) {
     if (this.isConnected && this.session && !isRetry) return;
 
-    const candidateLiveModels = ['gemini-3.8-live', 'gemini-2.0-flash-exp'];
+    const candidateLiveModels = [
+      'gemini-2.5-flash-native-audio-latest',
+      'gemini-3.8-live',
+      'gemini-3.1-flash-live-preview',
+    ];
 
     let userMemoryPrompt = '';
     if (this.currentUser?.uid) {
@@ -3678,10 +4104,24 @@ export class GdmLiveAudio extends LitElement {
 
     for (const model of candidateLiveModels) {
       try {
-        this.session = await this.client.live.connect({
+        let openFired = false;
+        let resolveOpen: (success: boolean) => void;
+        const openPromise = new Promise<boolean>((resolve) => {
+          resolveOpen = resolve;
+        });
+
+        const handshakeTimeout = window.setTimeout(() => {
+          if (!openFired) {
+            resolveOpen(false);
+          }
+        }, 5000);
+
+        const newSession = await this.client.live.connect({
           model: model,
         callbacks: {
           onopen: () => {
+            openFired = true;
+            window.clearTimeout(handshakeTimeout);
             this.isConnected = true;
             this.isSessionReconnecting = false;
             this.reconnectAttempts = 0;
@@ -3699,6 +4139,7 @@ export class GdmLiveAudio extends LitElement {
                 1,
               );
             }
+            resolveOpen(true);
           },
           onmessage: async (message: LiveServerMessage) => {
             const audio =
@@ -3839,15 +4280,25 @@ export class GdmLiveAudio extends LitElement {
           },
           onerror: (e: any) => {
             console.warn('Live session connection notice:', e?.message || e);
-            this.isConnected = false;
-            this.isSpeaking = false;
-            this.scheduleSessionReconnect();
+            if (!openFired) {
+              window.clearTimeout(handshakeTimeout);
+              resolveOpen(false);
+            } else {
+              this.isConnected = false;
+              this.isSpeaking = false;
+              this.scheduleSessionReconnect();
+            }
           },
           onclose: (e: CloseEvent) => {
-            this.isConnected = false;
-            this.isSpeaking = false;
-            if (!e.wasClean) {
-              this.scheduleSessionReconnect();
+            if (!openFired) {
+              window.clearTimeout(handshakeTimeout);
+              resolveOpen(false);
+            } else {
+              this.isConnected = false;
+              this.isSpeaking = false;
+              if (!e.wasClean) {
+                this.scheduleSessionReconnect();
+              }
             }
           },
         },
@@ -3876,15 +4327,24 @@ export class GdmLiveAudio extends LitElement {
         },
       });
 
-        this.isConnected = true;
-        this.isSessionReconnecting = false;
-        this.reconnectAttempts = 0;
-        this.sessionErrorMessage = '';
-        if (!isRetry) {
-          this.triggerInitialGreeting();
+        const openSuccess = await openPromise;
+        if (openSuccess) {
+          this.session = newSession;
+          this.isConnected = true;
+          this.isSessionReconnecting = false;
+          this.reconnectAttempts = 0;
+          this.sessionErrorMessage = '';
+          if (!isRetry) {
+            this.triggerInitialGreeting();
+          }
+          connected = true;
+          break;
+        } else {
+          try {
+            newSession.close();
+          } catch {}
+          lastError = new Error(`Connection to model ${model} closed before handshake.`);
         }
-        connected = true;
-        break;
       } catch (e: any) {
         lastError = e;
         console.warn(`Live session initial connection with ${model} notice:`, e?.message || e);
@@ -4859,10 +5319,32 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
     this.isUploadingFiles = true;
     const fileArray = Array.from(files);
 
+    const genaiClient = this.client || this.createGoogleGenAIClient();
+
     for (const file of fileArray) {
-      this.uploadStatusMessage = `در حال پردازش و استخراج سند: ${file.name}...`;
+      this.uploadStatusMessage = `در حال خوانش، استخراج کلمات و تحلیل هوشمند: ${file.name}...`;
       try {
-        const processed = await processLocalDocumentFile(file);
+        const processed = await processLocalDocumentFile(file, genaiClient);
+
+        const newDocItem: StoredDocItem = {
+          id: 'doc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          title: processed.title,
+          fileName: processed.fileName,
+          fileType: processed.fileType,
+          fileCategory: processed.fileCategory,
+          fileSize: processed.fileSize,
+          fileDataUrl: processed.fileDataUrl,
+          extractedText: processed.extractedText,
+          analysis: processed.analysis,
+          summary: processed.summary,
+          parties: processed.parties,
+          keyDates: processed.keyDates,
+          legalRisks: processed.legalRisks,
+          recommendations: processed.recommendations,
+          source: 'local_upload',
+          previewUrl: processed.previewUrl,
+          createdAt: new Date().toISOString(),
+        };
 
         // Save to Firestore
         if (this.currentUser?.uid) {
@@ -4870,18 +5352,30 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
             title: processed.title,
             fileName: processed.fileName,
             fileType: processed.fileType,
+            fileCategory: processed.fileCategory,
             fileSize: processed.fileSize,
             fileDataUrl: processed.fileDataUrl,
             extractedText: processed.extractedText,
             analysis: processed.analysis,
+            summary: processed.summary,
+            parties: processed.parties,
+            keyDates: processed.keyDates,
+            legalRisks: processed.legalRisks,
+            recommendations: processed.recommendations,
             source: 'local_upload',
           });
         }
 
+        // Update local scanned docs state immediately
+        this.scannedDocs = [newDocItem, ...this.scannedDocs.filter((d) => d.fileName !== processed.fileName)];
+
+        // Automatically focus on this document for instant review
+        this.selectedDocDetails = newDocItem;
+        this.activeDocTab = 'analysis';
+
         // Send to active Live session
         if (this.session && this.isConnected) {
           if (processed.previewUrl && processed.previewUrl.startsWith('data:image/')) {
-            // Send image frame directly
             const base64 = processed.previewUrl.split(',')[1];
             if (base64) {
               this.session.sendRealtimeInput({
@@ -4894,7 +5388,17 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           }
 
           // Send notification text turn
-          const textPrompt = `جناب وکیل، من سند «${processed.title}» (فایل: ${processed.fileName}، حجم: ${formatFileSize(processed.fileSize)}) را از حافظه داخلی آپلود کردم.\nمتن/محتوای استخراج‌شده:\n${processed.extractedText.substring(0, 3000)}\nلطفاً تایید فرمایید که سند را دریافت کردید و نکات مهم آن را برای من بررسی کنید.`;
+          const textPrompt = `جناب وکیل، موکل سند جدیدی با عنوان «${processed.title}» (فایل: ${processed.fileName}، حجم: ${formatFileSize(processed.fileSize)}) را بارگذاری کرد.
+خلاصه سند:
+${processed.summary || 'سند بارگذاری و استخراج گردید.'}
+
+متن کامل استخراج‌شده از سند:
+${processed.extractedText ? processed.extractedText.substring(0, 3000) : '-'}
+
+تحلیل حقوقی و نکات کلیدی:
+${processed.analysis ? processed.analysis.substring(0, 2000) : '-'}
+
+لطفاً ضمن تایید دریافت سند، نکات کلیدی و توصیه‌های حقوقی خود را به زبان شمرده و مستدل بفرمایید.`;
 
           this.session.sendClientContent({
             turns: [
@@ -4907,15 +5411,138 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
           });
         }
 
-        this.showToast(`سند «${processed.fileName}» بارگذاری و به وکیل تحویل داده شد ✓`);
+        this.showToast(`سند «${processed.fileName}» با موفقیت خوانده و تحلیل شد ✓`);
       } catch (err) {
         console.error('Error processing file:', err);
-        this.showToast(`خطا در بارگذاری فایل ${file.name}`);
+        this.showToast(`خطا در پردازش فایل ${file.name}`);
       }
     }
 
     this.isUploadingFiles = false;
     this.uploadStatusMessage = '';
+  }
+
+  /* Document Studio, Narration & Details Handlers */
+  private openDocDetails(docItem: StoredDocItem, e?: Event) {
+    if (e) e.stopPropagation();
+    this.selectedDocDetails = docItem;
+    this.activeDocTab = 'analysis';
+  }
+
+  private closeDocDetails(e?: Event) {
+    if (e) e.stopPropagation();
+    documentAudioNarrator.stop();
+    this.isNarratingDoc = false;
+    this.selectedDocDetails = null;
+  }
+
+  private handleToggleNarrateDoc(textToSpeak: string, e?: Event) {
+    if (e) e.stopPropagation();
+    if (this.isNarratingDoc) {
+      documentAudioNarrator.stop();
+      this.isNarratingDoc = false;
+      this.showToast('قرائت صوتی متوقف شد.');
+      return;
+    }
+
+    if (!textToSpeak || !textToSpeak.trim()) {
+      this.showToast('متنی جهت قرائت صوتی یافت نشد.');
+      return;
+    }
+
+    this.isNarratingDoc = true;
+    this.showToast('در حال قرائت صوتی سند توسط وکیل... 🔊');
+
+    documentAudioNarrator.speak(
+      textToSpeak,
+      () => {
+        this.isNarratingDoc = true;
+      },
+      () => {
+        this.isNarratingDoc = false;
+        this.showToast('قرائت سند به پایان رسید ✓');
+      },
+      (err) => {
+        this.isNarratingDoc = false;
+        console.warn('Speech narration notice:', err);
+      },
+    );
+  }
+
+  private handleStopNarration(e?: Event) {
+    if (e) e.stopPropagation();
+    documentAudioNarrator.stop();
+    this.isNarratingDoc = false;
+    this.showToast('قرائت صوتی متوقف شد.');
+  }
+
+  private async handleCopyDocText(text: string, e?: Event) {
+    if (e) e.stopPropagation();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      this.showToast('متن استخراج‌شده در حافظه کپی شد 📋');
+    } catch {
+      this.showToast('خطا در کپی متن');
+    }
+  }
+
+  private handleDownloadDocReport(docItem: StoredDocItem, e?: Event) {
+    if (e) e.stopPropagation();
+    const content = `================================================
+گزارش جامع استخراج، خوانش و تحلیل سند
+سامانه هوشمند وکیل پایه یک دادگستری
+================================================
+عنوان سند: ${docItem.title}
+نام فایل: ${docItem.fileName || '-'}
+فرمت: ${docItem.fileType || '-'}
+حجم: ${docItem.fileSize ? formatFileSize(docItem.fileSize) : '-'}
+تاریخ ثبت: ${docItem.createdAt ? new Date(docItem.createdAt).toLocaleString('fa-IR') : '-'}
+
+------------------------------------------------
+۱. خلاصه اجرایی و ارزیابی سریع:
+------------------------------------------------
+${docItem.summary || 'سند در سامانه ثبت و توسط هوش مصنوعی بررسی گردید.'}
+
+------------------------------------------------
+۲. مشخصات طرفین و اشخاص ذینفع:
+------------------------------------------------
+${docItem.parties && docItem.parties.length > 0 ? docItem.parties.join(' | ') : 'موردی احراز نشد یا عمومیت دارد.'}
+
+------------------------------------------------
+۳. مواعد قانونی و تاریخ‌های کلیدی:
+------------------------------------------------
+${docItem.keyDates && docItem.keyDates.length > 0 ? docItem.keyDates.join(' | ') : 'تاریخ صریحی در متن یافت نشد.'}
+
+------------------------------------------------
+۴. ریسک‌ها، نواقص یا هشدارهای حقوقی:
+------------------------------------------------
+${docItem.legalRisks && docItem.legalRisks.length > 0 ? docItem.legalRisks.map((r, i) => `${i + 1}- ${r}`).join('\n') : 'ریسک بحرانی فوری احراز نگردید.'}
+
+------------------------------------------------
+۵. توصیه‌ها و راهکارهای اجرایی وکیل:
+------------------------------------------------
+${docItem.recommendations && docItem.recommendations.length > 0 ? docItem.recommendations.map((r, i) => `${i + 1}- ${r}`).join('\n') : 'پیشنهاد می‌شود اصل سند در جلسه مشاوره زنده مطرح شود.'}
+
+------------------------------------------------
+۶. تحلیل و موشکافی مشروح حقوقی:
+------------------------------------------------
+${docItem.analysis || '-'}
+
+------------------------------------------------
+۷. متن کامل استخراج‌شده از سند (OCR):
+------------------------------------------------
+${docItem.extractedText || '-'}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `تحلیل_سند_${docItem.fileName || 'سند'}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showToast('فایل متن و تحلیل سند دانلود شد 📥');
   }
 
   private async handleDeleteDocItem(docId: string, e?: Event) {
@@ -5455,12 +6082,12 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                   </button>
                 </div>
 
-                <!-- Hidden Input for file selection -->
+                <!-- Hidden Input for file selection (any text, doc, image, or pdf format) -->
                 <input
                   type="file"
                   id="localFileInput"
                   multiple
-                  accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp,.bmp"
+                  accept=".pdf,.doc,.docx,.dotx,.rtf,.odt,.txt,.md,.json,.csv,.tsv,.xml,.html,.htm,.log,.jpg,.jpeg,.png,.webp,.bmp,.gif,.svg,.ico,.tiff,.tif,.avif,.heic,.py,.js,.ts,.sql,.yaml,.yml,*"
                   @change=${this.handleFileInputChange}
                   style="display: none;" />
 
@@ -5477,8 +6104,10 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                       <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
                     </svg>
                   </div>
-                  <div class="upload-zone-text">فایل‌های مورد نظر را به اینجا بکشید یا برای انتخاب کلیک کنید</div>
-                  <div class="upload-zone-hint">پشتیبانی از اسناد PDF، فایل‌های Word، متون، قراردادها، چک‌ها و تصاویر مدارک</div>
+                  <div class="upload-zone-text">فایل‌های متنی، اسنادی یا تصویری را به اینجا بکشید یا برای انتخاب کلیک کنید</div>
+                  <div class="upload-zone-hint">
+                    خوانش و تحلیل ۱۰۰٪ تمامی فرمت‌ها: تصاویر (OCR هوشمند)، فایل‌های PDF، ورد (.docx/.doc)، متون، قراردادها، چک‌ها و اسناد رسمی
+                  </div>
                   <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 4px;">
                     <button class="upload-action-btn" @click=${this.triggerFileUploadInput}>
                       انتخاب فایل از دستگاه
@@ -5495,8 +6124,8 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
                 ${this.isUploadingFiles
                   ? html`
-                      <div style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; margin-bottom: 12px;">
-                        ⏳ ${this.uploadStatusMessage || 'در حال بارگذاری و تحلیل اسناد...'}
+                      <div style="padding: 12px; text-align: center; color: #ffd700; font-size: 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 10px; margin-bottom: 12px; animation: pulse-camera 2s infinite;">
+                        ⏳ ${this.uploadStatusMessage || 'در حال خوانش، استخراج کلمات و تحلیل اسناد توسط هوش مصنوعی...'}
                       </div>
                     `
                   : ''}
@@ -5508,29 +6137,51 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
 
                 <div class="uploaded-docs-list">
                   ${this.scannedDocs.length === 0
-                    ? html`<div style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;">هنوز فایلی بارگذاری نشده است. اسناد و مدارک خود را آپلود کنید تا وکیل آنها را بررسی کند.</div>`
+                    ? html`<div style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;">هنوز فایلی بارگذاری نشده است. هرگونه فایل متنی، تصویری یا سندی را آپلود کنید تا وکیل آن را با دقت بخواند و تحلیل نماید.</div>`
                     : this.scannedDocs.map(
                         (doc) => html`
-                          <div class="doc-item-row">
+                          <div class="doc-item-row" @click=${(e: Event) => this.openDocDetails(doc, e)}>
                             <div class="doc-item-info">
                               <div class="doc-item-title">
-                                <span>${doc.fileType === 'pdf' ? '📕' : doc.fileType === 'doc' ? '📘' : doc.fileType === 'image' ? '🖼️' : '📄'}</span>
+                                <span>${doc.fileCategory === 'pdf' || doc.fileType === 'pdf' ? '📕' : doc.fileCategory === 'doc' || doc.fileType === 'doc' ? '📘' : doc.fileCategory === 'image' || doc.fileType === 'image' ? '🖼️' : doc.fileCategory === 'code' ? '💻' : '📄'}</span>
                                 <span>${doc.title}</span>
+                                ${doc.summary || doc.analysis
+                                  ? html`<span class="doc-studio-badge" style="font-size: 9px; padding: 1px 6px;">✓ تحلیل و استخراج هوشمند</span>`
+                                  : ''}
                               </div>
                               <div class="doc-item-meta">
                                 <span>${doc.fileName || 'سند ارائه‌شده'}</span>
                                 ${doc.fileSize ? html`<span>• ${formatFileSize(doc.fileSize)}</span>` : ''}
+                                ${doc.summary ? html`<span style="color: #ffd700;">• ${doc.summary.substring(0, 50)}...</span>` : ''}
                               </div>
                               ${doc.extractedText
-                                ? html`<div class="doc-item-preview">${doc.extractedText.substring(0, 180)}...</div>`
+                                ? html`<div class="doc-item-preview">${doc.extractedText.substring(0, 160)}...</div>`
                                 : ''}
                             </div>
                             <div class="doc-item-actions">
                               <button
                                 class="doc-action-btn primary"
+                                @click=${(e: Event) => this.openDocDetails(doc, e)}
+                                title="مشاهده متن کامل، تحلیل و جزئیات">
+                                🔍 مشاهده
+                              </button>
+                              <button
+                                class="doc-action-btn audio"
+                                @click=${(e: Event) =>
+                                  this.handleToggleNarrateDoc(
+                                    doc.summary
+                                      ? `${doc.title}. خلاصه سند: ${doc.summary}. تحلیل وکیل: ${doc.analysis}`
+                                      : doc.extractedText || doc.analysis,
+                                    e,
+                                  )}
+                                title="روخوانی صوتی سند توسط وکیل">
+                                🔊 روخوانی
+                              </button>
+                              <button
+                                class="doc-action-btn primary"
                                 @click=${(e: Event) => this.handleSendDocToLiveSession(doc, e)}
-                                title="ارسال مجدد به وکیل جهت تحلیل و بازبینی">
-                                تحویل به وکیل
+                                title="طرح و تحویل به وکیل در تماس صوتی">
+                                ⚖️ تحویل
                               </button>
                               <button
                                 class="doc-action-btn danger"
@@ -5542,6 +6193,279 @@ ${docsSummary || 'اسناد و مدارک عادی پیوست پرونده'}
                           </div>
                         `,
                       )}
+                </div>
+              </div>
+            </div>
+          `
+        : ''}
+
+      <!-- Dedicated Document Studio Modal (Inspection, Verbatim OCR & Speech Narration) -->
+      ${this.selectedDocDetails
+        ? html`
+            <div class="doc-studio-backdrop" @click=${this.closeDocDetails}>
+              <div
+                class="doc-studio-card"
+                id="docStudioCard"
+                @click=${(e: Event) => e.stopPropagation()}>
+                
+                <!-- Studio Header -->
+                <div class="doc-studio-header">
+                  <div class="doc-studio-title-box">
+                    <div class="doc-studio-title">
+                      <span>${this.selectedDocDetails.fileCategory === 'pdf' ? '📕' : this.selectedDocDetails.fileCategory === 'doc' ? '📘' : this.selectedDocDetails.fileCategory === 'image' ? '🖼️' : '📄'}</span>
+                      <span>${this.selectedDocDetails.title}</span>
+                      <span class="doc-studio-badge">
+                        ${this.selectedDocDetails.extractedText ? 'استخراج کامل هوش مصنوعی ✓' : 'ثبت‌شده در پرونده'}
+                      </span>
+                    </div>
+                    <div class="doc-studio-meta">
+                      <span><strong>نام فایل:</strong> ${this.selectedDocDetails.fileName || '-'}</span>
+                      ${this.selectedDocDetails.fileSize ? html`<span>• <strong>حجم:</strong> ${formatFileSize(this.selectedDocDetails.fileSize)}</span>` : ''}
+                      ${this.selectedDocDetails.fileType ? html`<span>• <strong>نوع:</strong> ${this.selectedDocDetails.fileType}</span>` : ''}
+                      <span>• <strong>تاریخ ثبت:</strong> ${this.selectedDocDetails.createdAt ? new Date(this.selectedDocDetails.createdAt).toLocaleDateString('fa-IR') : 'امروز'}</span>
+                    </div>
+                  </div>
+                  <button class="pip-btn-icon" @click=${this.closeDocDetails} title="بستن پنجره">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+                      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Speech Narration & Action Toolbar -->
+                <div class="doc-narration-bar">
+                  <div class="narration-left">
+                    <button
+                      class="narrate-play-btn ${this.isNarratingDoc ? 'speaking' : ''}"
+                      @click=${(e: Event) =>
+                        this.handleToggleNarrateDoc(
+                          this.activeDocTab === 'extractedText'
+                            ? this.selectedDocDetails!.extractedText
+                            : this.selectedDocDetails!.summary
+                            ? `${this.selectedDocDetails!.title}. خلاصه سند: ${this.selectedDocDetails!.summary}. تحلیل حقوقی وکیل: ${this.selectedDocDetails!.analysis}`
+                            : this.selectedDocDetails!.extractedText || this.selectedDocDetails!.analysis,
+                          e,
+                        )}>
+                      ${this.isNarratingDoc
+                        ? html`
+                            <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
+                              <path d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Z"/>
+                            </svg>
+                            <span>توقف روخوانی وکیل</span>
+                          `
+                        : html`
+                            <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
+                              <path d="M560-131v-82q90-26 145-100t55-167q0-93-55-167T560-747v-82q124 28 202 125.5T840-480q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-320q46 14 73 54.5t27 95.5q0 55-27 115.5T560-320Z"/>
+                            </svg>
+                            <span>🔊 روخوانی صوتی متن و تحلیل سند</span>
+                          `}
+                    </button>
+                    ${this.isNarratingDoc
+                      ? html`
+                          <button class="doc-action-btn danger" @click=${this.handleStopNarration}>
+                            قطع صدا ⏹️
+                          </button>
+                        `
+                      : ''}
+                    <span class="narration-status">
+                      ${this.isNarratingDoc
+                        ? 'در حال قرائت صوتی وکیل با بیان شمرده و فصیح...'
+                        : 'شنیدن کامل محتوا و نکات حقوقی با صدای مشاور عالی حقوقی'}
+                    </span>
+                  </div>
+
+                  <div class="narration-actions">
+                    <button
+                      class="doc-action-btn primary"
+                      @click=${(e: Event) => this.handleCopyDocText(this.selectedDocDetails!.extractedText || this.selectedDocDetails!.analysis, e)}
+                      title="کپی کردن متن استخراج شده">
+                      📋 کپی متن کامل
+                    </button>
+                    <button
+                      class="doc-action-btn primary"
+                      @click=${(e: Event) => this.handleDownloadDocReport(this.selectedDocDetails!, e)}
+                      title="دانلود گزارش کامل متن و تحلیل">
+                      📥 دریافت فایل گزارش (.txt)
+                    </button>
+                    <button
+                      class="doc-action-btn primary"
+                      style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(184, 134, 11, 0.45)); color: #fff;"
+                      @click=${(e: Event) => this.handleSendDocToLiveSession(this.selectedDocDetails!, e)}
+                      title="طرح این سند در تماس صوتی فعال با وکیل">
+                      ⚖️ تحویل به وکیل در تماس صوتی
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Studio Tabs -->
+                <div class="doc-studio-nav">
+                  <button
+                    class="doc-studio-tab-btn ${this.activeDocTab === 'analysis' ? 'active' : ''}"
+                    @click=${() => (this.activeDocTab = 'analysis')}>
+                    ⚖️ تحلیل و ارزیابی حقوقی وکیل
+                  </button>
+                  <button
+                    class="doc-studio-tab-btn ${this.activeDocTab === 'extractedText' ? 'active' : ''}"
+                    @click=${() => (this.activeDocTab = 'extractedText')}>
+                    📝 متن کامل استخراج‌شده (OCR دقیق)
+                  </button>
+                  <button
+                    class="doc-studio-tab-btn ${this.activeDocTab === 'preview' ? 'active' : ''}"
+                    @click=${() => (this.activeDocTab = 'preview')}>
+                    🖼️ پیش‌نمایش سند / تصویر
+                  </button>
+                </div>
+
+                <!-- Studio Tab Content -->
+                <div class="doc-studio-content">
+                  ${this.activeDocTab === 'analysis'
+                    ? html`
+                        <!-- Executive Summary Box -->
+                        ${this.selectedDocDetails.summary
+                          ? html`
+                              <div class="doc-summary-card">
+                                <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                  <span>📌 خلاصه اجرایی و ارزیابی سریع وکیل:</span>
+                                </div>
+                                <div>${this.selectedDocDetails.summary}</div>
+                              </div>
+                            `
+                          : ''}
+
+                        <!-- Key Parties and Dates Chips -->
+                        <div class="doc-chips-row">
+                          ${this.selectedDocDetails.parties && this.selectedDocDetails.parties.length > 0
+                            ? this.selectedDocDetails.parties.map(
+                                (p) => html`
+                                  <span class="doc-chip party" title="طرف دعوا / قرارداد">
+                                    👤 ${p}
+                                  </span>
+                                `,
+                              )
+                            : ''}
+                          ${this.selectedDocDetails.keyDates && this.selectedDocDetails.keyDates.length > 0
+                            ? this.selectedDocDetails.keyDates.map(
+                                (d) => html`
+                                  <span class="doc-chip date" title="تاریخ یا موعد قانونی">
+                                    📅 ${d}
+                                  </span>
+                                `,
+                              )
+                            : ''}
+                        </div>
+
+                        <!-- Legal Risks and Cautions -->
+                        ${this.selectedDocDetails.legalRisks && this.selectedDocDetails.legalRisks.length > 0
+                          ? html`
+                              <div class="doc-points-box" style="border-color: rgba(248, 113, 113, 0.25);">
+                                <div class="doc-points-title" style="color: #f87171;">
+                                  ⚠️ ریسک‌ها، نواقص یا هشدارهای حقوقی:
+                                </div>
+                                ${this.selectedDocDetails.legalRisks.map(
+                                  (risk) => html`
+                                    <div class="doc-point-item">
+                                      <span style="color: #f87171;">•</span>
+                                      <span>${risk}</span>
+                                    </div>
+                                  `,
+                                )}
+                              </div>
+                            `
+                          : ''}
+
+                        <!-- Actionable Recommendations -->
+                        ${this.selectedDocDetails.recommendations && this.selectedDocDetails.recommendations.length > 0
+                          ? html`
+                              <div class="doc-points-box" style="border-color: rgba(52, 211, 153, 0.25);">
+                                <div class="doc-points-title" style="color: #34d399;">
+                                  💡 توصیه‌ها و راهکارهای اجرایی وکیل پایه یک:
+                                </div>
+                                ${this.selectedDocDetails.recommendations.map(
+                                  (rec) => html`
+                                    <div class="doc-point-item">
+                                      <span style="color: #34d399;">•</span>
+                                      <span>${rec}</span>
+                                    </div>
+                                  `,
+                                )}
+                              </div>
+                            `
+                          : ''}
+
+                        <!-- Full Detailed Analysis Commentary -->
+                        <div class="doc-points-box">
+                          <div class="doc-points-title" style="color: #ffd700;">
+                            ⚖️ مشروح تحلیل حقوقی و استدلالات قانونی:
+                          </div>
+                          <div class="doc-content-box" style="max-height: 250px;">
+${this.selectedDocDetails.analysis || 'تحلیل تکمیلی پس از طرح در جلسه مشاوره زنده ارائه خواهد شد.'}
+                          </div>
+                        </div>
+                      `
+                    : ''}
+
+                  ${this.activeDocTab === 'extractedText'
+                    ? html`
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <div style="font-size: 13px; font-weight: 700; color: #ffd700;">
+                            متن استخراج‌شده کلمه به کلمه (OCR دقیق):
+                          </div>
+                          <div style="display: flex; gap: 8px;">
+                            <button
+                              class="doc-action-btn primary"
+                              @click=${(e: Event) => this.handleCopyDocText(this.selectedDocDetails!.extractedText, e)}>
+                              📋 کپی متن
+                            </button>
+                            <button
+                              class="doc-action-btn audio"
+                              @click=${(e: Event) => this.handleToggleNarrateDoc(this.selectedDocDetails!.extractedText, e)}>
+                              🔊 روخوانی این بخش
+                            </button>
+                          </div>
+                        </div>
+                        <div class="doc-content-box" style="max-height: 480px;">
+${this.selectedDocDetails.extractedText || 'متنی برای این سند یافت نشد یا در حال پردازش است.'}
+                        </div>
+                      `
+                    : ''}
+
+                  ${this.activeDocTab === 'preview'
+                    ? html`
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px;">
+                          ${this.selectedDocDetails.previewUrl || (this.selectedDocDetails.fileDataUrl && this.selectedDocDetails.fileDataUrl.startsWith('data:image/'))
+                            ? html`
+                                <img
+                                  src=${this.selectedDocDetails.previewUrl || this.selectedDocDetails.fileDataUrl}
+                                  alt=${this.selectedDocDetails.title}
+                                  style="max-width: 100%; max-height: 450px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.3); object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+                              `
+                            : html`
+                                <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                                  <div style="font-size: 48px; margin-bottom: 12px;">
+                                    ${this.selectedDocDetails.fileCategory === 'pdf' ? '📕' : this.selectedDocDetails.fileCategory === 'doc' ? '📘' : '📄'}
+                                  </div>
+                                  <div style="font-size: 14px; font-weight: 600; color: #e2e8f0;">
+                                    ${this.selectedDocDetails.fileName}
+                                  </div>
+                                  <div style="font-size: 12px; margin-top: 6px;">
+                                    پیش‌نمایش بصری برای فایل‌های متنی یا PDF در زبانه «متن استخراج‌شده» و «تحلیل حقوقی» در دسترس است.
+                                  </div>
+                                  ${this.selectedDocDetails.fileDataUrl
+                                    ? html`
+                                        <a
+                                          href=${this.selectedDocDetails.fileDataUrl}
+                                          download=${this.selectedDocDetails.fileName || 'سند'}
+                                          class="doc-action-btn primary"
+                                          style="margin-top: 16px; text-decoration: none;">
+                                          📥 دانلود مستقیم فایل اصلی
+                                        </a>
+                                      `
+                                    : ''}
+                                </div>
+                              `}
+                        </div>
+                      `
+                    : ''}
                 </div>
               </div>
             </div>

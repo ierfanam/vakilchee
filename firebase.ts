@@ -71,10 +71,16 @@ export interface StoredDocItem {
   title: string;
   fileName?: string;
   fileType?: string;
+  fileCategory?: string;
   fileSize?: number;
   fileDataUrl?: string;
   extractedText: string;
   analysis: string;
+  summary?: string;
+  parties?: string[];
+  keyDates?: string[];
+  legalRisks?: string[];
+  recommendations?: string[];
   source?: 'camera_scan' | 'local_upload' | string;
   previewUrl?: string;
   createdAt: any;
@@ -672,10 +678,16 @@ export async function saveUploadedDocument(
     title: string;
     fileName: string;
     fileType: string;
+    fileCategory?: string;
     fileSize: number;
     fileDataUrl?: string;
     extractedText: string;
     analysis: string;
+    summary?: string;
+    parties?: string[];
+    keyDates?: string[];
+    legalRisks?: string[];
+    recommendations?: string[];
     source?: string;
   },
 ): Promise<string> {
@@ -685,10 +697,16 @@ export async function saveUploadedDocument(
     title: docData.title,
     fileName: docData.fileName,
     fileType: docData.fileType,
+    fileCategory: docData.fileCategory,
     fileSize: docData.fileSize,
     fileDataUrl: docData.fileDataUrl || '',
     extractedText: docData.extractedText,
     analysis: docData.analysis,
+    summary: docData.summary,
+    parties: docData.parties,
+    keyDates: docData.keyDates,
+    legalRisks: docData.legalRisks,
+    recommendations: docData.recommendations,
     source: docData.source || 'local_upload',
     createdAt: new Date().toISOString(),
   };
@@ -713,10 +731,16 @@ export async function saveUploadedDocument(
         title: docData.title,
         fileName: docData.fileName,
         fileType: docData.fileType,
+        fileCategory: docData.fileCategory || '',
         fileSize: docData.fileSize,
         fileDataUrl: docData.fileDataUrl || '',
         extractedText: docData.extractedText,
         analysis: docData.analysis,
+        summary: docData.summary || '',
+        parties: docData.parties || [],
+        keyDates: docData.keyDates || [],
+        legalRisks: docData.legalRisks || [],
+        recommendations: docData.recommendations || [],
         source: docData.source || 'local_upload',
         createdAt: serverTimestamp(),
       });
