@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {LitElement, css, html} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 
 interface Particle {
   x: number;
@@ -20,22 +20,22 @@ interface Particle {
 
 @customElement('neon-wave-visualizer')
 export class NeonWaveVisualizer extends LitElement {
-  @property({type: Object})
+  @property({ type: Object })
   outputNode: AudioNode | null = null;
 
-  @property({type: Object})
+  @property({ type: Object })
   inputNode: AudioNode | null = null;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isSpeaking = false;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isUserSpeaking = false;
 
-  @property({type: Boolean})
+  @property({ type: Boolean })
   isConnected = true;
 
-  @property({type: String})
+  @property({ type: String })
   toneBadge = '';
 
   private canvas: HTMLCanvasElement | null = null;
@@ -109,7 +109,9 @@ export class NeonWaveVisualizer extends LitElement {
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.2px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 242, 254, 0.2);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(0, 242, 254, 0.2);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       direction: rtl;
     }
@@ -117,14 +119,18 @@ export class NeonWaveVisualizer extends LitElement {
     .wave-status-pill.speaking {
       border-color: rgba(0, 242, 254, 0.8);
       color: #38bdf8;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 24px rgba(0, 242, 254, 0.45);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 24px rgba(0, 242, 254, 0.45);
       background: rgba(13, 21, 39, 0.88);
     }
 
     .wave-status-pill.user-speaking {
       border-color: rgba(245, 158, 11, 0.8);
       color: #fcd34d;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 158, 11, 0.45);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 24px rgba(245, 158, 11, 0.45);
       background: rgba(13, 21, 39, 0.88);
     }
 
@@ -133,18 +139,24 @@ export class NeonWaveVisualizer extends LitElement {
       height: 8px;
       border-radius: 50%;
       background: #00f2fe;
-      box-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe;
+      box-shadow:
+        0 0 10px #00f2fe,
+        0 0 20px #00f2fe;
       animation: neonPulse 1.5s infinite alternate ease-in-out;
     }
 
     .pulse-neon-dot.amber {
       background: #f59e0b;
-      box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b;
+      box-shadow:
+        0 0 10px #f59e0b,
+        0 0 20px #f59e0b;
     }
 
     .pulse-neon-dot.green {
       background: #10b981;
-      box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
+      box-shadow:
+        0 0 10px #10b981,
+        0 0 20px #10b981;
     }
 
     @keyframes neonPulse {
@@ -371,8 +383,8 @@ export class NeonWaveVisualizer extends LitElement {
     const glowColor = this.isSpeaking
       ? 'rgba(0, 242, 254, '
       : this.isUserSpeaking
-      ? 'rgba(245, 158, 11, '
-      : 'rgba(56, 189, 248, ';
+        ? 'rgba(245, 158, 11, '
+        : 'rgba(56, 189, 248, ';
     radialGlow.addColorStop(0, `${glowColor}${0.28 + this.smoothedVolume * 0.4})`);
     radialGlow.addColorStop(0.4, `${glowColor}${0.12 + this.smoothedVolume * 0.2})`);
     radialGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
@@ -485,7 +497,19 @@ export class NeonWaveVisualizer extends LitElement {
       harmonicAmp: number;
     }
   ) {
-    const {width, centerY, amplitude, frequency, phase, color, glowColor, glowBlur, lineWidth, harmonics, harmonicAmp} = config;
+    const {
+      width,
+      centerY,
+      amplitude,
+      frequency,
+      phase,
+      color,
+      glowColor,
+      glowBlur,
+      lineWidth,
+      harmonics,
+      harmonicAmp,
+    } = config;
 
     ctx.save();
     ctx.strokeStyle = color;
@@ -572,17 +596,21 @@ export class NeonWaveVisualizer extends LitElement {
 
         <div
           class="wave-status-pill ${isSpeakingNow ? 'speaking' : isUserSpeakingNow ? 'user-speaking' : ''}"
-          id="waveStatusPill">
+          id="waveStatusPill"
+        >
           <div
-            class="pulse-neon-dot ${isSpeakingNow ? '' : isUserSpeakingNow ? 'amber' : 'green'}"></div>
+            class="pulse-neon-dot ${isSpeakingNow ? '' : isUserSpeakingNow ? 'amber' : 'green'}"
+          ></div>
           <span>
-            ${isSpeakingNow
-              ? '🎙️ در حال گفتگوی هوشمند...'
-              : isUserSpeakingNow
-              ? '🎧 در حال شنیدن صدای شما...'
-              : this.isConnected
-              ? '✨ آماده مکالمه صوتی'
-              : 'اتصال صوتی برقرار نیست'}
+            ${
+              isSpeakingNow
+                ? '🎙️ در حال گفتگوی هوشمند...'
+                : isUserSpeakingNow
+                  ? '🎧 در حال شنیدن صدای شما...'
+                  : this.isConnected
+                    ? '✨ آماده مکالمه صوتی'
+                    : 'اتصال صوتی برقرار نیست'
+            }
           </span>
         </div>
       </div>

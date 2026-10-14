@@ -77,13 +77,26 @@ export async function processLocalDocumentFile(file: File): Promise<ProcessedDoc
 
   // Derive a clean Persian title from file name
   let title = file.name;
-  if (file.name.includes('contract') || file.name.includes('ghardad') || file.name.includes('قرارداد')) {
+  if (
+    file.name.includes('contract') ||
+    file.name.includes('ghardad') ||
+    file.name.includes('قرارداد')
+  ) {
     title = `قرارداد: ${file.name}`;
-  } else if (file.name.includes('check') || file.name.includes('cheque') || file.name.includes('چک')) {
+  } else if (
+    file.name.includes('check') ||
+    file.name.includes('cheque') ||
+    file.name.includes('چک')
+  ) {
     title = `چک صیادی / سند تجاری: ${file.name}`;
   } else if (file.name.includes('sanad') || file.name.includes('سند')) {
     title = `سند مالکیت / ثبتی: ${file.name}`;
-  } else if (file.name.includes('dadnameh') || file.name.includes('دادنامه') || file.name.includes('hokm') || file.name.includes('حکم')) {
+  } else if (
+    file.name.includes('dadnameh') ||
+    file.name.includes('دادنامه') ||
+    file.name.includes('hokm') ||
+    file.name.includes('حکم')
+  ) {
     title = `دادنامه و رأی دادگاه: ${file.name}`;
   }
 

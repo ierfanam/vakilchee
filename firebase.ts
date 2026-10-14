@@ -83,7 +83,18 @@ export interface StoredDocItem {
 export interface JudicialFormData {
   id?: string;
   userId?: string;
-  formType: 'dadkhast' | 'shekayat' | 'ezharnameh' | 'layehe' | 'shora' | 'divan' | 'tamin' | 'nameh_edari' | 'darkhast_edari' | 'etelaieh_hoghooghi' | 'qarardad_solh';
+  formType:
+    | 'dadkhast'
+    | 'shekayat'
+    | 'ezharnameh'
+    | 'layehe'
+    | 'shora'
+    | 'divan'
+    | 'tamin'
+    | 'nameh_edari'
+    | 'darkhast_edari'
+    | 'etelaieh_hoghooghi'
+    | 'qarardad_solh';
   title: string;
   authorityName: string;
   claimant: {
@@ -277,7 +288,7 @@ export async function ensureUserProfile(user: FirebaseUser | AppUser): Promise<U
           email: user.email || data.email || '',
           displayName: user.displayName || data.displayName || 'کاربر گرامی',
         },
-        { merge: true },
+        { merge: true }
       );
       saveLocalProfile(user.uid, data);
       return { ...data, uid: user.uid };
@@ -314,8 +325,12 @@ export async function loadUserMemoryContext(userId: string): Promise<string> {
   const localData = getLocalDossierData(userId);
   let dossier = localData.permanentDossier;
   let memoriesList = localData.memories.map((m) => `• [${m.key || 'نکته'}]: ${m.content}`);
-  let sessionsList = localData.sessions.map((s) => `• جلسه: ${s.title || 'مشاوره'} | خلاصه: ${s.summary || 'ثبت شده'}`);
-  let docsList = localData.docs.map((d) => `• سند: ${d.title} | نکات کلیدی: ${d.analysis || d.extractedText}`);
+  let sessionsList = localData.sessions.map(
+    (s) => `• جلسه: ${s.title || 'مشاوره'} | خلاصه: ${s.summary || 'ثبت شده'}`
+  );
+  let docsList = localData.docs.map(
+    (d) => `• سند: ${d.title} | نکات کلیدی: ${d.analysis || d.extractedText}`
+  );
   let userDisplayName = localData.displayName || '';
 
   // Try fetching fresh data from Firestore if user is authenticated
@@ -351,7 +366,9 @@ export async function loadUserMemoryContext(userId: string): Promise<string> {
         sessionsList = [];
         sessionsSnap.forEach((d) => {
           const data = d.data();
-          sessionsList.push(`• جلسه: ${data.title || 'مشاوره'} | خلاصه: ${data.summary || 'ثبت شده'}`);
+          sessionsList.push(
+            `• جلسه: ${data.title || 'مشاوره'} | خلاصه: ${data.summary || 'ثبت شده'}`
+          );
         });
       }
 
@@ -362,7 +379,9 @@ export async function loadUserMemoryContext(userId: string): Promise<string> {
         docsList = [];
         docsSnap.forEach((d) => {
           const data = d.data();
-          docsList.push(`• سند: ${data.title} | نکات کلیدی: ${data.analysis || data.extractedText}`);
+          docsList.push(
+            `• سند: ${data.title} | نکات کلیدی: ${data.analysis || data.extractedText}`
+          );
         });
       }
     } catch {
@@ -413,7 +432,7 @@ export async function saveUserName(userId: string, name: string): Promise<void> 
           displayName: cleanName,
           lastActiveAt: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       );
     } catch {
       // Ignored
@@ -428,7 +447,7 @@ export async function saveUserMemoryFact(
   userId: string,
   key: string,
   content: string,
-  source = 'conversation',
+  source = 'conversation'
 ): Promise<void> {
   // 1. Update LocalStorage
   try {
@@ -473,7 +492,7 @@ export async function saveSessionLog(
   sessionId: string,
   title: string,
   summary: string,
-  turnsCount: number,
+  turnsCount: number
 ): Promise<void> {
   // 1. Update LocalStorage
   try {
@@ -513,7 +532,7 @@ export async function saveSessionLog(
           updatedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       );
     } catch {
       // Ignored
@@ -528,7 +547,7 @@ export async function saveDocumentRecord(
   userId: string,
   title: string,
   extractedText: string,
-  analysis: string,
+  analysis: string
 ): Promise<void> {
   // 1. Update LocalStorage
   try {
@@ -571,7 +590,7 @@ export async function saveDocumentRecord(
  */
 export async function updatePermanentDossier(
   userId: string,
-  newDossierSummary: string,
+  newDossierSummary: string
 ): Promise<void> {
   saveLocalProfile(userId, { permanentMemoryDossier: newDossierSummary });
 
@@ -584,7 +603,7 @@ export async function updatePermanentDossier(
           permanentMemoryDossier: newDossierSummary,
           lastActiveAt: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       );
     } catch {
       // Ignored
@@ -597,9 +616,10 @@ export async function updatePermanentDossier(
  */
 export async function saveJudicialFormRecord(
   userId: string,
-  formData: JudicialFormData,
+  formData: JudicialFormData
 ): Promise<string> {
-  const formId = formData.id || 'form_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+  const formId =
+    formData.id || 'form_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
   const updatedForm = { ...formData, id: formId, userId, createdAt: new Date().toISOString() };
 
   // 1. Update LocalStorage
@@ -640,10 +660,7 @@ export async function saveJudicialFormRecord(
 /**
  * Saves the user's preferred tone and speaking accent
  */
-export async function saveTonePreference(
-  userId: string,
-  tone: string,
-): Promise<void> {
+export async function saveTonePreference(userId: string, tone: string): Promise<void> {
   saveLocalProfile(userId, { preferredTone: tone });
 
   if (auth.currentUser) {
@@ -655,7 +672,7 @@ export async function saveTonePreference(
           preferredTone: tone,
           lastActiveAt: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       );
     } catch {
       // Ignored
@@ -677,7 +694,7 @@ export async function saveUploadedDocument(
     extractedText: string;
     analysis: string;
     source?: string;
-  },
+  }
 ): Promise<string> {
   const docId = 'doc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
   const newDocItem: StoredDocItem = {
@@ -732,10 +749,7 @@ export async function saveUploadedDocument(
 /**
  * Deletes a document from user's permanent dossier
  */
-export async function deleteDocumentRecord(
-  userId: string,
-  docId: string,
-): Promise<void> {
+export async function deleteDocumentRecord(userId: string, docId: string): Promise<void> {
   // 1. Update LocalStorage
   try {
     const lKey = getLocalKey('docs', userId);
@@ -763,10 +777,7 @@ export async function deleteDocumentRecord(
 /**
  * Deletes a judicial form from user's permanent dossier
  */
-export async function deleteJudicialFormRecord(
-  userId: string,
-  formId: string,
-): Promise<void> {
+export async function deleteJudicialFormRecord(userId: string, formId: string): Promise<void> {
   // 1. Update LocalStorage
   try {
     const lKey = getLocalKey('forms', userId);

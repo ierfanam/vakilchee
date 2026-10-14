@@ -272,11 +272,13 @@ export class DynamicAudioVisualizer extends LitElement {
 
   private updateMetrics() {
     this.currentIntensityPercent = Math.min(100, Math.round(this.smoothedVolume * 100));
-    
+
     // Estimate dominant frequency in Hz
     const nyquist = 12000;
     const maxBandIdx = this.smoothedSpectrum.indexOf(Math.max(...this.smoothedSpectrum));
-    const estimatedHz = Math.round(((maxBandIdx + 1) / this.smoothedSpectrum.length) * (nyquist / 3));
+    const estimatedHz = Math.round(
+      ((maxBandIdx + 1) / this.smoothedSpectrum.length) * (nyquist / 3)
+    );
     this.currentPeakHz = this.smoothedVolume > 0.05 ? Math.max(80, estimatedHz) : 0;
   }
 
@@ -322,7 +324,8 @@ export class DynamicAudioVisualizer extends LitElement {
 
         // Bass, Mids, Treble
         rawBass = (rawBands[0] + rawBands[1] + rawBands[2] + rawBands[3]) / 4;
-        rawMid = (rawBands[4] + rawBands[5] + rawBands[6] + rawBands[7] + rawBands[8] + rawBands[9]) / 6;
+        rawMid =
+          (rawBands[4] + rawBands[5] + rawBands[6] + rawBands[7] + rawBands[8] + rawBands[9]) / 6;
         rawTreble = (rawBands[10] + rawBands[11] + rawBands[12] + rawBands[13] + rawBands[14]) / 5;
       }
     }
@@ -349,8 +352,10 @@ export class DynamicAudioVisualizer extends LitElement {
             rawBands[b] = Math.max(rawBands[b], bandSum / (step * 255));
           }
           rawBass = (rawBands[0] + rawBands[1] + rawBands[2] + rawBands[3]) / 4;
-          rawMid = (rawBands[4] + rawBands[5] + rawBands[6] + rawBands[7] + rawBands[8] + rawBands[9]) / 6;
-          rawTreble = (rawBands[10] + rawBands[11] + rawBands[12] + rawBands[13] + rawBands[14]) / 5;
+          rawMid =
+            (rawBands[4] + rawBands[5] + rawBands[6] + rawBands[7] + rawBands[8] + rawBands[9]) / 6;
+          rawTreble =
+            (rawBands[10] + rawBands[11] + rawBands[12] + rawBands[13] + rawBands[14]) / 5;
         }
       }
     }
@@ -369,11 +374,7 @@ export class DynamicAudioVisualizer extends LitElement {
     this.phase += 0.04 + this.smoothedVolume * 0.08;
 
     // Determine colors
-    const activeColor = this.isSpeaking
-      ? '#0284c7'
-      : this.isUserSpeaking
-      ? '#16a34a'
-      : '#64748b';
+    const activeColor = this.isSpeaking ? '#0284c7' : this.isUserSpeaking ? '#16a34a' : '#64748b';
 
     // --- 1. Draw Symmetric Frequency Spectrum Bars ---
     const barCount = 24;
@@ -385,7 +386,10 @@ export class DynamicAudioVisualizer extends LitElement {
       const intensity = this.smoothedSpectrum[i];
       const minHeight = 4;
       const maxHeight = height * 0.75;
-      const barHeight = Math.max(minHeight, intensity * maxHeight + (Math.sin(this.phase + i * 0.3) * 2));
+      const barHeight = Math.max(
+        minHeight,
+        intensity * maxHeight + Math.sin(this.phase + i * 0.3) * 2
+      );
       const y = centerY - barHeight / 2;
 
       // Opacity scales with frequency energy
@@ -393,7 +397,7 @@ export class DynamicAudioVisualizer extends LitElement {
 
       ctx.fillStyle = activeColor;
       ctx.globalAlpha = alpha;
-      
+
       // Draw rounded bar
       ctx.beginPath();
       ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 2, 2]);
@@ -406,15 +410,16 @@ export class DynamicAudioVisualizer extends LitElement {
     ctx.lineWidth = 1.5;
     ctx.beginPath();
 
-    const waveAmp = (this.smoothedVolume * 22 + 2);
+    const waveAmp = this.smoothedVolume * 22 + 2;
     const stepX = 4;
 
     for (let x = 0; x <= width; x += stepX) {
       const normX = (x / width) * 2 - 1;
       const envelope = Math.exp(-normX * normX * 3.0);
       const freqMultiplier = 0.02 + this.smoothedMid * 0.015;
-      const yOffset = Math.sin(x * freqMultiplier + this.phase) * waveAmp * envelope
-                    + Math.cos(x * freqMultiplier * 2.2 - this.phase * 1.5) * (waveAmp * 0.4) * envelope;
+      const yOffset =
+        Math.sin(x * freqMultiplier + this.phase) * waveAmp * envelope +
+        Math.cos(x * freqMultiplier * 2.2 - this.phase * 1.5) * (waveAmp * 0.4) * envelope;
       const y = centerY + yOffset;
 
       if (x === 0) {
@@ -435,8 +440,8 @@ export class DynamicAudioVisualizer extends LitElement {
     const statusText = isLawyer
       ? 'فرکانس و شدت صدای وکیل (خروجی)'
       : isUser
-      ? 'فرکانس و شدت صدای کاربر (میکروفون)'
-      : 'ویژوالایزر فرکانس و شدت صدا (آماده)';
+        ? 'فرکانس و شدت صدای کاربر (میکروفون)'
+        : 'ویژوالایزر فرکانس و شدت صدا (آماده)';
 
     return html`
       <div class="visualizer-container" id="dynamicVisualizerContainer">
@@ -452,7 +457,9 @@ export class DynamicAudioVisualizer extends LitElement {
 
           <div class="metric-group">
             <span>فرکانس غالب:</span>
-            <span class="metric-value">${this.currentPeakHz > 0 ? `${this.currentPeakHz} Hz` : '---'}</span>
+            <span class="metric-value"
+              >${this.currentPeakHz > 0 ? `${this.currentPeakHz} Hz` : '---'}</span
+            >
           </div>
 
           <div class="metric-group">
@@ -460,7 +467,8 @@ export class DynamicAudioVisualizer extends LitElement {
             <div class="intensity-progress-track">
               <div
                 class="intensity-progress-fill"
-                style="width: ${this.currentIntensityPercent}%; background: ${isLawyer ? '#0284c7' : isUser ? '#16a34a' : '#94a3b8'};"></div>
+                style="width: ${this.currentIntensityPercent}%; background: ${isLawyer ? '#0284c7' : isUser ? '#16a34a' : '#94a3b8'};"
+              ></div>
             </div>
             <span class="metric-value">${this.currentIntensityPercent}%</span>
           </div>

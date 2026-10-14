@@ -1,12 +1,7 @@
 {
   "name": "وکیل پایه یک رسمی دادگستری",
   "description": "سامانه هوشمند مشاوره حقوقی و اداری صوتی زنده با پس‌زمینه اختصاصی شرکت توزیع نیروی برق استان ایلام، انتخاب لحن و لهجه، بارگذاری و تحلیل اسناد و قراردادها، اسکن زنده مدارک، تنظیم و صدور اوراق و فرم‌های رسمی با محرمانگی کامل اطلاعات و حافظه پنهان امن",
-  "requestFramePermissions": [
-    "microphone",
-    "camera"
-  ],
+  "requestFramePermissions": ["microphone", "camera"],
   "prompt": "",
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
